@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ── Fonts ── */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design Tokens ── */
+:root {
+  --color-bg: #03020A;
+  --color-bg-alt: #05040F;
+  --color-surface: rgba(255, 255, 255, 0.025);
+  --color-gold: #C9A85C;
+  --color-gold-light: #E8C97A;
+  --color-gold-dark: #B8932E;
+  --color-gold-dim: rgba(201, 168, 92, 0.15);
+  --color-border: rgba(201, 168, 92, 0.12);
+  --color-text: #e8e0d0;
+  --color-text-muted: rgba(232, 224, 208, 0.4);
+  --color-text-faint: rgba(232, 224, 208, 0.25);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', 'Inter', sans-serif;
+  --nav-height: 72px;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── Sélection ── */
+::selection {
+  background: rgba(201, 168, 92, 0.25);
+  color: #ffffff;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-light);
+}
+
+/* ── Scroll margin pour la nav fixe ── */
+section[id] {
+  scroll-margin-top: var(--nav-height);
+}
+
+/* ── Focus visible (accessibilité) ── */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* ── Inputs ── */
+input,
+textarea {
+  caret-color: var(--color-gold);
+  transition: border-color 0.3s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ── Animations ── */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 1.5s ease-in-out infinite;
+}
+
+/* ── Grain overlay ── */
+.grain-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+
+/* ── Composants réutilisables ── */
+.nav-link {
+  position: relative;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-gold);
+  transition: width 0.4s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--color-gold);
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  width: 100%;
+}
+
+.tag-pill {
+  font-size: 0.65rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2px;
+  background: rgba(201, 168, 92, 0.06);
+  border: 1px solid var(--color-gold-dim);
+  color: rgba(201, 168, 92, 0.6);
+  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.tag-pill:hover {
+  background: rgba(201, 168, 92, 0.12);
+  color: var(--color-gold);
+  border-color: rgba(201, 168, 92, 0.35);
+}
+
+.card-hover {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s,
+    box-shadow 0.5s;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 168, 92, 0.25) !important;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(201, 168, 92, 0.1);
+}
+
+.gold-btn {
+  background: linear-gradient(135deg, var(--color-gold-dark), var(--color-gold), var(--color-gold-light));
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.gold-btn:hover,
+.gold-btn:focus-visible {
+  box-shadow:
+    0 0 40px rgba(201, 168, 92, 0.4),
+    0 8px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.ghost-btn {
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  border: 1px solid rgba(201, 168, 92, 0.25);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.ghost-btn:hover,
+.ghost-btn:focus-visible {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+/* ── Séparateur doré ── */
+.gold-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  opacity: 0.2;
+}
+
+.gold-separator--strong {
+  opacity: 0.3;
+}
+
+/* ── Coins décoratifs ── */
+.decorative-corners {
+  position: relative;
+}
+
+.decorative-corners::before,
+.decorative-corners::after {
+  content: '';
+  position: absolute;
+}
+
+.decorative-corners::before {
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-top: 1px solid var(--color-gold);
+  border-left: 1px solid var(--color-gold);
+}
+
+.decorative-corners::after {
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-bottom: 1px solid var(--color-gold);
+  border-right: 1px solid var(--color-gold);
+}

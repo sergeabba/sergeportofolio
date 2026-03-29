@@ -23,4 +23,11 @@ export interface ContactLink {
   label: string;
   value: string;
   href: string;
+  icon?: string;
+}
+
+export interface SkillBar {
+  label: string;
+  level: number;
+  accent?: boolean;
 }

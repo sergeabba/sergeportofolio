@@ -2,10 +2,16 @@ import type { ReactNode } from "react";
 
 export default function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-4 mb-6">
-      <div className="w-8 h-px bg-[var(--color-gold)]" />
-      <span className="font-[var(--font-display)] text-xs tracking-[0.3em] text-[var(--color-gold)] uppercase"
-        style={{ fontFamily: "var(--font-display)" }}>
+    <div className="section-label">
+      <span
+        style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "0.68rem",
+          letterSpacing: "0.28em",
+          color: "var(--color-gold)",
+          textTransform: "uppercase",
+        }}
+      >
         {children}
       </span>
     </div>

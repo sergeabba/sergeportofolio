@@ -11,38 +11,32 @@ interface SkillBarProps {
 
 export default function SkillBar({ label, level, accent = false }: SkillBarProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: true, margin: "-40px" });
 
   return (
-    <div ref={ref} className="mb-6" role="progressbar" aria-valuenow={level} aria-valuemin={0} aria-valuemax={100} aria-label={`${label}: ${level}%`}>
-      <div className="flex justify-between items-baseline mb-2">
-        <span
-          className="text-base tracking-wide text-[var(--color-text)]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+    <div ref={ref} className="mb-5"
+      role="progressbar" aria-valuenow={level} aria-valuemin={0} aria-valuemax={100}
+      aria-label={`${label}: ${level}%`}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.5rem" }}>
+        <span style={{ fontFamily: "var(--font-body)", fontWeight: 500, fontSize: "0.88rem", color: "var(--color-text)" }}>
           {label}
         </span>
-        <span
-          className="text-sm tracking-wider"
-          style={{
-            fontFamily: "var(--font-display)",
-            color: accent ? "var(--color-gold)" : "rgba(201,168,92,0.5)",
-          }}
-        >
+        <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.75rem",
+          color: accent ? "var(--color-blue-light)" : "rgba(107,147,255,0.5)" }}>
           {level}%
         </span>
       </div>
-      <div className="relative h-px bg-[var(--color-border)] overflow-hidden">
+      <div className="skill-track">
         <motion.div
-          className="absolute top-0 left-0 h-full"
           style={{
+            position: "absolute", top: 0, left: 0, height: "100%", borderRadius: 3,
             background: accent
-              ? "linear-gradient(90deg, var(--color-gold), var(--color-gold-light))"
-              : "linear-gradient(90deg, rgba(201,168,92,0.4), rgba(201,168,92,0.7))",
+              ? "linear-gradient(90deg, #2150CC, #6B93FF)"
+              : "linear-gradient(90deg, rgba(59,111,232,0.4), rgba(107,147,255,0.7))",
           }}
           initial={{ width: 0 }}
           animate={inView ? { width: `${level}%` } : {}}
-          transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         />
       </div>
     </div>

@@ -11,15 +11,15 @@ interface TypeWriterProps {
 
 export default function TypeWriter({
   texts,
-  typeSpeed = 70,
-  deleteSpeed = 35,
-  pauseDuration = 2000,
+  typeSpeed = 65,
+  deleteSpeed = 32,
+  pauseDuration = 2200,
 }: TypeWriterProps) {
   const [displayed, setDisplayed] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clear = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -27,7 +27,6 @@ export default function TypeWriter({
 
   useEffect(() => {
     const current = texts[textIndex];
-
     if (!isDeleting) {
       if (charIndex < current.length) {
         timeoutRef.current = setTimeout(() => {
@@ -35,7 +34,6 @@ export default function TypeWriter({
           setCharIndex((c) => c + 1);
         }, typeSpeed);
       } else {
-        /* Pause avant suppression */
         timeoutRef.current = setTimeout(() => setIsDeleting(true), pauseDuration);
       }
     } else {
@@ -49,15 +47,15 @@ export default function TypeWriter({
         setTextIndex((i) => (i + 1) % texts.length);
       }
     }
-
     return clear;
   }, [charIndex, isDeleting, textIndex, texts, typeSpeed, deleteSpeed, pauseDuration, clear]);
 
   return (
     <span aria-label={texts[textIndex]} role="text">
-      <span className="text-[var(--color-gold)]">{displayed}</span>
+      <span style={{ color: "var(--color-gold)" }}>{displayed}</span>
       <span
-        className="text-[var(--color-gold)] opacity-70 animate-pulse-slow"
+        style={{ color: "var(--color-gold)", opacity: 0.6 }}
+        className="animate-pulse-dot"
         aria-hidden="true"
       >
         |

@@ -4,25 +4,37 @@
     "titre": "Visuel Gaming TikTok",
     "desc": "Identité visuelle et contenu créatif pour ma page gaming sur les réseaux sociaux.",
     "cat": "Gaming",
-    "tags": ["TikTok", "Design", "Gaming"],
+    "tags": [
+      "TikTok",
+      "Design",
+      "Gaming"
+    ],
     "lien": "https://www.youtube.com/@thelegendofdon4125",
     "lienLabel": "Voir la chaîne"
   },
   {
     "src": "/projets/gaming/persona.png",
     "titre": "La série Persona",
-    "desc": "Miniature YouTube — Le J-RPG qui fait parler ton double intérieur.",
+    "desc": "Miniature YouTube  Le J-RPG qui fait parler ton double intérieur.",
     "cat": "Gaming",
-    "tags": ["YouTube", "J-RPG", "Design"],
+    "tags": [
+      "YouTube",
+      "J-RPG",
+      "Design"
+    ],
     "lien": "https://www.youtube.com/@thelegendofdon4125",
     "lienLabel": "Voir la chaîne"
   },
   {
     "src": "/projets/gaming/sonic.jpg",
     "titre": "Sonic The Hedgehog",
-    "desc": "Miniature YouTube — L'histoire d'un hérisson plus rapide que le temps.",
+    "desc": "Miniature YouTube  L'histoire d'un hérisson plus rapide que le temps.",
     "cat": "Gaming",
-    "tags": ["YouTube", "Sonic", "Design"],
+    "tags": [
+      "YouTube",
+      "Sonic",
+      "Design"
+    ],
     "lien": "https://www.youtube.com/@thelegendofdon4125",
     "lienLabel": "Voir la chaîne"
   },
@@ -31,7 +43,11 @@
     "titre": "Création IA Générative",
     "desc": "Création visuelle générée via Midjourney avec prompt engineering avancé.",
     "cat": "IA Générative",
-    "tags": ["Midjourney", "Prompt", "IA"],
+    "tags": [
+      "Midjourney",
+      "Prompt",
+      "IA"
+    ],
     "lien": "https://www.canva.com/design/DAGxXS-5YTQ/BOQSEe9l9AYNyQsSV-Dheg/edit",
     "lienLabel": "Voir sur Canva"
   },
@@ -40,7 +56,11 @@
     "titre": "Création Canva",
     "desc": "Création visuelle réalisée sur Canva.",
     "cat": "Canva",
-    "tags": ["Canva", "Design", "Graphisme"],
+    "tags": [
+      "Canva",
+      "Design",
+      "Graphisme"
+    ],
     "lien": "https://www.canva.com/design/DAGxXS-5YTQ/BOQSEe9l9AYNyQsSV-Dheg/edit",
     "lienLabel": "Voir sur Canva"
   }

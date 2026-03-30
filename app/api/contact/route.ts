@@ -1,15 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type ContactRequest = {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+};
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { name, email, subject, message } = body;
+    const body = (await req.json()) as ContactRequest;
+    const name = body.name?.trim() ?? "";
+    const email = body.email?.trim() ?? "";
+    const subject = body.subject?.trim() ?? "";
+    const message = body.message?.trim() ?? "";
 
     if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: "Champs requis manquants" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
+    }
+
+    if (!emailPattern.test(email)) {
+      return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
     }
 
     // ── Option 1 : Resend (recommandé en prod) ──
@@ -26,11 +39,16 @@ export async function POST(req: NextRequest) {
     // await transporter.sendMail({ ... });
 
     // ── Dev : log en console ──
-    console.log("📬 Nouveau message portfolio :", { name, email, subject, message });
+    console.log("📬 Nouveau message portfolio :", {
+      name,
+      email,
+      subject: subject || `Nouveau message de ${name}`,
+      message,
+    });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err) {
-    console.error("Contact API error:", err);
+  } catch (error) {
+    console.error("Contact API error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

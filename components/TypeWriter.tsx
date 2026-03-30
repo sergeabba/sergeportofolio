@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface TypeWriterProps {
   texts: string[];
@@ -15,43 +15,52 @@ export default function TypeWriter({
   deleteSpeed = 32,
   pauseDuration = 2200,
 }: TypeWriterProps) {
+  const safeTexts = useMemo(() => (texts.length > 0 ? texts : [""]), [texts]);
   const [displayed, setDisplayed] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clear = useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-  }, []);
-
   useEffect(() => {
-    const current = texts[textIndex];
+    const current = safeTexts[textIndex] ?? "";
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     if (!isDeleting) {
       if (charIndex < current.length) {
         timeoutRef.current = setTimeout(() => {
           setDisplayed(current.slice(0, charIndex + 1));
-          setCharIndex((c) => c + 1);
+          setCharIndex((value) => value + 1);
         }, typeSpeed);
       } else {
-        timeoutRef.current = setTimeout(() => setIsDeleting(true), pauseDuration);
-      }
-    } else {
-      if (charIndex > 0) {
         timeoutRef.current = setTimeout(() => {
-          setDisplayed(current.slice(0, charIndex - 1));
-          setCharIndex((c) => c - 1);
-        }, deleteSpeed);
-      } else {
-        setIsDeleting(false);
-        setTextIndex((i) => (i + 1) % texts.length);
+          setIsDeleting(true);
+        }, pauseDuration);
       }
+    } else if (charIndex > 0) {
+      timeoutRef.current = setTimeout(() => {
+        setDisplayed(current.slice(0, charIndex - 1));
+        setCharIndex((value) => value - 1);
+      }, deleteSpeed);
+    } else {
+      timeoutRef.current = setTimeout(() => {
+        setIsDeleting(false);
+        setTextIndex((value) => (value + 1) % safeTexts.length);
+      }, 0);
     }
-    return clear;
-  }, [charIndex, isDeleting, textIndex, texts, typeSpeed, deleteSpeed, pauseDuration, clear]);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [charIndex, deleteSpeed, isDeleting, pauseDuration, safeTexts, textIndex, typeSpeed]);
 
   return (
-    <span aria-label={texts[textIndex]} role="text">
+    <span aria-label={safeTexts[textIndex]} role="text">
       <span style={{ color: "var(--color-gold)" }}>{displayed}</span>
       <span
         style={{ color: "var(--color-gold)", opacity: 0.6 }}

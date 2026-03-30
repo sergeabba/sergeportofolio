@@ -1,12 +1,12 @@
 import type { ExperienceItem, ContactLink } from "./types";
 
 export const NAV_LINKS = [
-  { id: "bio",          label: "Accueil" },
-  { id: "quisuisje",   label: "À propos" },
+  { id: "bio", label: "Accueil" },
+  { id: "quisuisje", label: "À propos" },
   { id: "competences", label: "Skills" },
-  { id: "realisations",label: "Réalisations" },
-  { id: "experience",  label: "Parcours" },
-  { id: "contact",     label: "Contact" },
+  { id: "realisations", label: "Réalisations" },
+  { id: "experience", label: "Parcours" },
+  { id: "contact", label: "Contact" },
 ] as const;
 
 export const HERO_ROLES = [
@@ -19,28 +19,28 @@ export const HERO_ROLES = [
 
 export const SKILL_CATEGORIES = [
   {
-    title: "Data & Big Data",
-    tags: ["Power BI", "Python", "Pandas", "NumPy", "SQL", "Spark", "PySpark", "Excel"],
+    title: "Analyse & Visu. Données",
+    tags: ["SQL", "Pandas", "NumPy", "SciPy", "Power BI", "Matplotlib", "Seaborn", "Geoplotlib"],
   },
   {
-    title: "IA Générative",
-    tags: ["Midjourney", "DALL-E", "Sora", "Kling", "Runway", "Suno", "ChatGPT", "Claude"],
+    title: "IA Générative & Prompt",
+    tags: ["Midjourney", "NanoBanana Pro", "DALL-E", "Sora", "Suno", "Riffusion"],
   },
   {
-    title: "Graphisme & Design",
-    tags: ["Canva", "Photoshop", "Illustrator", "Figma", "Adobe XD"],
+    title: "Programmation",
+    tags: ["Python", "C++", "C"],
   },
   {
-    title: "No-Code & Web",
-    tags: ["WordPress", "Elementor", "Notion", "Google Sites", "Next.js"],
+    title: "Big Data & Cloud",
+    tags: ["Scala", "Spark", "PySpark"],
   },
   {
-    title: "Systèmes & OS",
-    tags: ["Windows", "Linux", "WSL", "Terminal", "Git", "GitHub"],
+    title: "Design & UI/UX",
+    tags: ["Photoshop", "Illustrator", "Adobe XD", "Figma", "Canva"],
   },
   {
-    title: "Contenu & Réseaux",
-    tags: ["TikTok", "YouTube", "Community Mgmt", "Vidéo", "Streaming"],
+    title: "Bureautique & Réseaux",
+    tags: ["Word", "Excel", "Sheets", "TikTok IA & Gaming"],
   },
 ];
 
@@ -50,7 +50,7 @@ export const SKILL_BARS = {
     { label: "Python & Pandas", level: 75 },
     { label: "SQL", level: 75 },
     { label: "Excel / Google Sheets", level: 88 },
-    { label: "Big Data — Spark, PySpark", level: 65 },
+    { label: "Big Data  Spark, PySpark", level: 65 },
   ],
   creative: [
     { label: "IA Générative & Prompt Engineering", level: 92, accent: true },
@@ -61,53 +61,62 @@ export const SKILL_BARS = {
   ],
 };
 
-// ✅ Date corrigée (stage 2024)
+// ✅ Données alignées avec le CV
 export const EXPERIENCES: ExperienceItem[] = [
   {
     type: "work",
-    title: "Stage — Data Analyse",
+    title: "Stage  Data Analyse",
     org: "Wemoov",
-    date: "Juin – Oct. 2024",
+    date: "Juin 2024 – Octobre 2025",
     index: "01",
     items: [
-      "Analyse des données de consommation des véhicules et optimisation des ressources",
-      "Suivi du chiffre d'affaires et évaluation des performances des chauffeurs",
-      "Création de rapports et tableaux de bord Power BI pour la prise de décision",
-      "Gestion et mise à jour du site web via WordPress",
-      "Consolidation des données et structuration d'une base centralisée",
+      "Analyse des données de consommation des véhicules et optimisation des ressources.",
+      "Suivi du chiffre d'affaires et évaluation des performances des chauffeurs.",
+      "Création de rapports et tableaux de bord pour faciliter la prise de décision.",
+      "Mise à jour et gestion du site web via WordPress.",
+      "Consolidation des données et structuration d'une base centralisée des opérations.",
     ],
     tags: ["Python", "SQL", "Power BI", "WordPress", "Excel"],
   },
   {
     type: "education",
-    title: "Master — Big Data & Data Stratégie",
-    org: "ISM Digital Campus · Dakar",
+    title: "Master  Big Data & Data Stratégie",
+    org: "Digital Campus",
     date: "2021 – 2023",
     index: "02",
-    desc: "Formation de spécialiste data couvrant l'analyse, le traitement et la stratégie autour de la donnée. Acquisition de compétences avancées en Python, Spark, SQL et visualisation, avec une approche project-based.",
-    tags: ["Big Data", "Python", "Spark", "SQL", "Data Strategy"],
+    desc: "Master en Big Data & Data Stratégie au sein de Digital Campus (Groupe ISM).",
+    tags: ["Big Data", "Data Strategy", "Spark", "Scala"],
   },
   {
     type: "education",
-    title: "Licence LIAGE",
-    org: "École d'Ingénieurs ISM · Dakar",
+    title: "Licence  LIAGE",
+    org: "École d'Ingénieurs ISM",
     date: "2018 – 2021",
     index: "03",
-    desc: "Licence en Informatique Appliquée à la Gestion d'Entreprise — bases solides en développement, systèmes d'information et gestion de projet.",
+    desc: "Licence en Informatique Appliquée à la Gestion d'Entreprise.",
     tags: ["Informatique", "Gestion", "Développement"],
+  },
+  {
+    type: "education",
+    title: "Baccalauréat Littéraire",
+    org: "Lycée Saint Etienne (Ndjamena, Tchad)",
+    date: "2017 – 2018",
+    index: "04",
+    desc: "Obtention du baccalauréat Littéraire.",
+    tags: ["Littéraire", "Général"],
   },
 ];
 
 export const CONTACT_LINKS: ContactLink[] = [
   {
     label: "Email",
-    value: "serge-mbaitadjim.abba@ism.edu.sn",
-    href: "mailto:serge-mbaitadjim.abba@ism.edu.sn",
+    value: "abbaserge2@gmail.com",
+    href: "mailto:abbaserge2@gmail.com",
     icon: "✉",
   },
   {
     label: "Téléphone",
-    value: "+221 78 546 08 74",
+    value: "78 546 08 74",
     href: "tel:+221785460874",
     icon: "☎",
   },
@@ -140,9 +149,9 @@ export const CONTACT_LINKS: ContactLink[] = [
 export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva"];
 
 export const ABOUT_FACTS = [
-  { key: "Formation",  val: "Master Big Data & Data Stratégie" },
-  { key: "École",      val: "ISM Digital Campus — Dakar" },
-  { key: "Stack",      val: "Python · SQL · Power BI · IA Gen" },
-  { key: "Passion",    val: "Gaming · IA · Création de contenu" },
-  { key: "Langues",    val: "Français (natif) · Anglais (B2)" },
+  { key: "Formation", val: "Master Big Data & Data Stratégie" },
+  { key: "École", val: "Digital Campus" },
+  { key: "Stack", val: "Python · SQL · Power BI · IA Gen" },
+  { key: "Passion", val: "Gaming · IA · Création de contenu" },
+  { key: "Langues", val: "Français (natif) · Anglais (B2)" },
 ];

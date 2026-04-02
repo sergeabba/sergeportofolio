@@ -69,7 +69,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body>{children}</body>
+      <body className="dark">{children}</body>
     </html>
   );
 }
+
+

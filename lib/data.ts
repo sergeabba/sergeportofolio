@@ -1,4 +1,6 @@
-import type { ExperienceItem, ContactLink } from "./types";
+import type { ExperienceItem, ContactLink, SkillBar as SkillBarType } from "./types";
+
+export const CV_LINK = "/cv.pdf";
 
 export const NAV_LINKS = [
   { id: "bio", label: "Accueil" },
@@ -59,6 +61,15 @@ export const SKILL_BARS = {
     { label: "Figma / Adobe XD", level: 75, accent: true },
     { label: "Windows / Linux (usage avancé)", level: 80, accent: true },
   ],
+  all: [
+    { label: "Power BI", level: 85 },
+    { label: "Python & Pandas", level: 75 },
+    { label: "SQL", level: 75 },
+    { label: "Excel / Google Sheets", level: 88 },
+    { label: "Big Data Spark, PySpark", level: 65 },
+    { label: "IA Générative & Prompt Engineering", level: 92, accent: true },
+    { label: "Canva / Photoshop / Illustrator", level: 85, accent: true },
+  ] as SkillBarType[],
 };
 
 // ✅ Données alignées avec le CV
@@ -146,7 +157,7 @@ export const CONTACT_LINKS: ContactLink[] = [
   },
 ];
 
-export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva"];
+export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva", "Data"];
 
 export const ABOUT_FACTS = [
   { key: "Formation", val: "Master Big Data & Data Stratégie" },
@@ -154,4 +165,35 @@ export const ABOUT_FACTS = [
   { key: "Stack", val: "Python · SQL · Power BI · IA Gen" },
   { key: "Passion", val: "Gaming · IA · Création de contenu" },
   { key: "Langues", val: "Français (natif) · Anglais (B2)" },
+];
+
+// Nouveaux projets DATA pour équilibrer portfolio
+export const PROJETS_DATA: any[] = [
+  {
+    "src": "/projets/data/wemoov-dashboard.jpg",
+    "titre": "Dashboard Power BI Wemoov",
+    "desc": "Tableau de bord interactif pour analyse performances chauffeurs et CA véhicules (stage Wemoov).",
+    "cat": "Data",
+    "tags": ["Power BI", "Data Viz", "Analyse", "Business Intel"],
+    "lien": "https://github.com/sergeabba/wemoov-dashboard",
+    "lienLabel": "Voir GitHub"
+  },
+  {
+    "src": "/projets/data/pandas-analysis.jpg",
+    "titre": "Analyse Pandas Véhicules",
+    "desc": "Script Python Pandas pour nettoyage/analyse données consommation carburant (100k+ lignes).",
+    "cat": "Data",
+    "tags": ["Python", "Pandas", "Data Cleaning", "EDA"],
+    "lien": "https://github.com/sergeabba/vehicle-analysis",
+    "lienLabel": "Code source"
+  },
+  {
+    "src": "/projets/data/spark-bigdata.jpg",
+    "titre": "Spark Streaming Log Analysis",
+    "desc": "Pipeline PySpark pour traitement temps réel logs applicatifs (projet Master Big Data).",
+    "cat": "Data",
+    "tags": ["PySpark", "Big Data", "Scala", "Streaming"],
+    "lien": "https://github.com/sergeabba/spark-logs",
+    "lienLabel": "Dépôt GitHub"
+  }
 ];

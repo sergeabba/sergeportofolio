@@ -8,6 +8,8 @@ import Projects from "@/components/sections/Projects";
 import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
+import BackToTop from "@/components/BackToTop";
+import SkipLink from "@/components/SkipLink";
 
 /**
  * PAGE PRINCIPALE DU PORTFOLIO
@@ -15,28 +17,32 @@ import Footer from "@/components/sections/Footer";
  */
 export default function Home() {
   return (
-    <main>
-      <Navbar />
-      
-      <Hero />
-      <div className="sep" />
-      
-      <About />
-      <div className="sep" />
-      
-      <Skills />
-      <div className="sep" />
-      
-      <Projects />
-      <div className="sep" />
-      
-      <Experience />
-      <div className="sep" />
-      
-      <Contact />
-      <div className="sep" />
-      
-      <Footer />
-    </main>
+    <>
+      <SkipLink />
+      <main>
+        <Navbar />
+
+        <Hero />
+        <div className="sep" />
+
+        <About />
+        <div className="sep" />
+
+        <Skills />
+        <div className="sep" />
+
+        <Projects />
+        <div className="sep" />
+
+        <Experience />
+        <div className="sep" />
+
+        <Contact />
+        <div className="sep" />
+
+        <Footer />
+      </main>
+      <BackToTop />
+    </>
   );
 }

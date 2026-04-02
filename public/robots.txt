@@ -1,0 +1,32 @@
+# Robots.txt pour Mbaitadjim Abba Serge - Portfolio
+# https://sergeabba.com
+
+User-agent: *
+Allow: /
+
+# Autoriser l'indexation de toutes les pages
+Allow: /
+
+# Fichier sitemap
+Sitemap: https://sergeabba.com/sitemap.xml
+
+# Règles spécifiques pour les bots
+User-agent: Googlebot
+Allow: /
+Max-Video-Preview: -1
+Max-Image-Preview: large
+Max-Snippet: -1
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+# Ne pas indexer les pages admin
+User-agent: *
+Disallow: /admin/
+Disallow: /api/

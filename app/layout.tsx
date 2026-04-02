@@ -2,53 +2,99 @@ import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-/* ── Outfit  bold display headings ── */
 const outfit = Outfit({
   subsets: ["latin"],
   weight: ["600", "700", "800", "900"],
-  variable: "--font-display",
+  variable: "--font-outfit",
   display: "swap",
 });
 
-/* ── Instrument Serif  elegant italic for first name ── */
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: ["400"],
   style: ["italic"],
-  variable: "--font-serif",
+  variable: "--font-serif-var",
   display: "swap",
 });
 
-/* ── Plus Jakarta Sans  clean body ── */
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-body",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sergeabba.com"),
-  title: "Mbaitadjim Abba Serge  Le Don · Portfolio",
+  title: {
+    default: "Mbaitadjim Abba Serge — Data Analyst Junior · Portfolio",
+    template: "%s | Mbaitadjim Abba Serge",
+  },
   description:
-    "Data Analyst Junior · Big Data · IA Générative · Prompt Engineering  Dakar, Sénégal. Portfolio professionnel.",
-  keywords: ["Data Analyst", "Big Data", "IA Générative", "Prompt Engineering", "Power BI", "Python", "Dakar", "Sénégal", "Portfolio"],
-  authors: [{ name: "Mbaitadjim Abba Serge" }],
+    "Data Analyst Junior spécialisé en Big Data, IA Générative et Prompt Engineering. Portfolio professionnel de Mbaitadjim Abba Serge — Dakar, Sénégal.",
+  keywords: [
+    "Data Analyst",
+    "Big Data",
+    "IA Générative",
+    "Prompt Engineering",
+    "Power BI",
+    "Python",
+    "SQL",
+    "Pandas",
+    "Data Visualization",
+    "Dakar",
+    "Sénégal",
+    "Portfolio",
+    "Mbaitadjim Abba Serge",
+  ],
+  authors: [{ name: "Mbaitadjim Abba Serge", url: "https://sergeabba.com" }],
+  creator: "Mbaitadjim Abba Serge",
+  publisher: "Mbaitadjim Abba Serge",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    title: "Mbaitadjim Abba Serge  Le Don",
-    description: "Data Analyst Junior · Big Data · IA Générative  Dakar, Sénégal",
-    locale: "fr_FR",
     type: "website",
-    siteName: "Portfolio Le Don",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Mbaitadjim Abba Serge  Portfolio" }],
+    locale: "fr_FR",
+    url: "https://sergeabba.com",
+    siteName: "Portfolio — Mbaitadjim Abba Serge",
+    title: "Mbaitadjim Abba Serge — Data Analyst Junior",
+    description: "Data Analyst Junior spécialisé en Big Data, IA Générative et Prompt Engineering — Dakar, Sénégal",
+    countryName: "Sénégal",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Mbaitadjim Abba Serge — Data Analyst Junior Portfolio",
+        type: "image/jpeg",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mbaitadjim Abba Serge  Le Don",
-    description: "Data Analyst Junior · Big Data · IA Générative",
+    title: "Mbaitadjim Abba Serge — Data Analyst Junior",
+    description: "Data Analyst Junior spécialisé en Big Data, IA Générative et Prompt Engineering — Dakar, Sénégal",
     images: ["/og-image.jpg"],
+    creator: "@sergeabba",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+  },
 };
 
 const jsonLd = {
@@ -65,13 +111,49 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${jakarta.variable} ${outfit.variable} ${instrumentSerif.variable}`}>
+    <html
+      lang="fr"
+      /* ✅ dark par défaut — cohérent avec thème bleu marine */
+      className={`dark ${jakarta.variable} ${outfit.variable} ${instrumentSerif.variable}`}
+      style={{ colorScheme: "dark" }}
+      suppressHydrationWarning
+    >
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* ✅ Script inline pour éviter le flash au chargement */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var isDark = saved === 'dark' || (!saved && prefersDark) || saved === null;
+                if (!isDark) {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.style.colorScheme = 'light';
+                } else {
+                  document.documentElement.classList.add('dark');
+                  document.documentElement.style.colorScheme = 'dark';
+                }
+              } catch(e) {}
+            })();
+          `
+        }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {/* Preconnect pour performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="dark">{children}</body>
+      <body
+        style={{
+          fontFamily: "var(--font-body, sans-serif)",
+          fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+        }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
-
-

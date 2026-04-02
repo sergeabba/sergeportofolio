@@ -11,9 +11,7 @@ interface LightboxProps {
 
 export default function Lightbox({ src, onClose }: LightboxProps) {
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
+    (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); },
     [onClose]
   );
 
@@ -29,21 +27,21 @@ export default function Lightbox({ src, onClose }: LightboxProps) {
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12"
-      style={{ background: "rgba(3,2,9,0.97)", backdropFilter: "blur(20px)" }}
+      style={{ background: "rgba(4, 8, 20, 0.97)", backdropFilter: "blur(24px)" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Vue agrandie"
+      aria-label="Vue agrandie de l'image"
     >
       <motion.div
         className="relative w-full max-w-5xl"
-        style={{ maxHeight: "88vh" }}
-        initial={{ scale: 0.92, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 220, damping: 26 }}
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 28 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ position: "relative", width: "100%", height: "80vh" }}>
@@ -58,23 +56,13 @@ export default function Lightbox({ src, onClose }: LightboxProps) {
         </div>
       </motion.div>
 
-      <motion.button
-        className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center"
-        style={{
-          background: "rgba(201,168,92,0.1)",
-          border: "1px solid rgba(201,168,92,0.25)",
-          color: "var(--color-gold)",
-          fontFamily: "var(--font-display)",
-          fontSize: "0.9rem",
-          cursor: "pointer",
-          borderRadius: "1px",
-        }}
-        whileHover={{ background: "rgba(201,168,92,0.2)" }}
+      <button
+        className="lightbox-close"
         onClick={onClose}
-        aria-label="Fermer"
+        aria-label="Fermer la vue agrandie"
       >
         ✕
-      </motion.button>
+      </button>
     </motion.div>
   );
 }

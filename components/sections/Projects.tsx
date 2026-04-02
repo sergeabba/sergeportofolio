@@ -29,12 +29,16 @@ function ProjectCard({ projet, index, onOpen }: {
       transition={{ duration: 0.55, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="relative overflow-hidden cursor-pointer" style={{ height: 185 }} onClick={() => onOpen(safeSrc)}>
-        <Image 
-          src={safeSrc} 
-          alt={projet.titre} 
-          fill 
-          sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" 
-          className="object-cover transition-transform duration-500 hover:scale-105" 
+        <Image
+          src={safeSrc}
+          alt={projet.titre}
+          fill
+          sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw"
+          className="object-cover transition-transform duration-500 hover:scale-105"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAwEPwAB//9k="
+          quality={85}
         />
         <div style={{ position: "absolute", top: "0.75rem", right: "0.75rem" }}>
           <span className="tag" style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.92)", color: "var(--primary)", border: "1px solid rgba(37,99,235,0.2)", fontWeight: 600 }}>
@@ -145,7 +149,16 @@ export default function Projects() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {projetsLoading
-            ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton rounded-2xl h-[340px]" />)
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="skeleton rounded-2xl"
+                  style={{ height: 340 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.1, duration: 0.3 }}
+                />
+              ))
             : filteredProjets.map((p, i) => (
                 <ProjectCard key={p.id || p.titre} projet={p} index={i} onOpen={setLightbox} />
               ))}

@@ -10,6 +10,8 @@ interface FadeInProps {
   x?: number;
   className?: string;
   style?: React.CSSProperties;
+  duration?: number;
+  once?: boolean;
 }
 
 export default function FadeIn({
@@ -19,9 +21,12 @@ export default function FadeIn({
   x = 0,
   className,
   style,
+  duration = 0.7,
+  once = true,
 }: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  // Margin négatif pour déclencher plus tôt l'animation
+  const inView = useInView(ref, { once, margin: "-80px" });
 
   return (
     <motion.div
@@ -30,7 +35,15 @@ export default function FadeIn({
       style={style}
       initial={{ opacity: 0, y, x }}
       animate={inView ? { opacity: 1, y: 0, x: 0 } : {}}
-      transition={{ duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{
+        duration,
+        delay,
+        ease: [0.16, 1, 0.3, 1],
+        // Désactiver les animations pour les utilisateurs qui préfèrent les réduire
+        repeat: 0,
+      }}
+      // Accessibilité : réduire les animations si préféré
+      data-reduce-motion={once ? "false" : "true"}
     >
       {children}
     </motion.div>

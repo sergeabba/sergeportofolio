@@ -6,9 +6,7 @@ import { EXPERIENCES } from "@/lib/data";
 
 export default function Experience() {
   return (
-    <section id="experience" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
-      <div className="orb orb-dark orb-3" style={{ width: 400, height: 400, top: "15%", left: "-10%" }} />
-
+    <section id="experience" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg-elevated)" }}>
       <FadeIn y={30}>
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div className="section-label">Parcours</div>
@@ -27,7 +25,7 @@ export default function Experience() {
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ position: "relative", paddingLeft: "1.5rem", marginTop: "2.5rem" }}>
           {/* Line */}
-          <div className="timeline-line timeline-flow-line" style={{ position: "absolute", left: 3, top: 0, bottom: 0 }} />
+          <div className="timeline-line" style={{ position: "absolute", left: 3, top: 0, bottom: 0 }} />
 
           {EXPERIENCES.map((item, i) => (
             <FadeIn key={item.title} delay={i * 0.1}>
@@ -39,8 +37,8 @@ export default function Experience() {
 
                 {/* Card */}
                 <motion.div
-                  className="liquid-card shimmer-card"
-                  style={{ flex: 1, padding: "1.25rem 1.4rem", borderLeftWidth: "2px", borderLeftColor: item.type === "work" ? "var(--accent)" : "rgba(59,130,246,0.12)" }}
+                  className="glass"
+                  style={{ flex: 1, padding: "1.25rem 1.4rem", borderLeftWidth: "2px", borderLeftColor: item.type === "work" ? "var(--accent)" : "var(--border)" }}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
@@ -50,7 +48,7 @@ export default function Experience() {
                     {item.date}
                   </span>
 
-                  <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(0.95rem, 2vw, 1.1rem)", letterSpacing: "-0.015em", color: "var(--text)", marginBottom: "0.2rem" }}>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(0.95rem, 2vw, 1.1rem)", letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "0.2rem" }}>
                     {item.title}
                   </h3>
 
@@ -81,7 +79,7 @@ export default function Experience() {
                         <span key={t} className="pill" style={{ fontSize: "0.6rem" }}>{t}</span>
                       ))}
                       {item.type === "work" && (
-                        <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.15)", color: "#86EFAC" }}>
+                        <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.2)", color: "#16A34A" }}>
                           Terminé
                         </span>
                       )}

@@ -65,7 +65,7 @@ export default function Footer() {
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--text-tertiary)", opacity: 0.5 }}>
               Next.js &middot; Tailwind &middot; Framer Motion
             </span>
-            <div style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--accent)", opacity: 0.2 }} />
+            <div style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--border-strong)", opacity: 0.3 }} />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.68rem", color: "var(--text-tertiary)", opacity: 0.5 }}>
               Dakar, Sénégal
             </span>

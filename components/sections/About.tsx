@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import FadeIn from "@/components/FadeIn";
 import MouseSpotCard from "@/components/MouseSpotCard";
 import { Counter } from "@/components/sections/Hero";
@@ -8,11 +9,7 @@ import { ABOUT_FACTS } from "@/lib/data";
 
 export default function About() {
   return (
-    <section id="quisuisje" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
-      {/* Floating orbes */}
-      <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
-      <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
-
+    <section id="quisuisje" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg)" }}>
       <FadeIn y={30}>
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div className="section-label">À propos</div>
@@ -23,7 +20,7 @@ export default function About() {
         </div>
       </FadeIn>
 
-      {/* Glow line separator */}
+      {/* Separator */}
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         <div className="glow-line" style={{ marginTop: "3rem" }} />
       </div>
@@ -87,7 +84,7 @@ export default function About() {
 
               {/* Identity facts */}
               <motion.div
-                className="liquid-card"
+                className="glass"
                 style={{ padding: "1.2rem", display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.25rem" }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -96,7 +93,7 @@ export default function About() {
               >
                 {ABOUT_FACTS.map(({ key, val }) => (
                   <div key={key} style={{ display: "flex", gap: "0.85rem", alignItems: "flex-start", paddingBottom: "0.5rem", borderBottom: "1px solid var(--border)" }}>
-                    <span style={{ fontFamily: "var(--font-display)", fontSize: "0.58rem", letterSpacing: "0.14em", color: "var(--accent-soft)", textTransform: "uppercase", minWidth: 72, flexShrink: 0, paddingTop: 2, opacity: 0.6 }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "0.58rem", letterSpacing: "0.14em", color: "var(--accent-soft)", textTransform: "uppercase", minWidth: 72, flexShrink: 0, paddingTop: 2 }}>
                       {key}
                     </span>
                     <span style={{ fontSize: "0.84rem", color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-body)" }}>
@@ -119,10 +116,10 @@ export default function About() {
                 transition={{ duration: 0.7, delay: 0.25 }}
               >
                 <div style={{ marginBottom: "0.85rem" }}>
-                  <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Expérience pro.</span>
+                  <span className="pill" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Expérience pro.</span>
                 </div>
                 <motion.div className="glass" style={{ display: "flex", alignItems: "center", gap: "0.85rem", padding: "1rem 1.1rem" }} whileHover={{ x: 4, borderColor: "var(--glass-border-h)" }} transition={{ duration: 0.3 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "#FCA5A5", flexShrink: 0 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "var(--accent)", flexShrink: 0 }}>
                     W
                   </div>
                   <div>
@@ -131,7 +128,7 @@ export default function About() {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin &ndash; Oct. 2024</span>
-                      <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.18)", color: "#86EFAC" }}>Termine</span>
+                      <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.2)", color: "#16A34A" }}>Termine</span>
                     </div>
                   </div>
                 </motion.div>
@@ -145,7 +142,7 @@ export default function About() {
                 transition={{ duration: 0.7, delay: 0.35 }}
               >
                 <div style={{ marginBottom: "0.85rem" }}>
-                  <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Formation</span>
+                  <span className="pill" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Formation</span>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {[
@@ -193,14 +190,14 @@ export default function About() {
               ].map(({ val, suffix, label }, i) => (
                 <motion.div
                   key={label}
-                  className="liquid-card liquid-glow"
+                  className="glass-subtle"
                   style={{ padding: "1.4rem 1rem", textAlign: "center" }}
                   initial={{ opacity: 0, y: 20, scale: 0.97 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.05 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: "0.35rem" }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: "0.35rem" }}>
                     <Counter target={val} suffix={suffix} />
                   </div>
                   <div style={{ fontSize: "0.62rem", color: "var(--text-tertiary)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>

@@ -17,7 +17,7 @@ import MagneticButton from "@/components/MagneticButton";
 
 const MARQUEE_SKILLS = [
   "Power BI", "Python", "SQL", "Pandas", "Spark",
-  "IA Generative", "Prompt Engineering", "Figma", "Photoshop",
+  "IA Générative", "Prompt Engineering", "Figma", "Photoshop",
   "Data Visualization", "WordPress", "Scala", "Big Data",
 ];
 
@@ -27,8 +27,6 @@ export default function Home() {
       <SkipLink />
       <CursorGlow />
       <main>
-        <div className="noise" aria-hidden="true" />
-
         <Navbar />
 
         <Hero />
@@ -41,7 +39,7 @@ export default function Home() {
         <div className="divider" />
 
         {/* Marquee section */}
-        <section className="marquee-fade" style={{ padding: "clamp(2rem, 4vw, 3.5rem) 0", position: "relative" }}>
+        <section className="marquee-fade" style={{ padding: "clamp(2rem, 4vw, 3.5rem) 0", position: "relative", background: "var(--bg)" }}>
           <TextMarquee items={MARQUEE_SKILLS} speed={30} label="Outils & Technologies" />
         </section>
         <div className="divider" />
@@ -68,8 +66,7 @@ export default function Home() {
 
 function CTABanner() {
   return (
-    <section style={{ padding: "clamp(4rem, 8vw, 6rem) 0", position: "relative", overflow: "hidden" }}>
-      <div className="orb orb-blue orb" style={{ width: 500, height: 500, top: "-20%", left: "50%", transform: "translateX(-50%)" }} />
+    <section style={{ padding: "clamp(4rem, 8vw, 6rem) 0", position: "relative", overflow: "hidden", background: "var(--bg)" }}>
       <div className="container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -77,8 +74,8 @@ function CTABanner() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="liquid-card liquid-glow" style={{ padding: "clamp(2.5rem, 5vw, 4rem)", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "1.5rem", maxWidth: 680, width: "100%" }}>
-            <h3 className="text-gradient-irid" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(1.5rem, 3vw, 2.2rem)", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+          <div className="glass-strong" style={{ padding: "clamp(2.5rem, 5vw, 4rem)", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "1.5rem", maxWidth: 680, width: "100%" }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.2rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)" }}>
               Prêt à transformer la donnée en décisions&nbsp;?
             </h3>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: 1.65, maxWidth: 460 }}>

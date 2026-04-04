@@ -97,6 +97,7 @@ export default function Navbar() {
           {/* Logo */}
           <button onClick={() => nav("bio")} aria-label="Retour en haut" style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "none", border: "none", cursor: "pointer", padding: "0.25rem 0" }}>
             <div style={{ width: 28, height: 28, borderRadius: "6px", background: "var(--text)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--bg)", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "0.8rem" }}>
+
               S
             </div>
             <div className="hidden sm:block">
@@ -132,7 +133,7 @@ export default function Navbar() {
                 flexShrink: 0,
               }}
             >
-              {theme === "dark" ? <Sun size={16} strokeWidth={1.5} /> : <Moon size={16} strokeWidth={1.5} />}
+              {theme === "dark" ? <Moon size={16} strokeWidth={1.5} /> : <Sun size={16} strokeWidth={1.5} />}
             </button>
             <a href="/cv.pdf" download className="btn-primary" style={{ padding: "0.48rem 1rem", fontSize: "0.78rem" }}>CV</a>
           </div>

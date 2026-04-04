@@ -6,11 +6,11 @@ import FadeIn from "@/components/FadeIn";
 import { smoothScrollTo } from "@/lib/utils";
 
 const HERO_SKILLS = [
-  { label: "Power BI",         val: 85, color: "#4F8EF7" },
-  { label: "Python & Pandas",  val: 75, color: "#818CF8" },
-  { label: "SQL",              val: 75, color: "#4F8EF7" },
-  { label: "IA Générative",    val: 92, color: "#F472B6" },
-  { label: "Excel / Sheets",   val: 88, color: "#34D399" },
+  { label: "Power BI",         val: 85, color: "#374151" },
+  { label: "Python & Pandas",  val: 75, color: "#4B5563" },
+  { label: "SQL",              val: 75, color: "#6B7280" },
+  { label: "IA Générative",    val: 92, color: "#111827" },
+  { label: "Excel / Sheets",   val: 88, color: "#374151" },
 ];
 
 export function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
@@ -36,16 +36,16 @@ function HeroBar({ label, val, color, index }: { label: string; val: number; col
   return (
     <div ref={ref} style={{ marginBottom: "0.75rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.3rem" }}>
-        <span style={{ fontSize: "0.72rem", color: "rgba(200,215,255,0.65)", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+        <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontFamily: "var(--font-body)", fontWeight: 500 }}>
           {label}
         </span>
-        <span style={{ fontSize: "0.68rem", color: "rgba(150,175,220,0.45)", fontFamily: "var(--font-body)", fontWeight: 600 }}>
+        <span style={{ fontSize: "0.68rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)", fontWeight: 600 }}>
           {val}%
         </span>
       </div>
-      <div style={{ height: "3px", background: "rgba(255,255,255,0.04)", borderRadius: 99, overflow: "hidden" }}>
+      <div style={{ height: "3px", background: "rgba(0,0,0,0.04)", borderRadius: 99, overflow: "hidden" }}>
         <motion.div
-          style={{ height: "100%", borderRadius: 99, background: color, boxShadow: `0 0 8px ${color}66, 0 0 16px ${color}33` }}
+          style={{ height: "100%", borderRadius: 99, background: color }}
           initial={{ width: 0 }}
           animate={inView ? { width: `${val}%` } : { width: 0 }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.6 + index * 0.1 }}
@@ -97,12 +97,21 @@ export default function Hero() {
         minHeight: "100svh",
         display: "flex",
         alignItems: "center",
+        background: "var(--bg)",
       }}
     >
-      {/* Orbs — morphing organic shapes via CSS */}
-      <motion.div className="orb orb-blue orb-1 orb-morph" style={{ width: 700, height: 700, top: "-15%", right: "-20%" }} />
-      <motion.div className="orb orb-indigo orb-2 orb-morph" style={{ width: 500, height: 500, bottom: "0%", left: "-15%" }} />
-      <motion.div className="orb orb-rose orb-3 orb-morph" style={{ width: 350, height: 350, top: "30%", right: "15%" }} />
+      {/* Subtle dot grid background */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)",
+          backgroundSize: "36px 36px",
+          opacity: 0.6,
+          pointerEvents: "none",
+        }}
+      />
 
       <motion.div className="container" style={{ position: "relative", zIndex: 1, width: "100%", opacity: heroOpacity, y: heroY }}>
         <div
@@ -115,7 +124,7 @@ export default function Hero() {
         >
           {/* Left */}
           <div>
-            {/* Status badge — spring entrance */}
+            {/* Status badge */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -130,16 +139,16 @@ export default function Hero() {
             {/* Name — WordReveal */}
             <WordReveal text="MBAITADJIM" delay={0.2} />
 
-            {/* First name — iridescent gradient */}
+            {/* First name */}
             <div style={{ overflow: "hidden", marginBottom: "1.5rem" }}>
               <motion.div
-                className="text-gradient-irid"
                 style={{
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
                   fontSize: "clamp(2.2rem, 6vw, 4.5rem)",
-                  letterSpacing: "-0.02em",
+                  letterSpacing: "-0.04em",
                   lineHeight: 1.05,
+                  color: "var(--text)",
                 }}
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
@@ -210,7 +219,7 @@ export default function Hero() {
                   { label: "IA Générative", color: "var(--accent-rose)" },
                 ].map(({ label, color }) => (
                   <div key={label} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <div style={{ width: 3, height: 10, borderRadius: 2, background: color, flexShrink: 0, opacity: 0.6 }} />
+                    <div style={{ width: 3, height: 10, borderRadius: 2, background: color, flexShrink: 0, opacity: 0.5 }} />
                     <span style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--text-tertiary)", fontWeight: 500 }}>
                       {label}
                     </span>
@@ -232,21 +241,21 @@ export default function Hero() {
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.5rem" }}>
               <motion.div
                 className="glass"
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0.3rem 0.75rem", borderRadius: "var(--radius-full)" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0.3rem 0.75rem", borderRadius: "var(--radius-full)", background: "rgba(0,0,0,0.02)" }}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9 }}
               >
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--accent)", display: "inline-block", boxShadow: "0 0 6px var(--accent)" }} />
-                <span style={{ fontSize: "0.68rem", fontWeight: 500, color: "rgba(200,215,255,0.75)", fontFamily: "var(--font-body)" }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--green-400)", display: "inline-block", boxShadow: "0 0 6px rgba(34,197,94,0.3)" }} />
+                <span style={{ fontSize: "0.68rem", fontWeight: 500, color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}>
                   Data Analyst
                 </span>
               </motion.div>
             </div>
 
-            {/* Main card — float animation + liquid glass */}
+            {/* Main card — float animation */}
             <motion.div
-              className="liquid-card liquid-glow"
+              className="glass-strong"
               style={{
                 borderRadius: "var(--radius-xl)",
                 overflow: "hidden",
@@ -284,7 +293,7 @@ export default function Hero() {
 
             {/* Gaming pill */}
             <motion.div style={{ marginTop: "0.5rem", display: "flex", justifyContent: "center" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
-              <div className="glass" style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0.3rem 0.7rem", borderRadius: "var(--radius-full)" }}>
+              <div className="glass" style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0.3rem 0.7rem", borderRadius: "var(--radius-full)", background: "rgba(0,0,0,0.02)" }}>
                 <span style={{ fontSize: "0.65rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)" }}>
                   Gaming &middot; IA &middot; Création
                 </span>
@@ -295,8 +304,8 @@ export default function Hero() {
       </motion.div>
 
       {/* Scroll indicator */}
-      <motion.div style={{ position: "absolute", bottom: "2rem", left: "50%", transform: "translateX(-50%)", zIndex: 1 }} animate={{ y: [0, 6, 0], opacity: [0.3, 0.6, 0.3] }} transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }} aria-hidden="true">
-        <div style={{ width: 1, height: 36, background: "linear-gradient(to bottom, var(--accent-soft), transparent)", margin: "0 auto", opacity: 0.25 }} />
+      <motion.div style={{ position: "absolute", bottom: "2rem", left: "50%", transform: "translateX(-50%)", zIndex: 1 }} animate={{ y: [0, 6, 0], opacity: [0.2, 0.4, 0.2] }} transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }} aria-hidden="true">
+        <div style={{ width: 1, height: 36, background: "linear-gradient(to bottom, var(--border-strong), transparent)", margin: "0 auto", opacity: 0.3 }} />
       </motion.div>
     </section>
   );

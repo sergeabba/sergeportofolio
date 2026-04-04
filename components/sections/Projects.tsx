@@ -42,7 +42,7 @@ function ProjectCard({ projet, index, onOpen }: {
       }}
     >
       <div
-        className="liquid-card shimmer-card"
+        className="glass"
         style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", padding: 0 }}
       >
         {/* Image */}
@@ -63,13 +63,13 @@ function ProjectCard({ projet, index, onOpen }: {
           />
           {/* Category */}
           <div style={{ position: "absolute", top: "0.75rem", left: "0.75rem" }}>
-            <span className="pill pill-accent" style={{ fontSize: "0.6rem", background: "rgba(0,0,0,0.55)", backdropFilter: "blur(10px)" }}>{projet.cat}</span>
+            <span className="pill" style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}>{projet.cat}</span>
           </div>
         </div>
 
         {/* Content */}
         <div style={{ padding: "1.15rem 1.3rem" }}>
-          <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", letterSpacing: "-0.01em", color: "var(--text)", marginBottom: "0.35rem" }}>
+          <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "0.35rem" }}>
             {projet.titre}
           </h3>
           <p className="truncate-2" style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", lineHeight: 1.6, marginBottom: "0.85rem" }}>
@@ -125,9 +125,7 @@ export default function Projects() {
   );
 
   return (
-    <section id="realisations" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
-      <div className="orb orb-blue orb-2" style={{ width: 550, height: 550, bottom: "-25%", right: "-12%" }} />
-
+    <section id="realisations" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg)" }}>
       <FadeIn y={30}>
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div className="section-label">Réalisations</div>
@@ -139,7 +137,7 @@ export default function Projects() {
       </FadeIn>
 
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
-        {/* Glow line */}
+        {/* Separator */}
         <div className="glow-line" style={{ marginTop: "2rem", marginBottom: "0" }} />
       </div>
 
@@ -171,7 +169,7 @@ export default function Projects() {
               ? Array.from({ length: 6 }).map((_, i) => (
                   <motion.div
                     key={i}
-                    style={{ height: 340, borderRadius: "var(--radius-lg)", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+                    style={{ height: 340, borderRadius: "var(--radius-lg)", background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.1, duration: 0.3 }}

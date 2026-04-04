@@ -18,13 +18,13 @@ function SkillBar({ label, level, accent = false, index = 0 }: {
         <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.82rem", color: "var(--text)" }}>
           {label}
         </span>
-        <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", fontWeight: 600, color: accent ? "var(--accent-soft)" : "var(--text-tertiary)" }}>
+        <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", fontWeight: 600, color: accent ? "var(--accent)" : "var(--text-tertiary)" }}>
           {level}%
         </span>
       </div>
       <div className="skill-track">
         <motion.div
-          style={{ height: "100%", borderRadius: 99, background: accent ? "linear-gradient(90deg, var(--accent), var(--accent-soft))" : "linear-gradient(90deg, rgba(59,130,246,0.3), rgba(96,165,250,0.5))" }}
+          style={{ height: "100%", borderRadius: 99, background: accent ? "linear-gradient(90deg, var(--accent), var(--accent-soft))" : "linear-gradient(90deg, var(--accent-soft), var(--accent-ultra))" }}
           initial={{ width: 0 }}
           animate={inView ? { width: `${level}%` } : { width: 0 }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.08 + index * 0.07 }}
@@ -39,15 +39,13 @@ const CATEGORY_ICONS = [
   { initials: "IA", color: "var(--accent-warm)" },
   { initials: "PY", color: "var(--accent-rose)" },
   { initials: "BD", color: "var(--accent-soft)" },
-  { initials: "UI", color: "rgba(245,245,247,0.45)" },
-  { initials: "OF", color: "rgba(245,245,247,0.3)" },
+  { initials: "UI", color: "var(--text-tertiary)" },
+  { initials: "OF", color: "var(--text-tertiary)" },
 ];
 
 export default function Skills() {
   return (
-    <section id="competences" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
-      <div className="orb orb-indigo orb-2" style={{ width: 450, height: 450, top: "0%", left: "-15%" }} />
-
+    <section id="competences" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg-elevated)" }}>
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         <FadeIn y={30}>
           <div className="section-label">Compétences</div>
@@ -58,14 +56,14 @@ export default function Skills() {
         </FadeIn>
 
         <div className="container" style={{ marginTop: "clamp(2.5rem, 5vw, 4rem)" }}>
-          {/* Grid of skill cards — staggered */}
+          {/* Grid of skill cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0.75rem" }}>
             {SKILL_CATEGORIES.map((cat, i) => {
               const { initials, color } = CATEGORY_ICONS[i] || { initials: "//", color: "var(--text-tertiary)" };
               return (
                 <motion.div
                   key={cat.title}
-                  className="liquid-card shimmer-card"
+                  className="glass-subtle"
                   style={{ padding: "1.4rem 1.4rem" }}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -94,14 +92,14 @@ export default function Skills() {
 
           {/* Mastery bars panel */}
           <motion.div
-            className="liquid-accent"
+            className="glass"
             style={{ padding: "clamp(1.5rem, 3vw, 2.25rem)", marginTop: "clamp(2.5rem, 5vw, 4rem)" }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.25, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", color: "var(--text)", letterSpacing: "-0.02em", marginBottom: "0.35rem" }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", color: "var(--text)", letterSpacing: "-0.03em", marginBottom: "0.35rem" }}>
               Niveaux de maîtrise
             </h3>
             <p style={{ color: "var(--text-tertiary)", fontSize: "0.82rem", marginBottom: "2.5rem" }}>
@@ -111,7 +109,7 @@ export default function Skills() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2.5rem 3.5rem" }}>
               <div>
                 <div style={{ marginBottom: "1.25rem" }}>
-                  <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                  <span className="pill" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>
                     Data &amp; Analyse
                   </span>
                 </div>

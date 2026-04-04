@@ -12,7 +12,10 @@
       "Bash(taskkill /IM node.exe /F)",
       "Bash(Taskkill:*)",
       "Bash(cmd:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "mcp__aidesigner__get_credit_status",
+      "mcp__aidesigner__generate_design",
+      "Bash(npx -y @aidesigner/agent-skills capture --prompt \"Premium minimalist portfolio for a Data Analyst & Prompt Engineer. Clean, luxurious aesthetic with white, light gray, and subtle charcoal tones\" --transport mcp --remote-run-id \"ac12437a-08ca-46e0-910b-121dc6fb6e7e\")"
     ]
   }
 }

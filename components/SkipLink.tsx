@@ -2,10 +2,6 @@
 
 import { smoothScrollTo } from "@/lib/utils";
 
-/**
- * Skip link - permet aux utilisateurs de clavier/screen readers
- * de sauter directement au contenu principal
- */
 export default function SkipLink() {
   const handleSkip = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -21,8 +17,8 @@ export default function SkipLink() {
         top: "-100px",
         left: "50%",
         transform: "translateX(-50%)",
-        background: "var(--primary)",
-        color: "#fff",
+        background: "var(--text)",
+        color: "var(--bg)",
         padding: "0.75rem 1.5rem",
         borderRadius: "var(--radius-md)",
         fontFamily: "var(--font-body)",
@@ -32,12 +28,8 @@ export default function SkipLink() {
         zIndex: 9999,
         transition: "top 0.2s",
       }}
-      onFocus={(e) => {
-        e.currentTarget.style.top = "1rem";
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.top = "-100px";
-      }}
+      onFocus={(e) => { e.currentTarget.style.top = "1rem"; }}
+      onBlur={(e) => { e.currentTarget.style.top = "-100px"; }}
     >
       Aller au contenu
     </a>

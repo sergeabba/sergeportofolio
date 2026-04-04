@@ -6,180 +6,94 @@ import { EXPERIENCES } from "@/lib/data";
 
 export default function Experience() {
   return (
-    <section
-      id="experience"
-      className="mesh-white"
-      style={{ padding: "clamp(4rem, 8vw, 6.5rem) 0", position: "relative" }}
-    >
-      <div className="container">
-        <FadeIn>
-          <div className="section-badge">Parcours</div>
-          <h2 className="section-heading" style={{ marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}>
-            Expérience & Formation
-          </h2>
-        </FadeIn>
+    <section id="experience" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
+      <div className="orb orb-dark orb-3" style={{ width: 400, height: 400, top: "15%", left: "-10%" }} />
 
-        {/* Timeline */}
-        <div style={{ position: "relative", paddingLeft: "2rem" }}>
-          {/* Ligne verticale */}
-          <div
-            style={{
-              position: "absolute",
-              left: 6,
-              top: 12,
-              bottom: 12,
-              width: 1,
-              background: "linear-gradient(to bottom, var(--primary), rgba(37,99,235,0.08))",
-            }}
-          />
+      <FadeIn y={30}>
+        <div className="container" style={{ position: "relative", zIndex: 1 }}>
+          <div className="section-label">Parcours</div>
+          <h2 className="section-heading">Expérience &amp; Formation</h2>
+          <p className="section-desc" style={{ marginTop: "0.6rem" }}>
+            Mon parcours professionnel et académique.
+          </p>
+        </div>
+      </FadeIn>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {EXPERIENCES.map((item, i) => (
-              <FadeIn key={item.title} delay={i * 0.1}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1.5rem",
-                    paddingBottom: i < EXPERIENCES.length - 1 ? "2rem" : 0,
-                    position: "relative",
-                  }}
+      <div className="container" style={{ position: "relative", zIndex: 1, marginTop: "clamp(2.5rem, 5vw, 4rem)" }}>
+        <div className="glow-line" />
+      </div>
+
+      {/* Timeline */}
+      <div className="container" style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", paddingLeft: "1.5rem", marginTop: "2.5rem" }}>
+          {/* Line */}
+          <div className="timeline-line timeline-flow-line" style={{ position: "absolute", left: 3, top: 0, bottom: 0 }} />
+
+          {EXPERIENCES.map((item, i) => (
+            <FadeIn key={item.title} delay={i * 0.1}>
+              <div style={{ display: "flex", gap: "1.25rem", paddingBottom: "2rem" }}>
+                {/* Dot */}
+                <motion.div style={{ position: "absolute", left: 0, top: 4 }} whileHover={{ scale: 1.4 }} transition={{ duration: 0.2 }}>
+                  <div className={item.type === "work" ? "timeline-dot-filled" : "timeline-dot"} />
+                </motion.div>
+
+                {/* Card */}
+                <motion.div
+                  className="liquid-card shimmer-card"
+                  style={{ flex: 1, padding: "1.25rem 1.4rem", borderLeftWidth: "2px", borderLeftColor: item.type === "work" ? "var(--accent)" : "rgba(59,130,246,0.12)" }}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 }}
                 >
-                  {/* Dot */}
-                  <div style={{ position: "absolute", left: "-2rem", top: 3 }}>
-                    <div className={item.type === "work" ? "timeline-dot-filled" : "timeline-dot"} />
+                  <span className="pill" style={{ fontSize: "0.6rem", marginBottom: "0.65rem", display: "inline-block" }}>
+                    {item.date}
+                  </span>
+
+                  <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(0.95rem, 2vw, 1.1rem)", letterSpacing: "-0.015em", color: "var(--text)", marginBottom: "0.2rem" }}>
+                    {item.title}
+                  </h3>
+
+                  <div style={{ fontSize: "0.82rem", color: "var(--accent-soft)", fontWeight: 600, marginBottom: item.desc || item.items ? "0.85rem" : "0.6rem" }}>
+                    {item.org}
                   </div>
 
-                  {/* Card */}
-                  <motion.div
-                    style={{
-                      flex: 1,
-                      background: "var(--bg-card)",
-                      border: "1px solid var(--border-card)",
-                      borderRadius: "var(--radius-lg)",
-                      padding: "1.25rem 1.5rem",
-                      marginLeft: "-0.25rem",
-                      boxShadow: "var(--shadow-xs)",
-                      borderLeft: item.type === "work"
-                        ? "3px solid var(--primary)"
-                        : "3px solid rgba(37,99,235,0.18)",
-                      borderRadius: "0 var(--radius-lg) var(--radius-lg) 0",
-                    }}
-                    whileHover={{
-                      borderColor: "rgba(37,99,235,0.28)",
-                      boxShadow: "var(--shadow-md)",
-                      x: 2,
-                    }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {/* Date */}
-                    <div
-                      className="label-tag"
-                      style={{ marginBottom: "0.45rem", opacity: 0.8 }}
-                    >
-                      {item.date}
+                  {item.desc && (
+                    <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.75, marginBottom: "0.85rem", maxWidth: 580 }}>
+                      {item.desc}
+                    </p>
+                  )}
+
+                  {item.items && (
+                    <ul style={{ listStyle: "none", marginBottom: "0.85rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      {item.items.slice(0, 4).map((li) => (
+                        <li key={li} style={{ display: "flex", gap: "0.55rem", fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                          <span style={{ color: "var(--accent)", flexShrink: 0, marginTop: "0.3rem", fontSize: "0.45rem" }}>&rarr;</span>
+                          {li}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {item.tags && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", alignItems: "center" }}>
+                      {item.tags.map((t) => (
+                        <span key={t} className="pill" style={{ fontSize: "0.6rem" }}>{t}</span>
+                      ))}
+                      {item.type === "work" && (
+                        <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.15)", color: "#86EFAC" }}>
+                          Terminé
+                        </span>
+                      )}
+                      {item.type === "education" && (
+                        <span className="pill pill-accent" style={{ fontSize: "0.55rem" }}>Diplômé</span>
+                      )}
                     </div>
-
-                    {/* Titre */}
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontWeight: 700,
-                        fontSize: "clamp(0.95rem, 2vw, 1.1rem)",
-                        letterSpacing: "-0.015em",
-                        color: "var(--text)",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
-                      {item.title}
-                    </h3>
-
-                    {/* Org */}
-                    <div
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "var(--primary)",
-                        fontWeight: 600,
-                        marginBottom: item.desc || item.items ? "0.9rem" : "0.65rem",
-                        fontFamily: "var(--font-body)",
-                      }}
-                    >
-                      {item.org}
-                    </div>
-
-                    {/* Description */}
-                    {item.desc && (
-                      <p
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--text-muted)",
-                          lineHeight: 1.75,
-                          marginBottom: "0.9rem",
-                          maxWidth: 580,
-                        }}
-                      >
-                        {item.desc}
-                      </p>
-                    )}
-
-                    {/* Bullet points */}
-                    {item.items && (
-                      <ul style={{ listStyle: "none", marginBottom: "0.9rem", display: "flex", flexDirection: "column", gap: "0.38rem" }}>
-                        {item.items.slice(0, 4).map((li) => (
-                          <li
-                            key={li}
-                            style={{
-                              display: "flex",
-                              gap: "0.55rem",
-                              fontSize: "0.8rem",
-                              color: "var(--text-muted)",
-                              lineHeight: 1.65,
-                            }}
-                          >
-                            <span
-                              style={{
-                                color: "var(--primary)",
-                                flexShrink: 0,
-                                marginTop: "0.22rem",
-                                fontSize: "0.55rem",
-                              }}
-                            >
-                              ▸
-                            </span>
-                            {li}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {/* Tags */}
-                    {item.tags && (
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.38rem", alignItems: "center" }}>
-                        {item.tags.map((t, ti) => (
-                          <span
-                            key={t}
-                            className={`tag ${ti === 1 ? "tag-gray" : ti === 2 ? "tag-violet" : ""}`}
-                            style={{ fontSize: "0.62rem" }}
-                          >
-                            {t}
-                          </span>
-                        ))}
-                        {item.type === "work" && (
-                          <span className="tag tag-green" style={{ fontSize: "0.62rem" }}>
-                            Terminé
-                          </span>
-                        )}
-                        {item.type === "education" && (
-                          <span className="tag" style={{ fontSize: "0.62rem" }}>
-                            Diplômé
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </motion.div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+                  )}
+                </motion.div>
+              </div>
+            </FadeIn>
+          ))}
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/lib/theme";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -113,36 +114,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="fr"
-      /* ✅ dark par défaut — cohérent avec thème bleu marine */
-      className={`dark ${jakarta.variable} ${outfit.variable} ${instrumentSerif.variable}`}
-      style={{ colorScheme: "dark" }}
+      className={`${jakarta.variable} ${outfit.variable} ${instrumentSerif.variable}`}
       suppressHydrationWarning
     >
       <head>
-        {/* ✅ Script inline pour éviter le flash au chargement */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              try {
-                var saved = localStorage.getItem('theme');
-                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                var isDark = saved === 'dark' || (!saved && prefersDark) || saved === null;
-                if (!isDark) {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.style.colorScheme = 'light';
-                } else {
-                  document.documentElement.classList.add('dark');
-                  document.documentElement.style.colorScheme = 'dark';
-                }
-              } catch(e) {}
-            })();
-          `
-        }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Preconnect pour performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
@@ -152,7 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
         }}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

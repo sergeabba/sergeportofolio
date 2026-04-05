@@ -1,312 +1,100 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
-import FadeIn from "@/components/FadeIn";
-import { smoothScrollTo } from "@/lib/utils";
-
-const HERO_SKILLS = [
-  { label: "Power BI",         val: 85, color: "#374151" },
-  { label: "Python & Pandas",  val: 75, color: "#4B5563" },
-  { label: "SQL",              val: 75, color: "#6B7280" },
-  { label: "IA Générative",    val: 92, color: "#111827" },
-  { label: "Excel / Sheets",   val: 88, color: "#374151" },
-];
-
-export function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref as React.RefObject<Element>, { once: true });
-  const [n, setN] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    let v = 0;
-    const step = Math.ceil(target / 60);
-    const t = setInterval(() => { v = Math.min(v + step, target); setN(v); if (v >= target) clearInterval(t); }, 16);
-    return () => clearInterval(t);
-  }, [inView, target]);
-
-  return <span ref={ref}>{n}{suffix}</span>;
-}
-
-function HeroBar({ label, val, color, index }: { label: string; val: number; color: string; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as React.RefObject<Element>, { once: true });
-
-  return (
-    <div ref={ref} style={{ marginBottom: "0.75rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.3rem" }}>
-        <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontFamily: "var(--font-body)", fontWeight: 500 }}>
-          {label}
-        </span>
-        <span style={{ fontSize: "0.68rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)", fontWeight: 600 }}>
-          {val}%
-        </span>
-      </div>
-      <div style={{ height: "3px", background: "rgba(0,0,0,0.04)", borderRadius: 99, overflow: "hidden" }}>
-        <motion.div
-          style={{ height: "100%", borderRadius: 99, background: color }}
-          initial={{ width: 0 }}
-          animate={inView ? { width: `${val}%` } : { width: 0 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.6 + index * 0.1 }}
-        />
-      </div>
-    </div>
-  );
-}
-
-/* ── Word-reveal animation ── */
-function WordReveal({ text, delay = 0 }: { text: string; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-
-  const words = text.split(" ");
-
-  return (
-    <div ref={ref} style={{ overflow: "hidden", marginBottom: "0.05rem" }}>
-      <div>
-        {words.map((word, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0, y: "120%" }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: "120%" }}
-            transition={{ type: "spring", stiffness: 260, damping: 28, delay: delay + i * 0.07 }}
-            style={{ display: "inline-block", marginRight: "0.25em" }}
-          >
-            {word}
-          </motion.span>
-        ))}
-      </div>
-    </div>
-  );
-}
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export default function Hero() {
   const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -60]);
+  const opacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.12], [0, -40]);
 
   return (
-    <section
-      id="bio"
-      style={{
-        paddingTop: "clamp(7rem, 13vw, 11rem)",
-        paddingBottom: "clamp(4rem, 7vw, 7rem)",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "100svh",
-        display: "flex",
-        alignItems: "center",
-        background: "var(--bg)",
-      }}
-    >
-      {/* Subtle dot grid background */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)",
-          backgroundSize: "36px 36px",
-          opacity: 0.6,
-          pointerEvents: "none",
-        }}
-      />
+    <section id="bio" style={{ background: "var(--revo-black)", minHeight: "100svh", paddingTop: "clamp(7rem, 12vw, 10rem)", paddingBottom: "clamp(3rem, 6vw, 5rem)", display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      {/* Subtle grid pattern */}
+      <div className="bg-grid-pattern" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }} />
 
-      <motion.div className="container" style={{ position: "relative", zIndex: 1, width: "100%", opacity: heroOpacity, y: heroY }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr auto",
-            gap: "clamp(2rem, 5vw, 5rem)",
-            alignItems: "center",
-          }}
-        >
-          {/* Left */}
+      <motion.div className="container" style={{ position: "relative", zIndex: 1, width: "100%", opacity, y, maxWidth: 1400 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "clamp(2rem, 5vw, 4rem)", alignItems: "center" }}>
+
+          {/* Left: Typography & CTAs */}
           <div>
             {/* Status badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 20 }}
-            >
-              <div className="status-badge" style={{ marginBottom: "2.5rem" }}>
-                <span className="status-dot" aria-hidden="true" />
-                Disponible pour de nouvelles opportunités
-              </div>
-            </motion.div>
-
-            {/* Name — WordReveal */}
-            <WordReveal text="MBAITADJIM" delay={0.2} />
-
-            {/* First name */}
-            <div style={{ overflow: "hidden", marginBottom: "1.5rem" }}>
-              <motion.div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 700,
-                  fontSize: "clamp(2.2rem, 6vw, 4.5rem)",
-                  letterSpacing: "-0.04em",
-                  lineHeight: 1.05,
-                  color: "var(--text)",
-                }}
-                initial={{ y: "110%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              >
-                Abba Serge
-              </motion.div>
+            <div className="status-badge" style={{ marginBottom: "2.5rem" }}>
+              <span className="dot" />
+              <span style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)" }}>Disponible</span>
             </div>
 
-            {/* Role line */}
-            <FadeIn delay={0.6}>
-              <div style={{ marginBottom: "1rem" }}>
-                <span style={{ fontFamily: "var(--font-body)", fontWeight: 500, fontSize: "1rem", color: "var(--text-secondary)" }}>
-                  Data Analyst{" "}
-                  <span style={{ color: "var(--border-strong)" }}>/</span>{" "}
-                  Power BI{" "}
-                  <span style={{ color: "var(--border-strong)" }}>/</span>{" "}
-                  Python{" "}
-                  <span style={{ color: "var(--border-strong)" }}>/</span>{" "}
-                  IA Générative
-                </span>
-              </div>
-            </FadeIn>
+            {/* Sub-name */}
+            <motion.h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.5rem, 3vw, 2.5rem)", letterSpacing: "-0.03em", color: "rgba(255,255,255,0.45)", marginBottom: "0.5rem" }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+              Abba Serge
+            </motion.h2>
 
-            <FadeIn delay={0.68}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginBottom: "1.5rem" }}>
-                <span style={{ fontSize: "0.82rem", color: "var(--text-tertiary)" }}>
-                  Stage Wemoov{" "}
-                  <span style={{ margin: "0 0.3rem" }}>&middot;</span>
-                  Juin &ndash; Oct. 2024
-                </span>
-                <span className="pill pill-accent" style={{ fontSize: "0.58rem" }}>Diplômé</span>
-              </div>
-            </FadeIn>
+            {/* Billboard name */}
+            <motion.h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(3.5rem, 12vw, 11rem)", letterSpacing: "-0.06em", lineHeight: 0.85, color: "#ffffff", textTransform: "uppercase" }} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+              MBAITADJIM
+            </motion.h1>
 
-            {/* Bio */}
-            <FadeIn delay={0.75}>
-              <p style={{
-                fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.75,
-                maxWidth: "540px", marginBottom: "2.5rem",
-              }}>
-                Fraîchement diplômé d&apos;un Master Big Data &amp; Data Stratégie (ISM, Dakar),
-                je transforme la donnée en décisions claires avec Power BI, Python, SQL et l&apos;IA générative.
-              </p>
-            </FadeIn>
+            {/* Subtitle */}
+            <motion.p style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.2rem, 2.5vw, 2rem)", letterSpacing: "-0.02em", color: "var(--revo-mint)", marginTop: "0.75rem", marginBottom: "2.5rem" }} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+              Data Analyst & Prompt Engineer
+            </motion.p>
 
-            {/* CTA — staggered spring */}
-            <FadeIn delay={0.85}>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "3rem" }}>
-                <motion.button className="btn-primary" style={{ padding: "0.85rem 2rem" }} onClick={() => smoothScrollTo("realisations")}>
-                  Voir mes projets
-                </motion.button>
-                <motion.button className="btn-glass" style={{ padding: "0.85rem 1.6rem" }} onClick={() => smoothScrollTo("contact")}>
-                  Me contacter
-                </motion.button>
-                <motion.a href="/cv.pdf" download className="btn-glass" style={{ padding: "0.85rem 1.6rem" }}>
-                  CV PDF
-                </motion.a>
-              </div>
-            </FadeIn>
+            {/* Tags */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "2.5rem" }}>
+              {["Master Big Data", "Data Stratégie", "ISM Dakar"].map((t) => (
+                <span key={t} className="pill" style={{ background: "transparent", borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontSize: "0.68rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>{t}</span>
+              ))}
+            </div>
 
-            {/* Domaines */}
-            <FadeIn delay={0.95}>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border)" }}>
-                {[
-                  { label: "Power BI, Excel", color: "var(--accent)" },
-                  { label: "Python, SQL, Pandas", color: "var(--accent-warm)" },
-                  { label: "IA Générative", color: "var(--accent-rose)" },
-                ].map(({ label, color }) => (
-                  <div key={label} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <div style={{ width: 3, height: 10, borderRadius: 2, background: color, flexShrink: 0, opacity: 0.5 }} />
-                    <span style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--text-tertiary)", fontWeight: 500 }}>
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </FadeIn>
+            {/* CTAs */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+              <a href="#realisations" className="btn-white" style={{ letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "0.78rem" }}>Voir mes projets</a>
+              <a href="#contact" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", padding: "0.85rem 2rem", borderRadius: "9999px", background: "transparent", color: "#fff", fontFamily: "var(--font-body)", fontWeight: 500, letterSpacing: "0.04em", textTransform: "uppercase", fontSize: "0.78rem", border: "1px solid rgba(255,255,255,0.5)", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap", minHeight: 48, transition: "background 0.25s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+              >Me contacter</a>
+            </div>
           </div>
 
-          {/* Right — floating skill card */}
-          <motion.div
-            className="hidden lg:block"
-            style={{ width: 260, flexShrink: 0 }}
-            initial={{ opacity: 0, x: 40, y: 20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {/* Top badge */}
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.5rem" }}>
-              <motion.div
-                className="glass"
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "0.3rem 0.75rem", borderRadius: "var(--radius-full)", background: "rgba(0,0,0,0.02)" }}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 }}
-              >
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--green-400)", display: "inline-block", boxShadow: "0 0 6px rgba(34,197,94,0.3)" }} />
-                <span style={{ fontSize: "0.68rem", fontWeight: 500, color: "var(--text-secondary)", fontFamily: "var(--font-body)" }}>
-                  Data Analyst
-                </span>
-              </motion.div>
-            </div>
-
-            {/* Main card — float animation */}
-            <motion.div
-              className="glass-strong"
-              style={{
-                borderRadius: "var(--radius-xl)",
-                overflow: "hidden",
-              }}
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            >
+          {/* Right: Dashboard Card */}
+          <div className="hidden lg:block" style={{ width: "clamp(220px, 22vw, 340px)", flexShrink: 0 }}>
+            <motion.div style={{ background: "var(--revo-dark)", borderRadius: "var(--radius-card)", padding: "1.5rem", border: "1px solid rgba(255,255,255,0.08)" }} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0, y: [0, -8, 0] }} transition={{ delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1], y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}>
               {/* Header */}
-              <div style={{ padding: "1.2rem 1.3rem", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
-                <div>
-                  <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text)", marginBottom: 2, lineHeight: 1.3, fontFamily: "var(--font-body)" }}>
-                    Mbaitadjim A. S.
-                  </div>
-                  <div style={{ fontSize: "0.66rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)" }}>
-                    Big Data &amp; Stratégie
-                  </div>
-                </div>
-                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--text)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "0.85rem", color: "var(--bg)", flexShrink: 0 }}>
-                  S
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "0.75rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>System Analytics</span>
+                <div style={{ display: "flex", gap: "0.35rem" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,0.15)" }} />
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--revo-mint)" }} />
                 </div>
               </div>
 
-              {/* Bars */}
-              <div style={{ padding: "1rem 1.3rem" }}>
-                {HERO_SKILLS.map((skill, i) => <HeroBar key={skill.label} {...skill} index={i} />)}
+              {/* Mini Stat Cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem", marginBottom: "1rem" }}>
+                <StatCard bg="var(--revo-black)" text="#fff" label="Models" value="GPT-4" />
+                <StatCard bg="var(--revo-blue)" text="#fff" label="Accuracy" value="99.8%" />
+                <StatCard bg="var(--revo-mint)" text="var(--revo-black)" label="Status" value="Active" />
               </div>
 
-              {/* Footer */}
-              <div style={{ padding: "0.65rem 1.3rem", borderTop: "1px solid var(--border)" }}>
-                <span style={{ fontSize: "0.62rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)" }}>
-                  ISM Digital Campus &middot; Dakar
-                </span>
+              {/* Bar Chart */}
+              <div style={{ background: "var(--revo-black)", borderRadius: 16, padding: "1rem", display: "flex", alignItems: "end", gap: "0.35rem", height: 100 }}>
+                {[40, 65, 50, 90, 75, 60].map((h, i) => (
+                  <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: "9999px 9999px 0 0", background: i === 3 ? "var(--revo-mint)" : "var(--revo-blue)", transition: "height 1s ease", transitionDelay: `${0.8 + i * 0.1}s` }} />
+                ))}
               </div>
             </motion.div>
-
-            {/* Gaming pill */}
-            <motion.div style={{ marginTop: "0.5rem", display: "flex", justifyContent: "center" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
-              <div className="glass" style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "0.3rem 0.7rem", borderRadius: "var(--radius-full)", background: "rgba(0,0,0,0.02)" }}>
-                <span style={{ fontSize: "0.65rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)" }}>
-                  Gaming &middot; IA &middot; Création
-                </span>
-              </div>
-            </motion.div>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div style={{ position: "absolute", bottom: "2rem", left: "50%", transform: "translateX(-50%)", zIndex: 1 }} animate={{ y: [0, 6, 0], opacity: [0.2, 0.4, 0.2] }} transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }} aria-hidden="true">
-        <div style={{ width: 1, height: 36, background: "linear-gradient(to bottom, var(--border-strong), transparent)", margin: "0 auto", opacity: 0.3 }} />
-      </motion.div>
     </section>
+  );
+}
+
+function StatCard({ bg, text, label, value }: { bg: string; text: string; label: string; value: string }) {
+  return (
+    <div style={{ background: bg, borderRadius: 14, padding: "0.6rem", textAlign: "left" }}>
+      <div style={{ fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", color: text === "#fff" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)", marginBottom: "0.15rem" }}>{label}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "0.7rem", letterSpacing: "-0.02em", color: text }}>{value}</div>
+    </div>
   );
 }

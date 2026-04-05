@@ -1,136 +1,118 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import FadeIn from "@/components/FadeIn";
-import MouseSpotCard from "@/components/MouseSpotCard";
-import { SKILL_CATEGORIES, SKILL_BARS } from "@/lib/data";
+import { motion } from "framer-motion";
+import { SKILL_CATEGORIES } from "@/lib/data";
 
-function SkillBar({ label, level, accent = false, index = 0 }: {
-  label: string; level: number; accent?: boolean; index?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as React.RefObject<Element>, { once: true, margin: "-40px" });
-
-  return (
-    <div ref={ref} style={{ marginBottom: "1rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
-        <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.82rem", color: "var(--text)" }}>
-          {label}
-        </span>
-        <span style={{ fontFamily: "var(--font-body)", fontSize: "0.72rem", fontWeight: 600, color: accent ? "var(--accent)" : "var(--text-tertiary)" }}>
-          {level}%
-        </span>
-      </div>
-      <div className="skill-track">
-        <motion.div
-          style={{ height: "100%", borderRadius: 99, background: accent ? "linear-gradient(90deg, var(--accent), var(--accent-soft))" : "linear-gradient(90deg, var(--accent-soft), var(--accent-ultra))" }}
-          initial={{ width: 0 }}
-          animate={inView ? { width: `${level}%` } : { width: 0 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.08 + index * 0.07 }}
-        />
-      </div>
-    </div>
-  );
-}
-
-const CATEGORY_ICONS = [
-  { initials: "DA", color: "var(--accent)" },
-  { initials: "IA", color: "var(--accent-warm)" },
-  { initials: "PY", color: "var(--accent-rose)" },
-  { initials: "BD", color: "var(--accent-soft)" },
-  { initials: "UI", color: "var(--text-tertiary)" },
-  { initials: "OF", color: "var(--text-tertiary)" },
+const CARD_BGS = [
+  { bg: "#ffffff", text: "var(--revo-black)" },
+  { bg: "var(--revo-gray)", text: "var(--revo-black)" },
+  { bg: "var(--revo-black)", text: "#ffffff" },
+  { bg: "var(--revo-gray)", text: "var(--revo-black)" },
+  { bg: "#ffffff", text: "var(--revo-black)" },
+  { bg: "var(--revo-black)", text: "#ffffff" },
 ];
 
 export default function Skills() {
   return (
-    <section id="competences" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg-elevated)" }}>
-      <div className="container" style={{ position: "relative", zIndex: 1 }}>
-        <FadeIn y={30}>
-          <div className="section-label">Compétences</div>
-          <h2 className="section-heading">Savoir-faire</h2>
-          <p className="section-desc" style={{ marginTop: "0.6rem" }}>
-            Un ensemble de compétences couvrant la data, l&apos;IA et la création.
-          </p>
-        </FadeIn>
+    <section id="competences" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
+      <div className="container">
+        <p className="section-eyebrow">Comp\u00e9tences</p>
+        <h2
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 500,
+            fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.1,
+            color: "var(--text)",
+            marginBottom: "clamp(2rem, 4vw, 3.5rem)",
+          }}
+        >
+          Outils, langages et plateformes.
+        </h2>
 
-        <div className="container" style={{ marginTop: "clamp(2.5rem, 5vw, 4rem)" }}>
-          {/* Grid of skill cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0.75rem" }}>
-            {SKILL_CATEGORIES.map((cat, i) => {
-              const { initials, color } = CATEGORY_ICONS[i] || { initials: "//", color: "var(--text-tertiary)" };
-              return (
-                <motion.div
-                  key={cat.title}
-                  className="glass-subtle"
-                  style={{ padding: "1.4rem 1.4rem" }}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ delay: i * 0.07, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "clamp(0.75rem, 1.5vw, 1rem)",
+          }}
+          className="skills-grid"
+        >
+          {SKILL_CATEGORIES.map((cat, i) => {
+            const palette = CARD_BGS[i % CARD_BGS.length];
+            const isDark = palette.bg === "var(--revo-black)";
+            const tagBg = isDark ? "var(--revo-dark)" : "var(--revo-gray)";
+            const tagColor = isDark ? "var(--text-tertiary)" : "var(--text-secondary)";
+
+            return (
+              <motion.div
+                key={cat.title}
+                style={{
+                  background: palette.bg,
+                  color: palette.text,
+                  borderRadius: "var(--radius-card)",
+                  padding: "clamp(1.25rem, 2.5vw, 2rem)",
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight: 220,
+                }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <h3
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 500,
+                    fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
+                    letterSpacing: "-0.02em",
+                    lineHeight: 1.15,
+                    marginBottom: "0.5rem",
+                  }}
                 >
-                  {/* Icon + Title */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
-                    <motion.div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: `${color}10`, border: `1px solid ${color}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 800, color, flexShrink: 0 }} whileHover={{ scale: 1.08 }} transition={{ duration: 0.25 }}>
-                      {initials}
-                    </motion.div>
-                    <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.85rem", color: "var(--text)" }}>
-                      {cat.title}
-                    </div>
-                  </div>
-                  {/* Tags */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                    {cat.tags.map((t) => (
-                      <span key={t} className="pill" style={{ fontSize: "0.62rem" }}>{t}</span>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  {cat.title}
+                </h3>
 
-          {/* Mastery bars panel */}
-          <motion.div
-            className="glass"
-            style={{ padding: "clamp(1.5rem, 3vw, 2.25rem)", marginTop: "clamp(2.5rem, 5vw, 4rem)" }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.25, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(1.3rem, 2.5vw, 1.8rem)", color: "var(--text)", letterSpacing: "-0.03em", marginBottom: "0.35rem" }}>
-              Niveaux de maîtrise
-            </h3>
-            <p style={{ color: "var(--text-tertiary)", fontSize: "0.82rem", marginBottom: "2.5rem" }}>
-              Auto-évaluation basée sur les projets et formations réalisés.
-            </p>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2.5rem 3.5rem" }}>
-              <div>
-                <div style={{ marginBottom: "1.25rem" }}>
-                  <span className="pill" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                    Data &amp; Analyse
-                  </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "0.4rem",
+                    marginTop: "auto",
+                    paddingTop: "1rem",
+                  }}
+                >
+                  {cat.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      style={{
+                        background: tagBg,
+                        color: tagColor,
+                        borderRadius: "9999px",
+                        padding: "0.3rem 0.85rem",
+                        fontSize: "0.72rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-                {SKILL_BARS.data.map((s, i) => (
-                  <SkillBar key={s.label} {...s} index={i} />
-                ))}
-              </div>
-              <div>
-                <div style={{ marginBottom: "1.25rem" }}>
-                  <span className="pill" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                    Créatif &amp; No-Code
-                  </span>
-                </div>
-                {SKILL_BARS.creative.map((s, i) => (
-                  <SkillBar key={s.label} accent={s.accent} label={s.label} level={s.level} index={i} />
-                ))}
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .skills-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

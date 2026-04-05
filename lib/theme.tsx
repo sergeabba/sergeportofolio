@@ -18,11 +18,10 @@ export function useTheme() {
 }
 
 function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   const stored = localStorage.getItem("theme");
   if (stored === "dark" || stored === "light") return stored;
-  // fallback — the site was originally dark-only
-  return "dark";
+  return "light";
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -38,7 +37,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);
 
   return (
-    <ThemeContext.Provider value={{ theme: mounted ? theme : "dark", toggle }}>
+    <ThemeContext.Provider value={{ theme: mounted ? theme : "light", toggle }}>
       {children}
     </ThemeContext.Provider>
   );

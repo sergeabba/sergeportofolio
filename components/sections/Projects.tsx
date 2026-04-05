@@ -1,95 +1,59 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import FadeIn from "@/components/FadeIn";
-import Lightbox from "@/components/Lightbox";
-import MouseSpotCard from "@/components/MouseSpotCard";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
-import { supabase } from "@/lib/supabase";
 import type { Projet } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
 
-
-function ProjectCard({ projet, index, onOpen }: {
-  projet: Projet; index: number; onOpen: (s: string) => void;
-}) {
+function ProjectCard({ projet, index }: { projet: Projet; index: number }) {
   let safeSrc = projet.src?.trim() || "/projets/gaming/gaming-2.jpg";
   if (!safeSrc.startsWith("/") && !safeSrc.startsWith("http")) safeSrc = "/" + safeSrc;
   safeSrc = safeSrc.replace(/\\/g, "/");
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.55, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={{ y: -6 }}
-      onMouseMove={useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
-        const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-        e.currentTarget.animate(
-          { transform: `perspective(800px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg)` },
-          { duration: 300, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
-        );
-      }, [])}
-      onMouseLeave={(e) => {
-        e.currentTarget.animate(
-          { transform: "perspective(800px) rotateX(0deg) rotateY(0deg)" },
-          { duration: 400, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
-        );
-      }}
+      transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={{ display: "flex", flexDirection: "column" }}
     >
-      <div
-        className="glass"
-        style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", padding: 0 }}
-      >
-        {/* Image */}
-        <div className="relative overflow-hidden cursor-pointer" style={{ height: 200 }} onClick={() => onOpen(safeSrc)}>
-          <Image
-            src={safeSrc}
-            alt={projet.titre}
-            fill
-            sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw"
-            className="object-cover"
-            style={{ transition: "transform 0.6s cubic-bezier(0.16,1,0.3,1)" }}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAwEPwAB//9k="
-            quality={85}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.06)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
-          />
-          {/* Category */}
-          <div style={{ position: "absolute", top: "0.75rem", left: "0.75rem" }}>
-            <span className="pill" style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}>{projet.cat}</span>
-          </div>
+      {/* Image */}
+      <div style={{ position: "relative", height: 260, borderRadius: "var(--radius-card)", overflow: "hidden", marginBottom: "1.25rem", background: "var(--bg-elevated)" }}>
+        <Image
+          src={safeSrc}
+          alt={projet.titre}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+          className="object-cover"
+          style={{ transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}
+          loading="lazy"
+        />
+        {/* Tags on left */}
+        <div style={{ position: "absolute", top: "0.75rem", left: "0.75rem", display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
+          {projet.tags.slice(0, 3).map(t => (
+            <span key={t} style={{ background: "#ffffff", color: "var(--revo-black)", borderRadius: 9999, padding: "0.2rem 0.55rem", fontSize: "0.6rem", fontWeight: 500, letterSpacing: "0.04em" }}>{t}</span>
+          ))}
         </div>
+      </div>
 
-        {/* Content */}
-        <div style={{ padding: "1.15rem 1.3rem" }}>
-          <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "0.35rem" }}>
-            {projet.titre}
-          </h3>
-          <p className="truncate-2" style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", lineHeight: 1.6, marginBottom: "0.85rem" }}>
-            {projet.desc}
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginBottom: "1rem" }}>
-            {projet.tags.slice(0, 4).map((t) => (
-              <span key={t} className="pill" style={{ fontSize: "0.6rem" }}>{t}</span>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: "0.5rem", paddingTop: "0.75rem", borderTop: "1px solid var(--border)" }}>
-            <button onClick={() => onOpen(safeSrc)} className="btn-glass" style={{ flex: 1, padding: "0.48rem", fontSize: "0.75rem" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              Aperçu
-            </button>
-            {projet.lien && (
-              <a href={projet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ flex: 1, padding: "0.48rem 0.75rem", fontSize: "0.75rem", textAlign: "center" }}>{projet.lienLabel || "Voir"}</a>
-            )}
-          </div>
-        </div>
+      {/* Content */}
+      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.15rem, 1.8vw, 1.5rem)", letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text)", marginBottom: "0.5rem" }}>
+        {projet.titre}
+      </h3>
+      <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "1.25rem" }}>
+        {projet.desc}
+      </p>
+      <div style={{ marginTop: "auto" }}>
+        {projet.lien ? (
+          <a href={projet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: "0.6rem 1.25rem", fontSize: "0.72rem", letterSpacing: "0.04em" }}>
+            {projet.lienLabel || "Voir plus"}
+          </a>
+        ) : null}
       </div>
     </motion.div>
   );
@@ -97,100 +61,82 @@ function ProjectCard({ projet, index, onOpen }: {
 
 export default function Projects() {
   const [filter, setFilter] = useState("Tous");
-  const [lightbox, setLightbox] = useState<string | null>(null);
   const [projets, setProjets] = useState<Projet[]>([]);
   const [projetsLoading, setProjetsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProjets = async () => {
+    const fetch = async () => {
       try {
         setProjetsLoading(true);
-        const { data, error: sbError } = await supabase.from("projets").select("*").order("created_at", { ascending: false });
-        if (sbError) { setProjets(PROJETS_DATA); }
-        else if (data && data.length > 0) { setProjets(data); }
-        else { setProjets(PROJETS_DATA); }
+        const { data, error } = await supabase.from("projets").select("*").order("created_at", { ascending: false });
+        if (error || !data || data.length === 0) setProjets(PROJETS_DATA);
+        else setProjets(data);
       } catch {
         setProjets(PROJETS_DATA);
       } finally {
         setProjetsLoading(false);
       }
     };
-    fetchProjets();
+    fetch();
   }, []);
 
   const filteredProjets = useMemo(
-    () => filter === "Tous" ? projets : projets.filter((p) => p.cat === filter),
+    () => filter === "Tous" ? projets : projets.filter(p => p.cat === filter),
     [filter, projets]
   );
 
   return (
-    <section id="realisations" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden", background: "var(--bg)" }}>
-      <FadeIn y={30}>
-        <div className="container" style={{ position: "relative", zIndex: 1 }}>
-          <div className="section-label">Réalisations</div>
-          <h2 className="section-heading">Mes projets</h2>
-          <p className="section-desc" style={{ marginTop: "0.6rem" }}>
-            Interfaces, visuels gaming, contenus IA et analyses data.
-          </p>
-        </div>
-      </FadeIn>
+    <section id="realisations" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
+      <div className="container">
+        <p className="section-eyebrow">Réalisations</p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)", marginBottom: "1rem" }}>
+          Mes projets.
+        </h2>
+        <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
+          Interfaces Power BI, scripts Python, IA générative et designs Canva.
+        </p>
 
-      <div className="container" style={{ position: "relative", zIndex: 1 }}>
-        {/* Separator */}
-        <div className="glow-line" style={{ marginTop: "2rem", marginBottom: "0" }} />
-      </div>
-
-      <div className="container" style={{ position: "relative", zIndex: 1 }}>
-        {/* Filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "2rem", marginBottom: "2.5rem" }}>
-          {FILTER_CATEGORIES.map((cat) => (
-            <motion.button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={filter === cat ? "pill pill-accent" : "pill"}
-              style={{ cursor: "pointer", fontSize: "0.78rem", fontFamily: "var(--font-body)", fontWeight: 500 }}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-            >
-              {cat}
-            </motion.button>
+        {/* Filter pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "2.5rem" }}>
+          {FILTER_CATEGORIES.map(cat => (
+            <button key={cat} onClick={() => setFilter(cat)}
+              style={{
+                background: filter === cat ? "var(--revo-black)" : "var(--bg-elevated)",
+                color: filter === cat ? "#ffffff" : "var(--text-secondary)",
+                borderRadius: 9999,
+                padding: "0.4rem 1rem",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+                fontFamily: "var(--font-body)",
+                cursor: "pointer",
+                border: "none",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = "0.85"; }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
+            >{cat}</button>
           ))}
         </div>
 
-        {error && (
-          <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--text-tertiary)", fontSize: "0.9rem" }}>{error}</div>
-        )}
-
         {/* Grid */}
-        <motion.div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.85rem" }} layout>
-          <AnimatePresence mode="popLayout">
-            {projetsLoading
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    style={{ height: 340, borderRadius: "var(--radius-lg)", background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.1, duration: 0.3 }}
-                  />
-                ))
-              : filteredProjets.map((p, i) => (
-                  <ProjectCard key={p.id || p.titre} projet={p} index={i} onOpen={setLightbox} />
-                ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {!projetsLoading && filteredProjets.length === 0 && (
-          <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--text-tertiary)", fontSize: "0.9rem" }}>
-            Aucun projet pour cette catégorie.
+        {projetsLoading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2rem" }}>
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} style={{ height: 420, borderRadius: "var(--radius-card)", background: "var(--bg-elevated)" }} />
+            ))}
+          </div>
+        ) : filteredProjets.length === 0 ? (
+          <p style={{ textAlign: "center", color: "var(--text-tertiary)", padding: "3rem 0" }}>Aucun projet pour cette catégorie.</p>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+            <AnimatePresence mode="popLayout">
+              {filteredProjets.map((p, i) => (
+                <ProjectCard key={p.id || p.titre} projet={p} index={i} />
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>
-
-      <AnimatePresence>
-        {lightbox && <Lightbox src={lightbox} onClose={() => setLightbox(null)} />}
-      </AnimatePresence>
     </section>
   );
 }

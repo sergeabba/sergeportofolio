@@ -15,7 +15,21 @@
       "Bash(python3:*)",
       "mcp__aidesigner__get_credit_status",
       "mcp__aidesigner__generate_design",
-      "Bash(npx -y @aidesigner/agent-skills capture --prompt \"Premium minimalist portfolio for a Data Analyst & Prompt Engineer. Clean, luxurious aesthetic with white, light gray, and subtle charcoal tones\" --transport mcp --remote-run-id \"ac12437a-08ca-46e0-910b-121dc6fb6e7e\")"
+      "Bash(npx -y @aidesigner/agent-skills capture --prompt \"Premium minimalist portfolio for a Data Analyst & Prompt Engineer. Clean, luxurious aesthetic with white, light gray, and subtle charcoal tones\" --transport mcp --remote-run-id \"ac12437a-08ca-46e0-910b-121dc6fb6e7e\")",
+      "Bash(taskkill /PID 18064 /F)",
+      "Bash(npx tsc:*)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm:*)",
+      "mcp__aidesigner__whoami",
+      "Read(//d/portofolio/**)",
+      "Bash(mkdir .aidesigner)",
+      "Bash(mkdir -p .aidesigner)",
+      "mcp__aidesigner__refine_design",
+      "Bash(npx -y @aidesigner/agent-skills capture --prompt \"Dark high-contrast portfolio: black text, deep layered background, void/charcoal/violet blobs, dot grid, gradient streaks, severe glass panels\" --transport mcp --remote-run-id \"1122b33b-9aff-4968-a926-3fa70fca4c6f\")",
+      "Bash(sed:*)",
+      "Bash(lsof -ti:3000)",
+      "Bash(echo \"Dev server PID: $!\")",
+      "Bash(netstat -ano)"
     ]
   }
 }

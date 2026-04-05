@@ -33,27 +33,18 @@ export default function BackToTop() {
             width: 48,
             height: 48,
             borderRadius: "var(--radius-full)",
-            background: "rgba(255,255,255,0.06)",
-            backdropFilter: "blur(20px)",
-            border: "1px solid var(--glass-border)",
-            color: "var(--text)",
+            background: "var(--revo-black)",
+            color: "#ffffff",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 40,
-            transition: "border-color 0.4s, box-shadow 0.4s, background 0.4s",
+            border: "1px solid var(--border-strong)",
+            transition: "background 0.25s",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "var(--glass-border-h)";
-            e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-            e.currentTarget.style.boxShadow = "var(--liq-glow-sm)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--glass-border)";
-            e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--revo-blue)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "var(--revo-black)"; }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
         </motion.button>

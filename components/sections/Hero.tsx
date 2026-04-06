@@ -97,9 +97,9 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.6, ease }}
-            >
-              Abba Serge
-            </motion.p>
+              >
+                MBAITADJIM
+              </motion.p>
 
             {/* Billboard name */}
             <div style={{ overflow: "hidden", marginBottom: "0.25rem" }}>
@@ -223,9 +223,9 @@ export default function Hero() {
               {/* Stats */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.4rem", marginBottom: "0.85rem" }}>
                 {[
-                  { bg: "var(--revo-black)", text: "#fff", label: "Model", val: "GPT-4" },
-                  { bg: "var(--revo-blue)",  text: "#fff", label: "Score", val: "99.8%" },
-                  { bg: "var(--revo-mint)",  text: "#191c1f", label: "Status", val: "Live" },
+                  { bg: "var(--revo-black)", text: "#fff", label: "Outil", val: "Power BI" },
+                  { bg: "var(--revo-blue)",  text: "#fff", label: "Précision", val: "99.8%" },
+                  { bg: "var(--revo-mint)",  text: "#191c1f", label: "Statut", val: "Dispo" },
                 ].map(({ bg, text, label, val }) => (
                   <div key={label} style={{ background: bg, borderRadius: 12, padding: "0.5rem 0.4rem" }}>
                     <div style={{ fontSize: "0.45rem", letterSpacing: "0.1em", textTransform: "uppercase", color: text === "#fff" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)", marginBottom: "0.2rem" }}>{label}</div>

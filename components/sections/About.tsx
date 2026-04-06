@@ -1,15 +1,13 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useEffect } from "react";
-import FadeIn from "@/components/FadeIn";
 import MouseSpotCard from "@/components/MouseSpotCard";
 import { ABOUT_FACTS } from "@/lib/data";
 
-
 function Counter({ target, suffix }: { target: number; suffix: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, amount: 0 });
   
   useEffect(() => {
     if (!isInView) return;
@@ -34,6 +32,8 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
   return <span ref={ref}>0{suffix}</span>;
 }
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export default function About() {
   return (
     <section id="quisuisje" style={{ background: "var(--bg)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
@@ -41,7 +41,12 @@ export default function About() {
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
 
-      <FadeIn y={30}>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0 }}
+        transition={{ duration: 0.65, ease }}
+      >
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <span className="section-label">À propos</span>
           <h2 className="section-heading">Qui suis-je&nbsp;?</h2>
@@ -49,7 +54,7 @@ export default function About() {
             Data Analyst junior, passionné par la donnée, l&apos;IA et la création visuelle.
           </p>
         </div>
-      </FadeIn>
+      </motion.div>
 
       {/* Glow line separator */}
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -68,7 +73,12 @@ export default function About() {
           }}
         >
           {/* Bio text */}
-          <FadeIn delay={0.12}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0 }}
+            transition={{ duration: 0.65, delay: 0.1, ease }}
+          >
             <div style={{ display: "flex", flexDirection: "column", gap: "1.35rem" }}>
               {[
                 {
@@ -101,8 +111,8 @@ export default function About() {
                   key={bi}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 + bi * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                  viewport={{ once: true, amount: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 + bi * 0.08, ease }}
                   style={{ fontSize: "0.93rem", lineHeight: 1.8 }}
                 >
                   {block.parts.map((part, pi) => (
@@ -119,8 +129,8 @@ export default function About() {
                 style={{ padding: "1.2rem", display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.25rem" }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.35 }}
+                viewport={{ once: true, amount: 0 }}
+                transition={{ duration: 0.6, delay: 0.35, ease }}
               >
                 {ABOUT_FACTS.map(({ key, val }) => (
                   <div key={key} style={{ display: "flex", gap: "0.85rem", alignItems: "flex-start", paddingBottom: "0.5rem", borderBottom: "1px solid var(--border)" }}>
@@ -134,17 +144,22 @@ export default function About() {
                 ))}
               </motion.div>
             </div>
-          </FadeIn>
+          </motion.div>
 
           {/* Formation & exp */}
-          <FadeIn delay={0.2}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0 }}
+            transition={{ duration: 0.65, delay: 0.2, ease }}
+          >
             <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
               {/* Experience */}
               <motion.div
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.25 }}
+                viewport={{ once: true, amount: 0 }}
+                transition={{ duration: 0.7, delay: 0.25, ease }}
               >
                 <div style={{ marginBottom: "0.85rem" }}>
                   <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Expérience pro.</span>
@@ -169,8 +184,8 @@ export default function About() {
               <motion.div
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.35 }}
+                viewport={{ once: true, amount: 0 }}
+                transition={{ duration: 0.7, delay: 0.35, ease }}
               >
                 <div style={{ marginBottom: "0.85rem" }}>
                   <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Formation</span>
@@ -187,8 +202,8 @@ export default function About() {
                       style={{ display: "flex", alignItems: "center", gap: "0.85rem", padding: "0.85rem 1rem" }}
                       initial={{ opacity: 0, x: 30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.4 + i * 0.08, duration: 0.6 }}
+                      viewport={{ once: true, amount: 0 }}
+                      transition={{ delay: 0.4 + i * 0.08, duration: 0.6, ease }}
                       whileHover={{ x: 3, borderColor: "var(--glass-border-h)" }}
                     >
                       <div style={{ width: 34, height: 34, borderRadius: "var(--radius-sm)", background: `${color}10`, border: `1px solid ${color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 800, color, flexShrink: 0 }}>
@@ -203,11 +218,16 @@ export default function About() {
                 </div>
               </motion.div>
             </div>
-          </FadeIn>
+          </motion.div>
         </div>
 
         {/* Stats bento row */}
-        <FadeIn delay={0.45}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.65, delay: 0.4, ease }}
+        >
           <MouseSpotCard style={{ borderRadius: "var(--radius-xl)", overflow: "hidden" }}>
             <div
               className="glass"
@@ -225,8 +245,8 @@ export default function About() {
                   style={{ padding: "1.4rem 1rem", textAlign: "center" }}
                   initial={{ opacity: 0, y: 20, scale: 0.97 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.05 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                  viewport={{ once: true, amount: 0 }}
+                  transition={{ duration: 0.5, delay: 0.05 + i * 0.07, ease }}
                 >
                   <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "var(--text)", letterSpacing: "-0.04em", lineHeight: 1, marginBottom: "0.35rem" }}>
                     <Counter target={val} suffix={suffix} />
@@ -238,9 +258,8 @@ export default function About() {
               ))}
             </div>
           </MouseSpotCard>
-        </FadeIn>
+        </motion.div>
       </div>
     </section>
   );
 }
-

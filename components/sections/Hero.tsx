@@ -114,7 +114,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.22, duration: 0.9, ease }}
               >
-                MBAITADJIM
+                SERGE ABBA
               </motion.h1>
             </div>
 

@@ -100,8 +100,15 @@ export default function Projects() {
     const fetch = async () => {
       try {
         setProjetsLoading(true);
-        const { data, error } = await supabase.from("projets").select("*").order("position", { ascending: true, nullsFirst: false });
-        if (error || !data || data.length === 0) setProjets(PROJETS_DATA);
+        let { data, error } = await supabase.from("projets").select("*").order("position", { ascending: true, nullsFirst: false });
+        
+        // S'il y a une erreur (colonne position manquante, etc), on essaie avec created_at
+        if (error) {
+          const fallback = await supabase.from("projets").select("*").order("created_at", { ascending: false });
+          data = fallback.data;
+        }
+
+        if (!data || data.length === 0) setProjets(PROJETS_DATA);
         else setProjets(data);
       } catch {
         setProjets(PROJETS_DATA);

@@ -89,8 +89,12 @@ export default function AdminDashboard() {
   const fetchProjets = async () => {
     setLoading(true);
     // On trie par 'position' Ascendant
-    const { data, error } = await supabase.from('projets').select('*').order('position', { ascending: true, nullsFirst: false });
-    if (!error && data) setProjets(data);
+    let { data, error } = await supabase.from('projets').select('*').order('position', { ascending: true, nullsFirst: false });
+    if (error) {
+       const fallback = await supabase.from('projets').select('*').order('created_at', { ascending: false });
+       data = fallback.data;
+    }
+    if (data) setProjets(data);
     setLoading(false);
   };
 

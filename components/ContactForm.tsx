@@ -3,213 +3,249 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
-type FormStatus = "idle" | "sending" | "success" | "error";
+type Status = "idle" | "sending" | "success" | "error";
+type Errors = { name?: string; email?: string; message?: string };
 
-function Field({ id, label, children, error }: { id: string; label: string; children: React.ReactNode; error?: string }) {
-  const errorId = `${id}-error`;
+import type { Easing } from "framer-motion";
+const ease: Easing = [0.22, 1, 0.36, 1];
+
+function FieldLabel({ htmlFor, children, error }: { htmlFor: string; children: React.ReactNode; error?: boolean }) {
   return (
-    <div>
-      <label
-        htmlFor={id}
-        style={{
-          display: "block",
-          marginBottom: "0.4rem",
-          fontFamily: "var(--font-body)",
-          fontSize: "0.7rem",
-          fontWeight: 700,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          color: error ? "var(--accent-rose)" : "var(--text-tertiary)",
-        }}
-      >
-        {label}
-      </label>
+    <label
+      htmlFor={htmlFor}
+      style={{
+        display: "block",
+        marginBottom: "0.45rem",
+        fontSize: "0.65rem",
+        fontWeight: 700,
+        letterSpacing: "0.09em",
+        textTransform: "uppercase",
+        color: error ? "var(--danger)" : "var(--text-tertiary)",
+        transition: "color 0.2s",
+      }}
+    >
       {children}
-      {error && (
-        <span
-          id={errorId}
-          role="alert"
-          style={{
-            display: "block",
-            marginTop: "0.25rem",
-            fontSize: "0.75rem",
-            color: "var(--accent-rose)",
-            fontFamily: "var(--font-body)",
-          }}
-        >
-          {error}
-        </span>
-      )}
-    </div>
+    </label>
+  );
+}
+
+function ErrorMsg({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return (
+    <motion.span
+      key={msg}
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease }}
+      role="alert"
+      style={{
+        display: "block",
+        fontSize: "0.7rem",
+        color: "var(--danger)",
+        marginTop: "0.3rem",
+      }}
+    >
+      {msg}
+    </motion.span>
   );
 }
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
-  const resetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const messageInputRef = useRef<HTMLTextAreaElement>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errors, setErrors] = useState<Errors>({});
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const msgRef  = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => () => { if (resetRef.current) clearTimeout(resetRef.current); }, []);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
-  function validateForm(data: { name: string; email: string; message: string }) {
-    const newErrors: { name?: string; email?: string; message?: string } = {};
-    if (!data.name.trim()) newErrors.name = "Le nom est requis";
-    if (!data.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      newErrors.email = "Email invalide";
-    }
-    if (!data.message.trim()) newErrors.message = "Le message est requis";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  function validate(d: { name: string; email: string; message: string }): Errors {
+    const e: Errors = {};
+    if (!d.name.trim())    e.name    = "Le nom est requis";
+    if (!d.email.trim())   e.email   = "L'email est requis";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) e.email = "Format d'email invalide";
+    if (!d.message.trim()) e.message = "Le message est requis";
+    return e;
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (resetRef.current) clearTimeout(resetRef.current);
-    setErrors({});
+    if (timer.current) clearTimeout(timer.current);
 
     const form = e.currentTarget;
+    const fd   = new FormData(form);
     const data = {
-      name: String(new FormData(form).get("name") ?? "").trim(),
-      email: String(new FormData(form).get("email") ?? "").trim(),
-      subject: String(new FormData(form).get("subject") ?? "").trim(),
-      message: String(new FormData(form).get("message") ?? "").trim(),
+      name:    String(fd.get("name")    ?? "").trim(),
+      email:   String(fd.get("email")   ?? "").trim(),
+      subject: String(fd.get("subject") ?? "").trim(),
+      message: String(fd.get("message") ?? "").trim(),
     };
 
-    if (!validateForm(data)) {
-      setStatus("error");
-      // Focus first invalid field
-      if (errors.name) nameInputRef.current?.focus();
-      else if (errors.email) emailInputRef.current?.focus();
-      else if (errors.message) messageInputRef.current?.focus();
-      resetRef.current = setTimeout(() => setStatus("idle"), 4000);
+    const errs = validate(data);
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      if (errs.name)    nameRef.current?.focus();
+      else if (errs.email)  emailRef.current?.focus();
+      else if (errs.message) msgRef.current?.focus();
       return;
     }
 
+    setErrors({});
     setStatus("sending");
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("API error");
       setStatus("success");
       form.reset();
     } catch {
       setStatus("error");
     }
-    resetRef.current = setTimeout(() => setStatus("idle"), 5000);
+    timer.current = setTimeout(() => setStatus("idle"), 6000);
   }
 
-  const statusMessages = {
-    idle: null,
-    sending: "Envoi en cours...",
-    success: "Votre message a bien été envoyé.",
-    error: "Une erreur est survenue. Réessayez ou contactez directement par email.",
-  };
+  /* ── Shared input class + error border ── */
+  function inputClass(err?: string) {
+    return err ? "form-input form-input--error" : "form-input";
+  }
 
   return (
-    <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1rem" }} aria-label="Formulaire de contact">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
-        <Field id="name" label="Nom" error={errors.name}>
-          <input
-            ref={nameInputRef}
-            id="name" name="name" type="text"
-            placeholder="Votre nom" required autoComplete="name"
-            className="form-input form-input-liquid"
-            aria-invalid={!!errors.name}
-            aria-describedby={errors.name ? "name-error" : undefined}
-          />
-        </Field>
-        <Field id="email" label="Email" error={errors.email}>
-          <input
-            ref={emailInputRef}
-            id="email" name="email" type="email"
-            placeholder="votre@email.com" required autoComplete="email"
-            className="form-input form-input-liquid"
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? "email-error" : undefined}
-          />
-        </Field>
-      </div>
+    <>
+      {/* Extra rule to make error border override via className */}
+      <style>{`
+        .form-input--error { border-color: var(--danger) !important; }
+        .form-input:focus   { border-color: var(--revo-blue) !important; box-shadow: 0 0 0 3px rgba(73,79,223,0.14); }
+      `}</style>
 
-      <Field id="subject" label="Sujet">
-        <input
-          id="subject" name="subject" type="text"
-          placeholder="Projet, opportunité, collaboration…"
-          className="form-input form-input-liquid"
-        />
-      </Field>
-
-      <Field id="message" label="Message" error={errors.message}>
-        <textarea
-          ref={messageInputRef}
-          id="message" name="message" rows={5}
-          placeholder="Décrivez votre projet ou votre question…"
-          required
-          className="form-input form-input-liquid"
-          style={{ resize: "vertical", lineHeight: 1.7, minHeight: 130 }}
-          aria-invalid={!!errors.message}
-          aria-describedby={errors.message ? "message-error" : undefined}
-        />
-      </Field>
-
-      <motion.button
-        type="submit"
-        className="btn-primary"
-        style={{ padding: "0.9rem", fontSize: "0.88rem", width: "100%", borderRadius: "var(--radius-md)" }}
-        disabled={status === "sending"}
-        whileHover={status === "idle" ? { scale: 1.01 } : {}}
-        whileTap={status === "idle" ? { scale: 0.99 } : {}}
-        aria-live="polite"
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        aria-label="Formulaire de contact"
+        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
       >
-        {status === "idle" && "Envoyer le message"}
-        {status === "sending" && (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-            Envoi en cours
-            <span style={{ display: "inline-flex", gap: "3px" }}>
-              {[0, 1, 2].map((i) => (
-                <motion.span
-                  key={i}
-                  style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: "50%",
-                    background: "currentColor",
-                    display: "inline-block",
-                  }}
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-                />
-              ))}
-            </span>
-          </span>
-        )}
-        {status === "success" && "Message envoyé ✓"}
-        {status === "error" && "Erreur -- Reessayez"}
-      </motion.button>
+        {/* Name + Email inline */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+          <div>
+            <FieldLabel htmlFor="cf-name" error={!!errors.name}>Nom *</FieldLabel>
+            <input
+              ref={nameRef}
+              id="cf-name" name="name" type="text"
+              placeholder="Votre nom"
+              autoComplete="name"
+              aria-invalid={!!errors.name}
+              className={inputClass(errors.name)}
+            />
+            <ErrorMsg msg={errors.name} />
+          </div>
+          <div>
+            <FieldLabel htmlFor="cf-email" error={!!errors.email}>Email *</FieldLabel>
+            <input
+              ref={emailRef}
+              id="cf-email" name="email" type="email"
+              placeholder="you@gmail.com"
+              autoComplete="email"
+              aria-invalid={!!errors.email}
+              className={inputClass(errors.email)}
+            />
+            <ErrorMsg msg={errors.email} />
+          </div>
+        </div>
 
-      {status !== "idle" && (
-        <motion.p
-          aria-live="polite"
-          role="status"
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            fontSize: "0.78rem",
-            color: status === "success" ? "var(--green-400)" : "var(--accent-rose)",
-            fontFamily: "var(--font-body)",
-            textAlign: "center",
+        {/* Subject */}
+        <div>
+          <FieldLabel htmlFor="cf-subject">Sujet</FieldLabel>
+          <input
+            id="cf-subject" name="subject" type="text"
+            placeholder="Projet, stage, collaboration…"
+            className="form-input"
+          />
+        </div>
+
+        {/* Message */}
+        <div>
+          <FieldLabel htmlFor="cf-message" error={!!errors.message}>Message *</FieldLabel>
+          <textarea
+            ref={msgRef}
+            id="cf-message"
+            name="message"
+            rows={5}
+            placeholder="Décrivez votre projet, votre besoin, ou posez-moi une question…"
+            aria-invalid={!!errors.message}
+            className={inputClass(errors.message)}
+          />
+          <ErrorMsg msg={errors.message} />
+        </div>
+
+        {/* Submit button */}
+        <motion.button
+          type="submit"
+          disabled={status === "sending"}
+          whileHover={{ scale: status === "idle" ? 1.015 : 1 }}
+          whileTap={{ scale: 0.97 }}
+          animate={{
+            background:
+              status === "success" ? "#00a87e" :
+              status === "error"   ? "#e23b4a" :
+              "#191c1f",
           }}
+          transition={{ duration: 0.3 }}
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            gap: "0.5rem", padding: "0.9rem",
+            width: "100%", borderRadius: "9999px",
+            border: "none", cursor: status === "sending" ? "not-allowed" : "pointer",
+            fontFamily: "var(--font-body)", fontWeight: 500,
+            fontSize: "0.9rem", letterSpacing: "0.01em",
+            color: "#ffffff", minHeight: 50,
+            opacity: status === "sending" ? 0.75 : 1,
+          }}
+          aria-live="polite"
         >
-          {statusMessages[status]}
-        </motion.p>
-      )}
-    </form>
+          {status === "idle"    && "Envoyer le message →"}
+          {status === "success" && "✓ Message envoyé !"}
+          {status === "error"   && "✕ Erreur — réessayez"}
+          {status === "sending" && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              Envoi en cours
+              <span style={{ display: "inline-flex", gap: 3 }}>
+                {[0,1,2].map(i => (
+                  <motion.span
+                    key={i}
+                    style={{ width: 4, height: 4, borderRadius: "50%", background: "#fff", display: "block" }}
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.12 }}
+                  />
+                ))}
+              </span>
+            </span>
+          )}
+        </motion.button>
+
+        {/* Status message */}
+        {(status === "success" || status === "error") && (
+          <motion.p
+            key={status}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease }}
+            aria-live="polite" role="status"
+            style={{
+              fontSize: "0.8rem", textAlign: "center",
+              color: status === "success" ? "var(--revo-mint)" : "var(--danger)",
+              lineHeight: 1.6,
+            }}
+          >
+            {status === "success"
+              ? "Votre message a bien été envoyé. Je vous réponds très vite !"
+              : "Une erreur est survenue. Réessayez ou écrivez-moi directement par email."}
+          </motion.p>
+        )}
+      </form>
+    </>
   );
 }

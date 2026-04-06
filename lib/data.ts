@@ -167,6 +167,29 @@ export const ABOUT_FACTS = [
   { key: "Langues", val: "Français (natif) · Anglais (B2)" },
 ];
 
+
+export const MARQUEE_SKILLS = [
+  "Power BI", "Python", "SQL", "Pandas", "Spark",
+  "IA Générative", "Prompt Engineering", "Figma", "Photoshop",
+  "Data Visualization", "WordPress", "Scala", "Big Data",
+];
+
+export const MARQUEE_ICONS: Record<string, string> = {
+  "Power BI": "ph-chart-polar",
+  "Python": "ph-code",
+  "SQL": "ph-database",
+  "Pandas": "ph-table",
+  "Spark": "ph-lightning",
+  "IA Générative": "ph-brain",
+  "Prompt Engineering": "ph-sparkle",
+  "Figma": "ph-pen-nib",
+  "Photoshop": "ph-image",
+  "Data Visualization": "ph-chart-bar",
+  "WordPress": "ph-globe",
+  "Scala": "ph-terminal",
+  "Big Data": "ph-stack",
+};
+
 // Nouveaux projets DATA pour équilibrer portfolio
 export const PROJETS_DATA: any[] = [
   {

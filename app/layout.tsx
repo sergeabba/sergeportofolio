@@ -74,7 +74,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={`${jakarta.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web" />
+        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
       </head>
       <body style={{ fontFamily: "var(--font-body, sans-serif)", fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"' }}>
         <ThemeProvider>{children}</ThemeProvider>

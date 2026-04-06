@@ -1,21 +1,49 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
 import FadeIn from "@/components/FadeIn";
 import MouseSpotCard from "@/components/MouseSpotCard";
-import { Counter } from "@/components/sections/Hero";
 import { ABOUT_FACTS } from "@/lib/data";
+
+
+function Counter({ target, suffix }: { target: number; suffix: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+  
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const duration = 2000;
+    const stepTime = 50;
+    const steps = duration / stepTime;
+    const increment = target / steps;
+    
+    const timer = setInterval(() => {
+      start += increment;
+      if (ref.current) ref.current.textContent = Math.floor(start).toString() + suffix;
+      if (start >= target) {
+        if (ref.current) ref.current.textContent = target.toString() + suffix;
+        clearInterval(timer);
+      }
+    }, stepTime);
+    
+    return () => clearInterval(timer);
+  }, [isInView, target, suffix]);
+
+  return <span ref={ref}>0{suffix}</span>;
+}
 
 export default function About() {
   return (
-    <section id="qui suis-je" style={{ padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
+    <section id="quisuisje" style={{ background: "var(--bg)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
       {/* Floating orbes */}
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
 
       <FadeIn y={30}>
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
-          <div className="section-label">À propos</div>
+          <span className="section-label">À propos</span>
           <h2 className="section-heading">Qui suis-je&nbsp;?</h2>
           <p className="section-desc" style={{ marginTop: "0.6rem" }}>
             Data Analyst junior, passionné par la donnée, l&apos;IA et la création visuelle.
@@ -215,3 +243,4 @@ export default function About() {
     </section>
   );
 }
+

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -14,37 +15,62 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as ContactRequest;
     const name = body.name?.trim() ?? "";
     const email = body.email?.trim() ?? "";
-    const subject = body.subject?.trim() ?? "";
+    const subject = body.subject?.trim() || `Nouveau message de ${name}`;
     const message = body.message?.trim() ?? "";
 
+    // Validation
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
-
     if (!emailPattern.test(email)) {
       return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
     }
 
-    // ── Option 1 : Resend (recommandé en prod) ──
-    // const resend = new Resend(process.env.RESEND_API_KEY);
-    // await resend.emails.send({
-    //   from: "portfolio@sergeabba.com",
-    //   to: "serge-mbaitadjim.abba@ism.edu.sn",
-    //   subject: subject || `Nouveau message de ${name}`,
-    //   html: `<p><b>De :</b> ${name} &lt;${email}&gt;</p><p>${message}</p>`,
-    // });
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const TO_EMAIL = process.env.CONTACT_EMAIL ?? "abbaserge2@gmail.com";
 
-    // ── Option 2 : Nodemailer SMTP ──
-    // const transporter = nodemailer.createTransport({ ... });
-    // await transporter.sendMail({ ... });
+    if (RESEND_API_KEY) {
+      // ── Production: envoi réel via Resend ──
+      const resend = new Resend(RESEND_API_KEY);
+      const { error } = await resend.emails.send({
+        from: "Portfolio <onboarding@resend.dev>",
+        to: TO_EMAIL,
+        replyTo: email,
+        subject: `[Portfolio] ${subject}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e5e7eb; border-radius: 12px;">
+            <h2 style="color: #191c1f; margin-bottom: 16px;">Nouveau message depuis le portfolio</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280; width: 100px;">Nom</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280;">Email</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5;"><a href="mailto:${email}" style="color: #494fdf;">${email}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280;">Sujet</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${subject}</td>
+              </tr>
+            </table>
+            <div style="margin-top: 20px; padding: 16px; background: #f0f2f5; border-radius: 8px;">
+              <p style="font-weight: 600; color: #6b7280; margin-bottom: 8px;">Message :</p>
+              <p style="color: #191c1f; white-space: pre-wrap; line-height: 1.7;">${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+            </div>
+          </div>
+        `,
+      });
 
-    // ── Dev : log en console ──
-    console.log("📬 Nouveau message portfolio :", {
-      name,
-      email,
-      subject: subject || `Nouveau message de ${name}`,
-      message,
-    });
+      if (error) {
+        console.error("Resend error:", error);
+        return NextResponse.json({ error: "Erreur envoi email" }, { status: 500 });
+      }
+    } else {
+      // ── Dev: log console uniquement ──
+      console.log("📬 [DEV] Nouveau message portfolio — configurez RESEND_API_KEY pour l'envoi réel :");
+      console.log({ name, email, subject, message });
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

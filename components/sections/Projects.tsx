@@ -210,74 +210,134 @@ export default function Projects() {
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              style={{ position: "relative", width: "100%", maxWidth: 1000, background: "var(--bg)", borderRadius: "var(--radius-xl)", overflow: "hidden", display: "flex", flexDirection: "column", maxHeight: "95vh", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }}
+              className="relative w-full max-w-5xl bg-[var(--bg)] rounded-[var(--radius-xl)] overflow-hidden flex flex-col shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+              style={{ maxHeight: "95vh" }}
             >
               {/* Close btn */}
               <button
                 onClick={() => setPreviewProjet(null)}
-                style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 10, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}
+                style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 50, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}
               >
                 <X size={20} strokeWidth={2.5} />
               </button>
 
-              {/* Image large */}
-              <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "40vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)", borderTopLeftRadius: "var(--radius-xl)", borderTopRightRadius: "var(--radius-xl)" }}>
-                <Image
-                  src={activeImage || previewProjet.src!}
-                  alt={previewProjet.titre}
-                  fill
-                  className="object-contain" // Contain pour voir l'image entière sans couper
-                  sizes="100vw"
-                  priority
-                />
+              {/* === DESKTOP LAYOUT (Hidden on mobile) === */}
+              <div className="hidden md:flex flex-col w-full h-full" style={{ maxHeight: "95vh" }}>
+                 {/* Image large */}
+                <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
+                  <Image
+                    src={activeImage || previewProjet.src!}
+                    alt={previewProjet.titre}
+                    fill
+                    className="object-contain" // Contain pour voir l'image entière sans couper
+                    sizes="100vw"
+                    priority
+                  />
+                </div>
+
+                {/* Scrollable content below */}
+                <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto", flexGrow: 1 }}>
+                  {/* Galerie Thumbnails (if any) */}
+                  {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                     <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                        <div 
+                           onClick={() => setActiveImage(previewProjet.src!)}
+                           style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
+                        >
+                           <img src={previewProjet.src!} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        </div>
+                        {previewProjet.gallery.map((gImg, idx) => (
+                           <div 
+                             key={idx}
+                             onClick={() => setActiveImage(gImg)}
+                             style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
+                          >
+                             <img src={gImg} alt={`Gallery ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          </div>
+                        ))}
+                     </div>
+                  )}
+
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+                      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
+                      <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.6rem", background: "var(--revo-blue)", color: "#ffffff", borderRadius: "9999px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{previewProjet.cat}</span>
+                    </div>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
+                  </div>
+                  
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
+                    <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                      {previewProjet.tags.map(t => (
+                        <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
+                      ))}
+                    </div>
+
+                    {previewProjet.lien && (
+                      <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
+                        {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              {/* Scrollable content below */}
-              <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto" }}>
-                
-                {/* Galerie Thumbnails (if any) */}
-                {previewProjet.gallery && previewProjet.gallery.length > 0 && (
-                   <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
-                      <div 
-                         onClick={() => setActiveImage(previewProjet.src)}
-                         style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
-                      >
-                         <img src={previewProjet.src} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      </div>
-                      {previewProjet.gallery.map((gImg, idx) => (
-                         <div 
-                           key={idx}
-                           onClick={() => setActiveImage(gImg)}
-                           style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
-                        >
-                           <img src={gImg} alt={`Gallery ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        </div>
-                      ))}
-                   </div>
-                )}
-
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-                    <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
-                    <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.6rem", background: "var(--revo-blue)", color: "#ffffff", borderRadius: "9999px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{previewProjet.cat}</span>
-                  </div>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
+              {/* === MOBILE LAYOUT (Hidden on desktop) === */}
+              {/* On mobile, everything is simply stacked vertically and fully scrollable, creating a natural reading experience for many images. */}
+              <div className="flex md:hidden flex-col w-full h-full overflow-y-auto" style={{ maxHeight: "95vh" }}>
+                <div style={{ position: "relative", width: "100%", height: "40vh", flexShrink: 0, background: "var(--bg-elevated)", borderBottom: "1px solid var(--border)" }}>
+                  <Image
+                    src={previewProjet.src!}
+                    alt={previewProjet.titre}
+                    fill
+                    className="object-contain"
+                    sizes="100vw"
+                    priority
+                  />
                 </div>
-                
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
-                  <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+
+                <div style={{ padding: "1.25rem 1rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
+                      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.25rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
+                      <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.6rem", background: "var(--revo-blue)", color: "#ffffff", borderRadius: "9999px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{previewProjet.cat}</span>
+                    </div>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.6 }}>{previewProjet.desc}</p>
+                  </div>
+                  
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                     {previewProjet.tags.map(t => (
-                      <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
+                      <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.7rem", fontSize: "0.6rem", fontWeight: 500 }}>#{t}</span>
                     ))}
                   </div>
 
                   {previewProjet.lien && (
-                    <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-                      {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
+                    <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary w-fit mt-1" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.65rem 1.25rem", fontSize: "0.8rem" }}>
+                      {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={14} strokeWidth={2.5} />
                     </a>
                   )}
+                  
+                  {/* Gallery Feed (All Images Stacked) */}
+                  {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                    <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-[var(--border)]">
+                      <h4 style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie</h4>
+                      {previewProjet.gallery.map((gImg, idx) => (
+                        <div key={idx} style={{ position: "relative", width: "100%", background: "var(--bg-elevated)", borderRadius: "8px", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+                          {/* We use next/image with auto height for responsive images */}
+                          <img 
+                            src={gImg} 
+                            alt={`Gallery ${idx}`} 
+                            style={{ width: "100%", height: "auto", objectFit: "contain", maxHeight: "70vh" }} 
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                 </div>
               </div>
+
             </motion.div>
           </motion.div>
         )}

@@ -13,42 +13,112 @@ export default function Skills() {
           min-height: 220px;
           display: flex;
           flex-direction: column;
+          position: relative;
+          overflow: hidden;
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
         }
 
-        /* Type 1: Standard background with border */
+        .skill-card:hover {
+          transform: translateY(-6px);
+        }
+
+        /* Glossy overlay over the entire card */
+        .skill-card::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          border-radius: inherit;
+          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.02) 100%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        /* Type 1: Standard Light Glass */
         .skill-card-0 {
-          background: var(--bg);
+          background: linear-gradient(145deg, var(--bg-elevated), var(--bg));
           color: var(--text);
+          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.2);
           border: 1px solid var(--border);
         }
         .skill-card-0 .skill-zone { border-top: 1px solid var(--border); }
-        .skill-card-0 .skill-tag { background: var(--bg-layer); color: var(--text-secondary); }
+        .skill-card-0 .skill-tag { 
+          background: linear-gradient(145deg, var(--bg-layer), var(--bg));
+          color: var(--text-secondary);
+          box-shadow: inset 0 1px 2px rgba(255,255,255,0.5), 0 4px 6px -2px rgba(0,0,0,0.05);
+          border: 1px solid var(--border);
+        }
 
-        /* Type 2: Elevated background */
+        /* Type 2: Elevated Blue/Gray Glass */
         .skill-card-1 {
-          background: var(--bg-elevated);
+          background: linear-gradient(145deg, var(--bg), var(--bg-elevated));
           color: var(--text);
-          border: 1px solid transparent;
+          box-shadow: 0 15px 35px -10px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.3);
+          border: 1px solid var(--border);
         }
         .skill-card-1 .skill-zone { border-top: 1px solid var(--border); }
-        .skill-card-1 .skill-tag { background: var(--border); color: var(--text-secondary); }
+        .skill-card-1 .skill-tag { 
+           background: linear-gradient(145deg, var(--bg-elevated), var(--border));
+           color: var(--text);
+           box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 4px 10px -2px rgba(0,0,0,0.08);
+           border: 1px solid var(--border);
+        }
 
-        /* Type 3: Always Dark (Revolut black) */
+        /* Type 3: Deep Dark Glass */
         .skill-card-2 {
-          background: #191c1f;
+          background: linear-gradient(145deg, #2a2f35, #14171a);
           color: #ffffff;
-          border: 1px solid transparent;
+          box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
+          border: 1px solid rgba(255,255,255,0.08);
         }
         .skill-card-2 .skill-zone { border-top: 1px solid rgba(255,255,255,0.1); }
-        .skill-card-2 .skill-tag { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); }
+        .skill-card-2 .skill-tag { 
+          background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+          color: #ffffff;
+          box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), 0 5px 12px -2px rgba(0,0,0,0.3);
+          border: 1px solid rgba(255,255,255,0.1);
+        }
 
-        /* Shared tag styling */
+        /* Shared tag glassy styling */
         .skill-tag {
+          position: relative;
+          overflow: hidden;
           border-radius: 9999px;
-          padding: 0.25rem 0.75rem;
-          font-size: 0.72rem;
-          font-weight: 500;
+          padding: 0.4rem 0.9rem;
+          font-size: 0.75rem;
+          font-weight: 600;
           letter-spacing: 0.02em;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Glossy reflection on the tag */
+        .skill-tag::after {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0; height: 50%;
+          background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+          border-radius: inherit;
+          pointer-events: none;
+        }
+
+        .skill-tag:hover {
+           transform: translateY(-3px) scale(1.05);
+           filter: brightness(1.1);
+        }
+        
+        .skill-zone {
+           position: relative;
+           z-index: 10;
+        }
+        .skill-card h3 {
+           position: relative;
+           z-index: 10;
         }
       `}</style>
       

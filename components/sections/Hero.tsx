@@ -130,7 +130,10 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.38, duration: 0.6, ease }}
             >
-              Data Analyst junior & IT Support junior
+              Data Analyst Junior (Novice) & IT Support
+              <span style={{ display: "block", fontSize: "0.55em", color: "rgba(255,255,255,0.6)", marginTop: "0.4rem", fontWeight: 400 }}>
+                Avec une première expérience professionnelle dans le domaine
+              </span>
             </motion.p>
 
             {/* Tags */}

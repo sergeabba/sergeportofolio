@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s | Mbaitadjim Abba Serge",
   },
   description:
-    "Data Analyst spécialisé en Big Data, IA Générative et Prompt Engineering. Portfolio professionnel de Mbaitadjim Abba Serge — Dakar, Sénégal.",
+    "Data Analyst junior, avec une première expérience professionnelle en Big Data et IA. Portfolio professionnel de Mbaitadjim Abba Serge — Dakar, Sénégal.",
   keywords: [
     "Data Analyst", "Big Data", "IA Générative", "Prompt Engineering",
     "Power BI", "Python", "SQL", "Pandas", "Data Visualization",
@@ -39,15 +39,15 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     url: "https://sergeabba.com",
     siteName: "Portfolio — Mbaitadjim Abba Serge",
-    title: "Mbaitadjim Abba Serge — Data Analyst",
-    description: "Data Analyst spécialisé en Big Data, IA Générative et Prompt Engineering — Dakar, Sénégal",
+    title: "Mbaitadjim Abba Serge — Data Analyst junior",
+    description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
     countryName: "Sénégal",
     images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Mbaitadjim Abba Serge — Data Analyst Portfolio", type: "image/jpeg" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mbaitadjim Abba Serge — Data Analyst",
-    description: "Data Analyst spécialisé en Big Data, IA Générative et Prompt Engineering — Dakar, Sénégal",
+    title: "Mbaitadjim Abba Serge — Data Analyst junior",
+    description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
     images: ["/og-image.jpg"],
     creator: "@sergeabba",
   },

@@ -221,7 +221,7 @@ export default function Projects() {
               </button>
 
               {/* Image large */}
-              <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "40vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)", borderTopLeftRadius: "var(--radius-xl)", borderTopRightRadius: "var(--radius-xl)" }}>
                 <Image
                   src={activeImage || previewProjet.src!}
                   alt={previewProjet.titre}
@@ -237,10 +237,10 @@ export default function Projects() {
                 
                 {/* Galerie Thumbnails (if any) */}
                 {previewProjet.gallery && previewProjet.gallery.length > 0 && (
-                   <div style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                   <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
                       <div 
                          onClick={() => setActiveImage(previewProjet.src)}
-                         style={{ flexShrink: 0, width: 80, height: 60, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
+                         style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
                       >
                          <img src={previewProjet.src} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       </div>
@@ -248,7 +248,7 @@ export default function Projects() {
                          <div 
                            key={idx}
                            onClick={() => setActiveImage(gImg)}
-                           style={{ flexShrink: 0, width: 80, height: 60, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
+                           style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
                         >
                            <img src={gImg} alt={`Gallery ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>

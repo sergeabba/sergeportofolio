@@ -67,7 +67,7 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
       <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "1.25rem" }}>
         {projet.desc}
       </p>
-      
+
       {/* Actions (Aperçu + Lien) */}
       <div style={{ marginTop: "auto", display: "flex", gap: "0.75rem", alignItems: "center" }}>
         <button
@@ -92,16 +92,22 @@ export default function Projects() {
   const [filter, setFilter] = useState("Tous");
   const [projets, setProjets] = useState<Projet[]>([]);
   const [projetsLoading, setProjetsLoading] = useState(true);
-  
+
   // State pour la Preview Modal
   const [previewProjet, setPreviewProjet] = useState<Projet | null>(null);
+  const [activeImage, setActiveImage] = useState<string>("");
+
+  useEffect(() => {
+     if(previewProjet) setActiveImage(previewProjet.src);
+     else setActiveImage("");
+  }, [previewProjet]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
         setProjetsLoading(true);
         let { data, error } = await supabase.from("projets").select("*").order("position", { ascending: true, nullsFirst: false });
-        
+
         // S'il y a une erreur (colonne position manquante, etc), on essaie avec created_at
         if (error) {
           const fallback = await supabase.from("projets").select("*").order("created_at", { ascending: false });
@@ -137,7 +143,7 @@ export default function Projects() {
         .project-img-wrapper:hover img { transform: scale(1.05); }
         .project-img-wrapper:hover .project-img-overlay { opacity: 1 !important; }
       `}</style>
-      
+
       <section id="realisations" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
         <div className="container">
           <p className="section-eyebrow">Réalisations</p>
@@ -145,7 +151,7 @@ export default function Projects() {
             Mes projets.
           </h2>
           <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
-            Interfaces Power BI, scripts Python, IA générative et designs Canva.
+            Interfaces Power BI, Miniature youtube , IA générative et designs Canva.
           </p>
 
           {/* Filter pills */}
@@ -200,7 +206,7 @@ export default function Projects() {
           >
             {/* Backdrop */}
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }} onClick={() => setPreviewProjet(null)} />
-            
+
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -215,9 +221,9 @@ export default function Projects() {
               </button>
 
               {/* Image large */}
-              <div style={{ position: "relative", width: "100%", height: "60vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
                 <Image
-                  src={previewProjet.src!}
+                  src={activeImage || previewProjet.src!}
                   alt={previewProjet.titre}
                   fill
                   className="object-contain" // Contain pour voir l'image entière sans couper
@@ -226,8 +232,30 @@ export default function Projects() {
                 />
               </div>
 
-              {/* Footer info in Modal */}
-              <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {/* Scrollable content below */}
+              <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto" }}>
+                
+                {/* Galerie Thumbnails (if any) */}
+                {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                   <div style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                      <div 
+                         onClick={() => setActiveImage(previewProjet.src)}
+                         style={{ flexShrink: 0, width: 80, height: 60, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
+                      >
+                         <img src={previewProjet.src} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      </div>
+                      {previewProjet.gallery.map((gImg, idx) => (
+                         <div 
+                           key={idx}
+                           onClick={() => setActiveImage(gImg)}
+                           style={{ flexShrink: 0, width: 80, height: 60, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
+                        >
+                           <img src={gImg} alt={`Gallery ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        </div>
+                      ))}
+                   </div>
+                )}
+
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
                     <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
@@ -236,7 +264,7 @@ export default function Projects() {
                   <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
                 </div>
                 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
                   <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                     {previewProjet.tags.map(t => (
                       <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>

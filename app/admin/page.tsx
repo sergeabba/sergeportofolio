@@ -78,12 +78,13 @@ export default function AdminDashboard() {
   const [filterCat, setFilterCat] = useState<string>("Tous");
   
   const [file, setFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    titre: "", desc: "", cat: "Gaming", tags: "", src: "", lien: "", lienLabel: "Voir le projet"
+    titre: "", desc: "", cat: "Gaming", tags: "", src: "", lien: "", lienLabel: "Voir le projet", gallery: [] as string[]
   });
 
   const fetchProjets = async () => {
@@ -112,15 +113,17 @@ export default function AdminDashboard() {
       setFormData({
         titre: projet.titre, desc: projet.desc, cat: projet.cat,
         tags: projet.tags?.join(", ") || "", src: projet.src,
-        lien: projet.lien || "", lienLabel: projet.lienLabel || "Voir le projet"
+        lien: projet.lien || "", lienLabel: projet.lienLabel || "Voir le projet",
+        gallery: projet.gallery || []
       });
     } else {
       setEditingId(null);
       setFormData({
-        titre: "", desc: "", cat: "Gaming", tags: "", src: "", lien: "", lienLabel: "Voir le projet"
+        titre: "", desc: "", cat: "Gaming", tags: "", src: "", lien: "", lienLabel: "Voir le projet", gallery: []
       });
     }
-    setFile(null); // Reset file
+    setFile(null); // Reset cover
+    setGalleryFiles([]); // Reset gallery
     setIsModalOpen(true);
   };
 
@@ -132,16 +135,15 @@ export default function AdminDashboard() {
   };
 
   // Upload Fichier
-  const handleFileUpload = async () => {
-    if (!file) return null;
-    const fileExt = file.name.split('.').pop();
+  const handleFileUpload = async (fileToUpload: File) => {
+    const fileExt = fileToUpload.name.split('.').pop();
     const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
     const filePath = `uploads/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage.from('portfolio').upload(filePath, file);
+    const { error: uploadError } = await supabase.storage.from('portfolio').upload(filePath, fileToUpload);
 
     if (uploadError) {
-      alert("Erreur lors de l'upload : " + uploadError.message);
+      alert("Erreur lors de l'upload de : " + fileToUpload.name + " - " + uploadError.message);
       return null;
     }
 
@@ -156,8 +158,16 @@ export default function AdminDashboard() {
     let finalSrc = formData.src;
     
     if (file) {
-      const uploadedUrl = await handleFileUpload();
+      const uploadedUrl = await handleFileUpload(file);
       if (uploadedUrl) finalSrc = uploadedUrl;
+    }
+
+    let finalGalleryUrls = [...formData.gallery];
+    if (galleryFiles.length > 0) {
+       for (const gFile of galleryFiles) {
+          const uploadedUrl = await handleFileUpload(gFile);
+          if (uploadedUrl) finalGalleryUrls.push(uploadedUrl);
+       }
     }
 
     const tagsArray = formData.tags.split(",").map(t => t.trim()).filter(Boolean);
@@ -165,6 +175,7 @@ export default function AdminDashboard() {
       titre: formData.titre, desc: formData.desc, cat: formData.cat,
       tags: tagsArray, src: finalSrc, lien: formData.lien || null,
       lienLabel: formData.lienLabel || null,
+      gallery: finalGalleryUrls,
       // Nouveau projet = position à la fin
       ...( !editingId && { position: projets.length } )
     };
@@ -310,7 +321,7 @@ export default function AdminDashboard() {
 
                   {/* Upload Image ou URL */}
                   <div style={{ background: "rgba(226,59,74,0.03)", padding: "1rem", borderRadius: "12px", border: "1px dashed var(--border-strong)" }}>
-                    <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.6rem", color: "var(--text-secondary)" }}>Média du projet (Image ou Vidéo)</label>
+                    <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.6rem", color: "var(--text-secondary)" }}>Couverture Principale (Image ou Vidéo)</label>
                     
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                       {/* Choix 1: Fichier local */}
@@ -330,6 +341,44 @@ export default function AdminDashboard() {
                         <input value={file ? "" : formData.src} disabled={!!file} onChange={e => setFormData({...formData, src: e.target.value})} placeholder={file ? "Lien désactivé car fichier sélectionné" : "Coller un lien HTTPs direct (/images/test.jpg)"} className="form-input" style={{ width: "100%", paddingLeft: "2.5rem" }} />
                       </div>
                     </div>
+                  </div>
+
+                  {/* Galerie Upload */}
+                  <div style={{ background: "var(--bg-layer)", padding: "1rem", borderRadius: "12px", border: "1px dashed var(--border-strong)" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.6rem", color: "var(--text-secondary)" }}>Galerie Additionnelle <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.5rem", background: "var(--revo-blue)", color: "#fff", borderRadius: 9999 }}>NOUVEAU</span></label>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", marginBottom: "0.75rem" }}>Images à afficher en dessous dans la présentation détaillée du projet.</p>
+                    
+                    <label style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "0.5rem", background: "var(--bg-elevated)", border: "1px solid var(--border)", padding: "1rem", borderRadius: "8px", cursor: "pointer", fontSize: "0.85rem", textAlign: "center" }}>
+                      <Upload size={16} style={{ color: "var(--revo-blue)" }} />
+                      <span style={{ color: "var(--text-secondary)" }}>Ajouter des images...</span>
+                      <input type="file" multiple style={{ display: "none" }} onChange={(e) => { if (e.target.files) setGalleryFiles([...galleryFiles, ...Array.from(e.target.files)]); }} accept="image/*" />
+                    </label>
+
+                    {/* Aperçu Fichiers Selectionnés */}
+                    {galleryFiles.length > 0 && (
+                      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                        {galleryFiles.map((f, i) => (
+                           <div key={i} style={{ fontSize: "0.7rem", display: "flex", alignItems: "center", gap: "0.3rem", background: "var(--revo-black)", color: "#fff", padding: "0.3rem 0.6rem", borderRadius: "8px" }}>
+                              {f.name} <button type="button" onClick={() => setGalleryFiles(galleryFiles.filter((_, idx) => idx !== i))} style={{ background: "transparent", border: "none", color: "#fff", cursor: "pointer" }}>&times;</button>
+                           </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Fichiers Déjà en Ligne */}
+                    {formData.gallery.length > 0 && (
+                      <div style={{ marginTop: "1rem" }}>
+                         <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "0.5rem" }}>Images actuellement rattachées au projet ({formData.gallery.length}) :</p>
+                         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                            {formData.gallery.map((url, i) => (
+                               <div key={url} style={{ position: "relative", width: 60, height: 60, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" }}>
+                                  <img src={url} alt="Gallery item" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                  <button type="button" onClick={() => setFormData({...formData, gallery: formData.gallery.filter(u => u !== url)})} style={{ position: "absolute", top: 0, right: 0, background: "rgba(226,59,74,0.8)", border: "none", color: "#fff", cursor: "pointer", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", borderRadius: "0 0 0 8px" }}>&times;</button>
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ background: "var(--bg-layer)", padding: "1rem", borderRadius: "12px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>

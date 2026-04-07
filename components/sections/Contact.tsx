@@ -4,12 +4,12 @@ import { motion, type Easing } from "framer-motion";
 import ContactForm from "@/components/ContactForm";
 
 const LINKS = [
-  { label: "Email",          value: "abbaserge2@gmail.com",      href: "mailto:abbaserge2@gmail.com" },
-  { label: "Téléphone",      value: "+221 78 546 08 74",          href: "tel:+221785460874" },
-  { label: "LinkedIn",       value: "linkedin.com/in/sergeabba",  href: "https://linkedin.com/in/sergeabba" },
-  { label: "GitHub",         value: "github.com/sergeabba",       href: "https://github.com/sergeabba" },
-  { label: "YouTube Gaming", value: "@thelegendofdon4125",        href: "https://www.youtube.com/@thelegendofdon4125" },
-  { label: "Facebook",       value: "The Legend of Don",          href: "https://www.facebook.com/thelegendofdon/followers" },
+  { label: "Email", value: "abbaserge2@gmail.com", href: "mailto:abbaserge2@gmail.com" },
+  { label: "Téléphone", value: "+221 78 546 08 74", href: "tel:+221785460874" },
+  { label: "LinkedIn", value: "linkedin.com/in/sergeabba", href: "https://linkedin.com/in/sergeabba" },
+  { label: "GitHub", value: "github.com/sergeabba", href: "https://github.com/sergeabba" },
+  { label: "YouTube Gaming", value: "@thelegendofdon4125", href: "https://www.youtube.com/@thelegendofdon4125" },
+  { label: "Facebook", value: "The Legend of Don", href: "https://www.facebook.com/thelegendofdon/followers" },
 ];
 
 const ease: Easing = [0.22, 1, 0.36, 1];
@@ -45,7 +45,7 @@ export default function Contact() {
         >
           <span className="section-label">Contact</span>
           <h2 className="section-heading" style={{ maxWidth: "16ch" }}>
-            Parlons de votre projet
+            Construisons quelque chose ensemble
           </h2>
         </motion.div>
 

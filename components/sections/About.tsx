@@ -36,14 +36,14 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 function GitHubStatsManager() {
   const [repos, setRepos] = useState<number>(3); // Fallback à 3
-  
+
   useEffect(() => {
     fetch("https://api.github.com/users/sergeabba")
       .then(res => res.json())
       .then(data => {
         if (data.public_repos) setRepos(data.public_repos);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return <div style={{ display: "none" }} id="github-stats-bridge" data-repos={repos} />;
@@ -306,9 +306,9 @@ export default function About() {
                   Live GitHub Activity
                 </span>
               </div>
-              <a 
-                href="https://github.com/sergeabba" 
-                target="_blank" 
+              <a
+                href="https://github.com/sergeabba"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="pill"
                 style={{ fontSize: "0.6rem", textDecoration: "none", background: "rgba(255,255,255,0.05)" }}
@@ -316,22 +316,22 @@ export default function About() {
                 @sergeabba
               </a>
             </div>
-            
+
             <div style={{ overflowX: "auto", overflowY: "hidden", padding: "0.5rem 0" }}>
-              <img 
-                src="https://ghchart.rshah.org/191c1f/sergeabba" 
-                alt="GitHub Contributions" 
-                style={{ 
-                  filter: "invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)", 
+              <img
+                src="https://ghchart.rshah.org/191c1f/sergeabba"
+                alt="GitHub Contributions"
+                style={{
+                  filter: "invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)",
                   minWidth: "700px",
                   height: "auto",
                   opacity: 0.8
-                }} 
+                }}
               />
             </div>
-            
+
             <p style={{ marginTop: "1rem", fontSize: "0.65rem", color: "var(--text-tertiary)", textAlign: "center", fontStyle: "italic" }}>
-              "Vibecoding : Transformer le café en commits, un prompt à la fois."
+              "Toujours curieux d'apprendre et de créer des solutions utiles au quotidien."
             </p>
           </div>
         </motion.div>

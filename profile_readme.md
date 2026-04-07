@@ -15,10 +15,10 @@ Passionné par la fusion entre la **Donnée**, l'**IA Générative** et le **Des
 
 ## 🛠️ Toolbox Technique
 
-- **Data**: SQL, Python (Pandas/NumPy), Power BI, PySpark, Scala.
+- **Data**: SQL, Python (Pandas/NumPy), Power BI, PySpark.
 - **AI**: Prompt Engineering, Midjourney, Generative UI, OpenAI API.
 - **Web**: Next.js, React, Framer Motion, Supabase.
-- **Tools**: Windows/Linux, Figma, Canva.
+- **Systèmes & IT**: Windows, Linux Mint, VirtualBox, Scripting Shell, Figma, Canva.
 
 ---
 

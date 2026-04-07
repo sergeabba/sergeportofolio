@@ -33,8 +33,8 @@ export const SKILL_CATEGORIES = [
     tags: ["Python", "C++", "C"],
   },
   {
-    title: "Big Data & Cloud",
-    tags: ["Scala", "Spark", "PySpark"],
+    title: "Systèmes & OS",
+    tags: ["Windows", "Linux Mint", "VirtualBox", "Scripting Shell", "Spark", "PySpark"],
   },
   {
     title: "Design & UI/UX",
@@ -96,7 +96,7 @@ export const EXPERIENCES: ExperienceItem[] = [
     date: "2021 – 2023",
     index: "02",
     desc: "Master en Big Data & Data Stratégie au sein de Digital Campus (Groupe ISM).",
-    tags: ["Big Data", "Data Strategy", "Spark", "Scala"],
+    tags: ["Big Data", "Data Strategy", "Spark", "Ecosysteme Hadoop"],
   },
   {
     type: "education",
@@ -171,7 +171,7 @@ export const ABOUT_FACTS = [
 export const MARQUEE_SKILLS = [
   "Power BI", "Python", "SQL", "Pandas", "Spark",
   "IA Générative", "Prompt Engineering", "Figma", "Photoshop",
-  "Data Visualization", "WordPress", "Scala", "Big Data",
+  "Windows", "Linux Mint", "VirtualBox", "Big Data",
 ];
 
 export const MARQUEE_ICONS: Record<string, string> = {
@@ -186,7 +186,9 @@ export const MARQUEE_ICONS: Record<string, string> = {
   "Photoshop": "ph-image",
   "Data Visualization": "ph-chart-bar",
   "WordPress": "ph-globe",
-  "Scala": "ph-terminal",
+  "Windows": "ph-windows-logo",
+  "Linux Mint": "ph-linux-logo",
+  "VirtualBox": "ph-hard-drives",
   "Big Data": "ph-stack",
 };
 
@@ -215,7 +217,7 @@ export const PROJETS_DATA: any[] = [
     "titre": "Spark Streaming Log Analysis",
     "desc": "Pipeline PySpark pour traitement temps réel logs applicatifs (projet Master Big Data).",
     "cat": "Data",
-    "tags": ["PySpark", "Big Data", "Scala", "Streaming"],
+    "tags": ["PySpark", "Big Data", "Linux", "Streaming"],
     "lien": "https://github.com/sergeabba/spark-logs",
     "lienLabel": "Dépôt GitHub"
   }

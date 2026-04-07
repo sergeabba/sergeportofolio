@@ -165,12 +165,12 @@ export default function Skills() {
                   <h3
                     style={{
                       fontFamily: "var(--font-display)",
-                      fontWeight: 500,
-                      fontSize: "clamp(1.05rem, 1.5vw, 1.25rem)",
+                      fontWeight: 800,
+                      fontSize: "clamp(1.1rem, 1.5vw, 1.35rem)",
                       letterSpacing: "-0.02em",
                       lineHeight: 1.2,
                       marginBottom: "auto",
-                      paddingBottom: "1rem",
+                      paddingBottom: "1.5rem",
                     }}
                   >
                     {cat.title}

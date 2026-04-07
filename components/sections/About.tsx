@@ -8,7 +8,7 @@ import { ABOUT_FACTS } from "@/lib/data";
 function Counter({ target, suffix }: { target: number; suffix: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0 });
-  
+
   useEffect(() => {
     if (!isInView) return;
     let start = 0;
@@ -16,7 +16,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
     const stepTime = 50;
     const steps = duration / stepTime;
     const increment = target / steps;
-    
+
     const timer = setInterval(() => {
       start += increment;
       if (ref.current) ref.current.textContent = Math.floor(start).toString() + suffix;
@@ -25,7 +25,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
         clearInterval(timer);
       }
     }, stepTime);
-    
+
     return () => clearInterval(timer);
   }, [isInView, target, suffix]);
 
@@ -51,7 +51,7 @@ export default function About() {
           <span className="section-label">À propos</span>
           <h2 className="section-heading">Qui suis-je&nbsp;?</h2>
           <p className="section-desc" style={{ marginTop: "0.6rem" }}>
-            Data Analyst junior, passionné par la donnée, l&apos;IA et la création visuelle.
+            Data Analyst junior & IT Support, passionné par la donnée, l&apos;IA et la création visuelle.
           </p>
         </div>
       </motion.div>

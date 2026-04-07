@@ -123,13 +123,13 @@ export const CONTACT_LINKS: ContactLink[] = [
     label: "Email",
     value: "abbaserge2@gmail.com",
     href: "mailto:abbaserge2@gmail.com",
-    icon: "✉",
+    icon: "Email",
   },
   {
     label: "Téléphone",
     value: "78 546 08 74",
     href: "tel:+221785460874",
-    icon: "☎",
+    icon: "Tel",
   },
   {
     label: "LinkedIn",
@@ -147,7 +147,7 @@ export const CONTACT_LINKS: ContactLink[] = [
     label: "YouTube Gaming",
     value: "@thelegendofdon4125",
     href: "https://www.youtube.com/@thelegendofdon4125",
-    icon: "▶",
+    icon: "YT",
   },
   {
     label: "Facebook Gaming",

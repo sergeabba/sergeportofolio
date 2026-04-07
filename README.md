@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Modern Data Portfolio & Dashboard
 
-## Getting Started
+Un portfolio haute performance conçu pour un **Data Analyst & Prompt Engineer**. Construit avec **Next.js 16**, **Framer Motion** et une architecture modulaire inspirée du design system de Revolut.
 
-First, run the development server:
+![Aperçu du Portfolio](https://github.com/sergeabba/portofolio/raw/main/public/og-image.jpg)
+
+## 🛠️ Stack Technique
+
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Styling**: Vanilla CSS + CSS Variables (Design System custom)
+- **Base de données**: [Supabase](https://supabase.com/) (Gestion des projets & admin)
+- **Typographie**: Aeonik Pro & Inter (via Geist)
+- **Déploiement**: [Vercel](https://vercel.com/)
+
+## ✨ Fonctionnalités Clés
+
+- **Bento Stats**: Statistiques dynamiques (Expérience, Projets, Skills).
+- **Project Showcase**: Filtrage par catégorie (Data, IA, Gaming).
+- **CV Interactif**: Visualisation du parcours professionnel et académique.
+- **Support Multi-images**: Gestion de galeries complexes via Supabase Storage.
+- **Mode Admin**: Interface sécurisée pour gérer les projets en temps réel.
+- **Optimisation SEO**: Balises dynamiques et structure sémantique.
+
+## 📊 Projets Phares Intégrés
+
+1. **Wemoov Dashboard**: Analyse des performances de flotte via Power BI.
+2. **Vehicle Analysis**: Nettoyage et EDA de données massives (Python/Pandas).
+3. **Spark Streaming**: Pipeline de traitement de logs en temps réel (PySpark).
+
+## 🚀 Installation & Développement
 
 ```bash
+# Cloner le dépôt
+git clone https://github.com/sergeabba/portofolio.git
+
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Propulsé par l'innovation et la donnée. Créé par **Mbaitadjim Abba Serge**.

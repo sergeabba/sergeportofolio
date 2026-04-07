@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import MouseSpotCard from "@/components/MouseSpotCard";
 import { ABOUT_FACTS } from "@/lib/data";
 
@@ -34,12 +34,42 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+function GitHubStatsManager() {
+  const [repos, setRepos] = useState<number>(3); // Fallback à 3
+  
+  useEffect(() => {
+    fetch("https://api.github.com/users/sergeabba")
+      .then(res => res.json())
+      .then(data => {
+        if (data.public_repos) setRepos(data.public_repos);
+      })
+      .catch(() => {});
+  }, []);
+
+  return <div style={{ display: "none" }} id="github-stats-bridge" data-repos={repos} />;
+}
+
 export default function About() {
+  const [reposCount, setReposCount] = useState(3);
+
+  useEffect(() => {
+    const checkStats = setInterval(() => {
+      const el = document.getElementById("github-stats-bridge");
+      if (el) {
+        const val = parseInt(el.getAttribute("data-repos") || "3");
+        if (val !== reposCount) setReposCount(val);
+      }
+    }, 500);
+    return () => clearInterval(checkStats);
+  }, [reposCount]);
+
   return (
     <section id="quisuisje" style={{ background: "var(--bg)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
       {/* Floating orbes */}
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
+
+      <GitHubStatsManager />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -237,7 +267,7 @@ export default function About() {
                 { val: 1, suffix: " an", label: "d'expérience pro" },
                 { val: 5, suffix: "+", label: "outils data maîtrisés" },
                 { val: 92, suffix: "%", label: "IA & Prompt Eng." },
-                { val: 3, suffix: "", label: "projets livrés" },
+                { val: reposCount, suffix: "", label: "repositories GitHub" },
               ].map(({ val, suffix, label }, i) => (
                 <motion.div
                   key={label}
@@ -258,6 +288,52 @@ export default function About() {
               ))}
             </div>
           </MouseSpotCard>
+        </motion.div>
+
+        {/* GitHub Graph - Extra Vibe for Vibecoder */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.65, delay: 0.5, ease }}
+          style={{ marginTop: "1.5rem" }}
+        >
+          <div className="glass" style={{ padding: "1.5rem", borderRadius: "var(--radius-xl)", border: "1px solid var(--glass-border-h)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 10px #22c55e" }} />
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-secondary)" }}>
+                  Live GitHub Activity
+                </span>
+              </div>
+              <a 
+                href="https://github.com/sergeabba" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="pill"
+                style={{ fontSize: "0.6rem", textDecoration: "none", background: "rgba(255,255,255,0.05)" }}
+              >
+                @sergeabba
+              </a>
+            </div>
+            
+            <div style={{ overflowX: "auto", overflowY: "hidden", padding: "0.5rem 0" }}>
+              <img 
+                src="https://ghchart.rshah.org/191c1f/sergeabba" 
+                alt="GitHub Contributions" 
+                style={{ 
+                  filter: "invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1)", 
+                  minWidth: "700px",
+                  height: "auto",
+                  opacity: 0.8
+                }} 
+              />
+            </div>
+            
+            <p style={{ marginTop: "1rem", fontSize: "0.65rem", color: "var(--text-tertiary)", textAlign: "center", fontStyle: "italic" }}>
+              "Vibecoding : Transformer le café en commits, un prompt à la fois."
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>

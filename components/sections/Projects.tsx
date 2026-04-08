@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";

@@ -223,7 +223,7 @@ export default function About() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {[
                     { abbr: "M", title: "Master Big Data & Data Strategie", sub: "2021 &ndash; 2023", place: "Digital Campus", color: "var(--accent)" },
-                    { abbr: "L", title: "Licence LIAGE", sub: "2018 &ndash; 2021", place: "Ecole d'Ingenieurs ISM", color: "var(--accent-warm)" },
+                    { abbr: "L", title: "Licence IAGE", sub: "2018 &ndash; 2021", place: "Ecole d'Ingenieurs ISM", color: "var(--accent-warm)" },
                     { abbr: "B", title: "Baccalaureat Litteraire", sub: "2017 &ndash; 2018", place: "Lycee Saint-Etienne", color: "var(--text-tertiary)" },
                   ].map(({ abbr, title, sub, place, color }, i) => (
                     <motion.div

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
-import { X, ExternalLink, ZoomIn } from "lucide-react";
+import { X, ExternalLink, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 
 function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: number; onPreview: (p: Projet) => void }) {
   let safeSrc = projet.src?.trim() || "/projets/gaming/gaming-2.jpg";
@@ -96,6 +96,23 @@ export default function Projects() {
   // State pour la Preview Modal
   const [previewProjet, setPreviewProjet] = useState<Projet | null>(null);
   const [activeImage, setActiveImage] = useState<string>("");
+
+  const allImages = useMemo(() => {
+    if (!previewProjet) return [];
+    return [previewProjet.src, ...(previewProjet.gallery || [])].filter(Boolean);
+  }, [previewProjet]);
+
+  const currentImageIndex = useMemo(() => {
+    return allImages.indexOf(activeImage);
+  }, [allImages, activeImage]);
+
+  const nextImage = useCallback(() => {
+    setActiveImage(allImages[(currentImageIndex + 1) % allImages.length]);
+  }, [allImages, currentImageIndex]);
+
+  const prevImage = useCallback(() => {
+    setActiveImage(allImages[(currentImageIndex - 1 + allImages.length) % allImages.length]);
+  }, [allImages, currentImageIndex]);
 
   useEffect(() => {
      if(previewProjet) setActiveImage(previewProjet.src);
@@ -221,19 +238,42 @@ export default function Projects() {
                 <X size={20} strokeWidth={2.5} />
               </button>
 
-              {/* === DESKTOP LAYOUT (Hidden on mobile) === */}
-              <div className="hidden md:flex flex-col w-full h-full" style={{ maxHeight: "95vh" }}>
-                 {/* Image large */}
-                <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
-                  <Image
-                    src={activeImage || previewProjet.src!}
-                    alt={previewProjet.titre}
-                    fill
-                    className="object-contain" // Contain pour voir l'image entière sans couper
-                    sizes="100vw"
-                    priority
-                  />
-                </div>
+               {/* === DESKTOP LAYOUT (Hidden on mobile) === */}
+               <div className="hidden md:flex flex-col w-full h-full" style={{ maxHeight: "95vh" }}>
+                  {/* Image large */}
+                 <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
+                   <Image
+                     src={activeImage || previewProjet.src!}
+                     alt={previewProjet.titre}
+                     fill
+                     className="object-contain" // Contain pour voir l'image entière sans couper
+                     sizes="100vw"
+                     priority
+                   />
+
+                   {/* Navigation Arrows */}
+                   {allImages.length > 1 && (
+                     <>
+                       <button 
+                         onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                         style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                         onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                         onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                       >
+                         <ChevronLeft size={24} strokeWidth={2.5} />
+                       </button>
+                       <button 
+                         onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                         style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                         onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                         onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                       >
+                         <ChevronRight size={24} strokeWidth={2.5} />
+                       </button>
+                     </>
+                   )}
+                 </div>
+
 
                 {/* Scrollable content below */}
                 <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto", flexGrow: 1 }}>
@@ -266,20 +306,58 @@ export default function Projects() {
                     <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
                   </div>
                   
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
-                    <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                      {previewProjet.tags.map(t => (
-                        <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
-                      ))}
-                    </div>
+                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
+                     <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                       {previewProjet.tags.map(t => (
+                         <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
+                       ))}
+                     </div>
+ 
+                     {previewProjet.lien && (
+                       <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
+                         {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
+                       </a>
+                     )}
+                   </div>
 
-                    {previewProjet.lien && (
-                      <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-                        {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
-                      </a>
-                    )}
-                  </div>
-                </div>
+                   {/* Desktop Gallery Feed (Mirrors Mobile Experience for many images) */}
+                   {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                     <div className="flex flex-col gap-6 mt-10 pt-8 border-t border-[var(--border)]">
+                       <h4 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie complète</h4>
+                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1.5rem" }}>
+                         {allImages.map((img, idx) => (
+                           <div 
+                             key={idx} 
+                             onClick={() => setActiveImage(img)}
+                             style={{ 
+                               position: "relative", 
+                               borderRadius: "var(--radius-card)", 
+                               overflow: "hidden", 
+                               cursor: "pointer", 
+                               border: activeImage === img ? "2px solid var(--revo-blue)" : "2px solid transparent",
+                               transition: "all 0.3s",
+                               aspectRatio: "4/3",
+                               background: "var(--bg-elevated)"
+                             }}
+                             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
+                             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                           >
+                             <img 
+                               src={img} 
+                               alt={`Project visual ${idx}`} 
+                               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                               loading="lazy" 
+                             />
+                             {activeImage === img && (
+                               <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,255,0.1)", pointerEvents: "none" }} />
+                             )}
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                 </div>
+
               </div>
 
               {/* === MOBILE LAYOUT (Hidden on desktop) === */}

@@ -203,8 +203,8 @@ export default function About() {
                       Stage &mdash; Data Analyse
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin &ndash; Oct. 2024</span>
-                      <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.18)", color: "#86EFAC" }}>Termine</span>
+                      <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin 2024&ndash; Oct. 2025</span>
+                      <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.18)", color: "#86EFAC" }}>Terminé</span>
                     </div>
                   </div>
                 </motion.div>

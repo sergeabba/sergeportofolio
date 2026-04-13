@@ -34,42 +34,23 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-function GitHubStatsManager() {
-  const [repos, setRepos] = useState<number>(3); // Fallback à 3
+export default function About() {
+  const [reposCount, setReposCount] = useState(3);
 
   useEffect(() => {
     fetch("https://api.github.com/users/sergeabba")
       .then(res => res.json())
       .then(data => {
-        if (data.public_repos) setRepos(data.public_repos);
+        if (data.public_repos) setReposCount(data.public_repos);
       })
       .catch(() => { });
   }, []);
-
-  return <div style={{ display: "none" }} id="github-stats-bridge" data-repos={repos} />;
-}
-
-export default function About() {
-  const [reposCount, setReposCount] = useState(3);
-
-  useEffect(() => {
-    const checkStats = setInterval(() => {
-      const el = document.getElementById("github-stats-bridge");
-      if (el) {
-        const val = parseInt(el.getAttribute("data-repos") || "3");
-        if (val !== reposCount) setReposCount(val);
-      }
-    }, 500);
-    return () => clearInterval(checkStats);
-  }, [reposCount]);
 
   return (
     <section id="quisuisje" style={{ background: "var(--bg)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
       {/* Floating orbes */}
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
-
-      <GitHubStatsManager />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

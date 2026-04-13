@@ -1,10 +1,36 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { supabase } from '@/lib/supabase';
 import fs from 'fs';
 import path from 'path';
 
+async function verifyToken(token: string, secret: string): Promise<boolean> {
+  const encoder = new TextEncoder()
+  const keyData = encoder.encode(secret)
+  const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['verify'])
+  const data = encoder.encode('admin-session')
+  const tokenBytes = new Uint8Array(token.match(/.{2}/g)!.map(b => parseInt(b, 16)))
+  return crypto.subtle.verify('HMAC', key, tokenBytes, data)
+}
+
 export async function GET() {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+    }
+
+    const secret = process.env.ADMIN_PASSWORD;
+    if (!secret) {
+      return NextResponse.json({ error: 'Configuration serveur manquante' }, { status: 500 });
+    }
+
+    const valid = await verifyToken(token, secret);
+    if (!valid) {
+      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
+    }
+
     // 1. Lire le fichier data.json actuel
     const dataPath = path.join(process.cwd(), 'public', 'projets', 'data.json');
     const fileContents = fs.readFileSync(dataPath, 'utf8');

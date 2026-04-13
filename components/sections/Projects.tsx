@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";
@@ -31,6 +31,7 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
         }}
         role="button"
         tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPreview({ ...projet, src: safeSrc }); } }}
       >
         <Image
           src={safeSrc}
@@ -149,6 +150,31 @@ export default function Projects() {
     return () => { document.body.style.overflow = "auto"; };
   }, [previewProjet]);
 
+  // Focus trap dans la modale
+  useEffect(() => {
+    if (!previewProjet) return;
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const dialog = document.querySelector('[role="dialog"]');
+      if (!dialog) return;
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'button, a[href], [tabindex]:not([tabindex="-1"]), input, textarea, select'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", handleTab);
+    return () => document.removeEventListener("keydown", handleTab);
+  }, [previewProjet]);
+
   const filteredProjets = useMemo(
     () => filter === "Tous" ? projets : projets.filter(p => p.cat === filter),
     [filter, projets]
@@ -229,11 +255,15 @@ export default function Projects() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-5xl bg-[var(--bg)] rounded-[var(--radius-xl)] overflow-hidden flex flex-col shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
               style={{ maxHeight: "95vh" }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Aperçu du projet ${previewProjet.titre}`}
             >
               {/* Close btn */}
               <button
                 onClick={() => setPreviewProjet(null)}
                 style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 50, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)" }}
+                aria-label="Fermer l'aperçu"
               >
                 <X size={20} strokeWidth={2.5} />
               </button>
@@ -254,20 +284,22 @@ export default function Projects() {
                    {/* Navigation Arrows */}
                    {allImages.length > 1 && (
                      <>
-                       <button 
-                         onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                         style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
-                         onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
-                         onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
-                       >
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                          style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                          onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                          aria-label="Image précédente"
+                        >
                          <ChevronLeft size={24} strokeWidth={2.5} />
                        </button>
-                       <button 
-                         onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                         style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
-                         onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
-                         onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
-                       >
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                          style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                          onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                          aria-label="Image suivante"
+                        >
                          <ChevronRight size={24} strokeWidth={2.5} />
                        </button>
                      </>

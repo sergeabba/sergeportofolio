@@ -3,6 +3,15 @@ import { Resend } from "resend";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 type ContactRequest = {
   name?: string;
   email?: string;
@@ -43,20 +52,20 @@ export async function POST(req: NextRequest) {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280; width: 100px;">Nom</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${name}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${escapeHtml(name)}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280;">Email</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5;"><a href="mailto:${email}" style="color: #494fdf;">${email}</a></td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5;"><a href="mailto:${escapeHtml(email)}" style="color: #494fdf;">${escapeHtml(email)}</a></td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-weight: 600; color: #6b7280;">Sujet</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${subject}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f0f2f5; color: #191c1f;">${escapeHtml(subject)}</td>
               </tr>
             </table>
             <div style="margin-top: 20px; padding: 16px; background: #f0f2f5; border-radius: 8px;">
               <p style="font-weight: 600; color: #6b7280; margin-bottom: 8px;">Message :</p>
-              <p style="color: #191c1f; white-space: pre-wrap; line-height: 1.7;">${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+              <p style="color: #191c1f; white-space: pre-wrap; line-height: 1.7;">${escapeHtml(message)}</p>
             </div>
           </div>
         `,

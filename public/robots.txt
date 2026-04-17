@@ -1,5 +1,5 @@
 # Robots.txt pour Mbaitadjim Abba Serge - Portfolio
-# https://sergeabba.com
+# https://sergeportfolio.vercel.app
 
 User-agent: *
 Allow: /
@@ -8,7 +8,7 @@ Allow: /
 Allow: /
 
 # Fichier sitemap
-Sitemap: https://sergeabba.com/sitemap.xml
+Sitemap: https://sergeportfolio.vercel.app/sitemap.xml
 
 # Règles spécifiques pour les bots
 User-agent: Googlebot

@@ -2,10 +2,10 @@ import { MetadataRoute } from 'next';
 
 /**
  * Sitemap généré dynamiquement pour le portfolio
- * URL: https://sergeabba.com/sitemap.xml
+ * URL: https://sergeportfolio.vercel.app/sitemap.xml
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://sergeabba.com';
+  const baseUrl = 'https://sergeportfolio.vercel.app';
 
   return [
     {

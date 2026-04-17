@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sergeabba.com"),
+  metadataBase: new URL("https://sergeportfolio.vercel.app"),
   title: {
     default: "Mbaitadjim Abba Serge — Data Analyst · Portfolio",
     template: "%s | Mbaitadjim Abba Serge",
@@ -30,14 +30,14 @@ export const metadata: Metadata = {
     "Power BI", "Python", "SQL", "Pandas", "Data Visualization",
     "Dakar", "Sénégal", "Portfolio", "Mbaitadjim Abba Serge",
   ],
-  authors: [{ name: "Mbaitadjim Abba Serge", url: "https://sergeabba.com" }],
+  authors: [{ name: "Mbaitadjim Abba Serge", url: "https://sergeportfolio.vercel.app" }],
   creator: "Mbaitadjim Abba Serge",
   publisher: "Mbaitadjim Abba Serge",
   formatDetection: { email: false, address: false, telephone: false },
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://sergeabba.com",
+    url: "https://sergeportfolio.vercel.app",
     siteName: "Portfolio — Mbaitadjim Abba Serge",
     title: "Mbaitadjim Abba Serge — Data Analyst junior",
     description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
@@ -63,7 +63,7 @@ const jsonLd = {
   "@type": "Person",
   name: "Mbaitadjim Abba Serge",
   jobTitle: "Data Analyst",
-  url: "https://sergeabba.com",
+  url: "https://sergeportfolio.vercel.app",
   address: { "@type": "PostalAddress", addressLocality: "Dakar", addressCountry: "SN" },
   alumniOf: { "@type": "EducationalOrganization", name: "ISM Digital Campus" },
   knowsAbout: ["Big Data", "Data Analysis", "Artificial Intelligence", "Prompt Engineering"],

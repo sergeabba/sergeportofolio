@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { rateLimit } from '@/lib/rate-limit'
+
+const loginLimiter = rateLimit({ windowMs: 60_000, maxRequests: 5 })
 
 async function generateToken(secret: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -12,6 +15,15 @@ async function generateToken(secret: string): Promise<string> {
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const { allowed, retryAfterMs } = loginLimiter(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Trop de tentatives. Réessayez dans quelques instants.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+      );
+    }
+
     const { password } = await request.json()
     
     if (password === process.env.ADMIN_PASSWORD) {

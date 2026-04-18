@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { rateLimit } from "@/lib/rate-limit";
+
+const contactLimiter = rateLimit({ windowMs: 300_000, maxRequests: 3 });
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -27,6 +30,15 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "Portfolio <onboarding@resen
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const { allowed, retryAfterMs } = contactLimiter(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Trop de messages envoyés. Réessayez dans quelques instants.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(retryAfterMs / 1000)) } }
+      );
+    }
+
     const body = (await req.json()) as ContactRequest;
     const name = body.name?.trim() ?? "";
     const email = body.email?.trim() ?? "";

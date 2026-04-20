@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { rateLimit } from '@/lib/rate-limit'
+import { generateToken, ADMIN_COOKIE_MAX_AGE } from '@/lib/auth'
 
 const loginLimiter = rateLimit({ windowMs: 60_000, maxRequests: 5 })
-
-async function generateToken(secret: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const keyData = encoder.encode(secret)
-  const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-  const data = encoder.encode('admin-session')
-  const signature = await crypto.subtle.sign('HMAC', key, data)
-  return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 export async function POST(request: Request) {
   try {
@@ -35,13 +27,14 @@ export async function POST(request: Request) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        path: '/'
+        path: '/',
+        maxAge: ADMIN_COOKIE_MAX_AGE,
       });
       return NextResponse.json({ success: true });
     }
     
     return NextResponse.json({ success: false, error: "Mot de passe incorrect" }, { status: 401 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
+import type { Projet } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { Plus, Edit2, Trash2, LogOut, Loader2, Link as LinkIcon, Image as ImageIcon, GripVertical, Upload } from "lucide-react";
 
@@ -15,7 +16,13 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 // --- Composant Carte Triable ---
-function SortableProjectCard({ projet, handleOpenModal, handleDelete }: any) {
+interface SortableCardProps {
+  projet: Projet & { id: string; position?: number };
+  handleOpenModal: (projet?: Projet & { id: string }) => void;
+  handleDelete: (id: string) => void;
+}
+
+function SortableProjectCard({ projet, handleOpenModal, handleDelete }: SortableCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: projet.id });
 
   const style = {
@@ -69,7 +76,7 @@ function SortableProjectCard({ projet, handleOpenModal, handleDelete }: any) {
 
 // --- Dashboard ---
 export default function AdminDashboard() {
-  const [projets, setProjets] = useState<any[]>([]);
+  const [projets, setProjets] = useState<(Projet & { id: string; position?: number })[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [isModalOpen, setIsModalOpen] = useState(false);

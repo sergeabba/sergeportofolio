@@ -37,7 +37,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-[var(--border)]">
+      <div style={{ background: "var(--bg-elevated)", borderRadius: "1rem", padding: "2rem", border: "1px solid var(--border)", maxWidth: "420px", width: "100%" }}>
         <h1 className="text-2xl font-bold mb-6 text-center" style={{ fontFamily: "var(--font-display)", color: "var(--text)" }}>
           Administration
         </h1>

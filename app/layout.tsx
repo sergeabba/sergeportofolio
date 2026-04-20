@@ -20,7 +20,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://sergeportfolio.vercel.app"),
   title: {
-    default: "Mbaitadjim Abba Serge  Data Analyst · Portfolio",
+    default: "Mbaitadjim Abba Serge — Data Analyst · Portfolio",
     template: "%s | Mbaitadjim Abba Serge",
   },
   description:
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     url: "https://sergeportfolio.vercel.app",
-    siteName: "Portfolio  Mbaitadjim Abba Serge",
+    siteName: "Portfolio — Mbaitadjim Abba Serge",
     title: "Mbaitadjim Abba Serge — Data Analyst junior",
     description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
     countryName: "Sénégal",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     index: true, follow: true,
     googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
-  verification: { google: "your-google-verification-code", yandex: "your-yandex-verification-code" },
+  // verification: { google: "xxx", yandex: "xxx" }, // Add real codes from Search Console
 };
 
 const jsonLd = {
@@ -74,8 +74,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={`${jakarta.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-        <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
       </head>
       <body style={{ fontFamily: "var(--font-body, sans-serif)", fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"' }}>
         <ThemeProvider>{children}</ThemeProvider>

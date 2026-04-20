@@ -1,4 +1,4 @@
-import type { ExperienceItem, ContactLink, SkillBar as SkillBarType } from "./types";
+import type { ExperienceItem, ContactLink, SkillBar as SkillBarType, Projet } from "./types";
 
 export const CV_LINK = "/cv.pdf";
 
@@ -220,7 +220,7 @@ export const MARQUEE_ICONS: Record<string, string> = {
 };
 
 // Nouveaux projets DATA pour équilibrer portfolio
-export const PROJETS_DATA: any[] = [
+export const PROJETS_DATA: Projet[] = [
   {
     "src": "/projets/data/wemoov-dashboard.jpg",
     "titre": "Dashboard Power BI Wemoov",

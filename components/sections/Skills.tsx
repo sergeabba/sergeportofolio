@@ -167,17 +167,17 @@ export default function Skills() {
           border: 1px solid var(--border);
         }
         .skill-card-2 {
-          background: linear-gradient(145deg, #2a2f35, #14171a);
-          color: #ffffff;
+          background: linear-gradient(145deg, var(--bg-elevated), var(--bg));
+          color: var(--text);
           box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid var(--border);
         }
-        .skill-card-2 .skill-zone { border-top: 1px solid rgba(255,255,255,0.1); }
+        .skill-card-2 .skill-zone { border-top: 1px solid var(--border); }
         .skill-card-2 .skill-tag {
-          background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
-          color: #ffffff;
-          box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), 0 5px 12px -2px rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(145deg, var(--bg-layer), var(--bg));
+          color: var(--text-secondary);
+          box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 5px 12px -2px rgba(0,0,0,0.15);
+          border: 1px solid var(--border);
         }
         .skill-tag {
           position: relative; overflow: hidden;
@@ -190,7 +190,7 @@ export default function Skills() {
         .skill-tag::after {
           content: "";
           position: absolute; top: 0; left: 0; right: 0; height: 50%;
-          background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+          background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
           border-radius: inherit; pointer-events: none;
         }
         .skill-tag:hover { transform: translateY(-3px) scale(1.05); filter: brightness(1.1); }

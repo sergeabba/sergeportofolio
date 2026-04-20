@@ -6,7 +6,8 @@ import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
-import { X, ExternalLink, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import BrowserMockup from "@/components/BrowserMockup";
 
 function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: number; onPreview: (p: Projet) => void }) {
   let safeSrc = projet.src?.trim() || "/projets/gaming/gaming-2.jpg";
@@ -21,44 +22,16 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
       transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       style={{ display: "flex", flexDirection: "column" }}
     >
-      {/* Image (Clique -> Aperçu) */}
-      <div
-        onClick={() => onPreview({ ...projet, src: safeSrc })}
-        className="project-img-wrapper"
-        style={{
-          position: "relative", height: 260, borderRadius: "var(--radius-card)",
-          overflow: "hidden", marginBottom: "1.25rem", background: "var(--bg-elevated)", cursor: "pointer"
-        }}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPreview({ ...projet, src: safeSrc }); } }}
-      >
-        <Image
+      {/* Browser Mockup (Interactive Preview) */}
+      <div style={{ marginBottom: "1.25rem" }}>
+        <BrowserMockup
           src={safeSrc}
           alt={projet.titre}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
-          className="object-cover"
-          style={{ transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)" }}
-          loading="lazy"
+          url={projet.lien}
+          gallery={projet.gallery}
+          tags={projet.tags}
+          onClick={() => onPreview({ ...projet, src: safeSrc })}
         />
-        <div
-          className="project-img-overlay"
-          style={{
-            position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)", opacity: 0,
-            transition: "opacity 0.3s", display: "flex", alignItems: "center", justifyContent: "center"
-          }}
-        >
-          <span style={{ background: "#ffffff", color: "#191c1f", padding: "0.5rem 1rem", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", fontWeight: 600 }}>
-            <ZoomIn size={18} strokeWidth={2.5} /> Aperçu
-          </span>
-        </div>
-        {/* Tags on top-left overlaying image */}
-        <div style={{ position: "absolute", top: "0.75rem", left: "0.75rem", display: "flex", gap: "0.4rem", flexWrap: "wrap", pointerEvents: "none" }}>
-          {projet.tags.slice(0, 3).map(t => (
-            <span key={t} style={{ background: "#ffffff", color: "var(--revo-black)", borderRadius: 9999, padding: "0.3rem 0.65rem", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.04em", boxShadow: "0 2px 10px rgba(0,0,0,0.15)" }}>{t}</span>
-          ))}
-        </div>
       </div>
 
       {/* Content */}
@@ -182,11 +155,6 @@ export default function Projects() {
 
   return (
     <>
-      <style>{`
-        .project-img-wrapper:hover img { transform: scale(1.05); }
-        .project-img-wrapper:hover .project-img-overlay { opacity: 1 !important; }
-      `}</style>
-
       <section id="realisations" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
         <div className="container">
           <p className="section-eyebrow">Réalisations</p>

@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { smoothScrollTo } from "@/lib/utils";
 import { NAV_LINKS } from "@/lib/data";
 import { useTheme } from "@/lib/theme";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, ArrowUpRight } from "lucide-react";
 
 function useScrolled(threshold = 40) {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +39,6 @@ function useActiveSection() {
   return active;
 }
 
-// Short display labels for nav
 const NAV_LABELS: Record<string, string> = {
   bio: "Bio",
   quisuisje: "À propos",
@@ -47,6 +46,22 @@ const NAV_LABELS: Record<string, string> = {
   experience: "Parcours",
   realisations: "Projets",
   contact: "Contact",
+};
+
+const NAV_NUMBERS: Record<string, string> = {
+  bio: "00",
+  quisuisje: "01",
+  competences: "02",
+  realisations: "03",
+  experience: "04",
+  contact: "05",
+};
+
+const springOut = { type: "spring", stiffness: 300, damping: 30 };
+const staggerItem = {
+  initial: { opacity: 0, x: -40, filter: "blur(8px)" },
+  animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, x: -40, filter: "blur(8px)" },
 };
 
 export default function Navbar() {
@@ -91,7 +106,6 @@ export default function Navbar() {
 
   function nav(id: string) { smoothScrollTo(id); setMenuOpen(false); }
 
-  // Filter to show only main sections
   const mainLinks = NAV_LINKS.filter(l =>
     ["quisuisje", "competences", "realisations", "experience", "contact"].includes(l.id)
   );
@@ -103,7 +117,8 @@ export default function Navbar() {
         style={{
           transformOrigin: "left", scaleX,
           position: "fixed", top: 0, left: 0, right: 0,
-          height: 2, background: "var(--revo-blue)",
+          height: 2,
+          background: "linear-gradient(90deg, var(--revo-blue), var(--accent-soft, #a78bfa))",
           zIndex: 101, pointerEvents: "none",
         }}
       />
@@ -132,7 +147,7 @@ export default function Navbar() {
           <motion.a
             href="#bio"
             onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-            style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}
+            style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", zIndex: menuOpen ? 200 : 1 }}
             whileHover={{ opacity: 0.8 }}
           >
             <span
@@ -156,11 +171,9 @@ export default function Navbar() {
             </span>
           </motion.a>
 
-          {/* ── Desktop Links ── */}
+          {/* Desktop Links */}
           <div
-            style={{
-              display: "flex", alignItems: "center", gap: "0.25rem",
-            }}
+            style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
             className="nav-desktop-links"
           >
             {mainLinks.map(({ id }) => {
@@ -192,7 +205,7 @@ export default function Navbar() {
           </div>
 
           {/* Right: theme + CV + hamburger */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", zIndex: menuOpen ? 200 : 1 }}>
             <motion.button
               onClick={toggle}
               aria-label="Basculer le thème"
@@ -213,6 +226,7 @@ export default function Navbar() {
               href="/cv.pdf" download
               whileHover={{ opacity: 0.85, scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
+              className="nav-cv-btn"
               style={{
                 display: "inline-flex", alignItems: "center", justifyContent: "center",
                 padding: "0.4rem 1.2rem", borderRadius: "9999px",
@@ -258,91 +272,171 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Mobile menu */}
+      {/* Full-screen mobile menu */}
       <AnimatePresence>
         {menuOpen && (
-          <>
-            <motion.div
-              key="overlay"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setMenuOpen(false)}
-              style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,0.65)" }}
-            />
-            <motion.div
-              key="menu"
-              ref={mobileMenuRef}
-              role="dialog" aria-modal="true" aria-label="Menu de navigation"
-              initial={{ opacity: 0, y: -12, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.97 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                position: "fixed", top: 56,
-                right: "clamp(1.25rem, 5vw, 3rem)",
-                zIndex: 95, background: "#1e2226",
-                borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)",
-                padding: "1.25rem", width: "min(calc(100vw - 2.5rem), 300px)",
-              }}
-            >
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
-                {NAV_LINKS.map(({ id, label }) => (
-                  <button
+          <motion.div
+            ref={mobileMenuRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navigation"
+            initial={{ clipPath: "circle(0% at calc(100% - 2.5rem) 2rem)" }}
+            animate={{ clipPath: "circle(150% at calc(100% - 2.5rem) 2rem)" }}
+            exit={{ clipPath: "circle(0% at calc(100% - 2.5rem) 2rem)" }}
+            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 150,
+              background: "var(--revo-black)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "2rem",
+            }}
+          >
+            {/* Nav links */}
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.25rem",
+              width: "100%",
+              maxWidth: 400,
+            }}>
+              {NAV_LINKS.map(({ id, label }, i) => {
+                const isActive = active === id;
+                return (
+                  <motion.button
                     key={id}
                     onClick={() => nav(id)}
-                    style={{
-                      background: active === id ? "rgba(255,255,255,0.07)" : "none",
-                      border: "none", color: active === id ? "#ffffff" : "rgba(255,255,255,0.6)",
-                      fontFamily: "var(--font-body)", fontSize: "0.95rem",
-                      fontWeight: active === id ? 600 : 400,
-                      padding: "0.75rem 0.85rem", cursor: "pointer",
-                      textAlign: "left", borderRadius: 8, transition: "all 0.15s",
-                      width: "100%",
+                    {...staggerItem}
+                    transition={{
+                      delay: 0.15 + i * 0.06,
+                      duration: 0.5,
+                      ease: [0.22, 1, 0.36, 1],
                     }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: isActive ? "#ffffff" : "rgba(255,255,255,0.5)",
+                      fontFamily: "var(--font-display)",
+                      fontSize: "clamp(1.8rem, 6vw, 2.5rem)",
+                      fontWeight: isActive ? 700 : 500,
+                      letterSpacing: "-0.03em",
+                      padding: "0.4rem 0",
+                      cursor: "pointer",
+                      textAlign: "center",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5rem",
+                      position: "relative",
+                      transition: "color 0.2s",
+                    }}
+                    whileHover={{ color: "#ffffff", x: 8 }}
+                    whileTap={{ scale: 0.97 }}
                   >
+                    <span style={{
+                      fontSize: "0.6rem",
+                      fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace",
+                      color: "var(--revo-blue)",
+                      fontWeight: 500,
+                      letterSpacing: "0.08em",
+                      opacity: 0.7,
+                    }}>
+                      {NAV_NUMBERS[id]}
+                    </span>
                     {NAV_LABELS[id] || label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                <button
-                  onClick={toggle}
-                  aria-label="Basculer le thème"
-                  style={{
-                    width: 42, height: 42, borderRadius: "50%",
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    color: "rgba(255,255,255,0.7)", cursor: "pointer",
-                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
-                  }}
-                >
-                  {theme === "dark" ? <Sun size={15} strokeWidth={1.5} /> : <Moon size={15} strokeWidth={1.5} />}
-                </button>
-                <a
-                  href="/cv.pdf" download onClick={() => setMenuOpen(false)}
-                  style={{
-                    flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    padding: "0.75rem", borderRadius: "9999px",
-                    background: "#ffffff", color: "#191c1f",
-                    fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.85rem",
-                    textDecoration: "none",
-                  }}
-                >
-                  Télécharger CV
-                </a>
-              </div>
+                    {isActive && (
+                      <motion.span
+                        layoutId="mobActiveDot"
+                        style={{
+                          width: 6, height: 6, borderRadius: "50%",
+                          background: "var(--revo-blue)",
+                          display: "inline-block",
+                          flexShrink: 0,
+                        }}
+                      />
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Bottom actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ delay: 0.5, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                marginTop: "2.5rem",
+                alignItems: "center",
+              }}
+            >
+              <button
+                onClick={toggle}
+                aria-label="Basculer le thème"
+                style={{
+                  width: 48, height: 48, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.7)", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                }}
+              >
+                {theme === "dark" ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+              </button>
+              <a
+                href="/cv.pdf" download onClick={() => setMenuOpen(false)}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "0.5rem",
+                  padding: "0.75rem 2rem", borderRadius: "9999px",
+                  background: "#ffffff", color: "#191c1f",
+                  fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.85rem",
+                  textDecoration: "none",
+                }}
+              >
+                Télécharger CV <ArrowUpRight size={14} strokeWidth={2.5} />
+              </a>
             </motion.div>
-          </>
+
+            {/* Decorative background text */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "8%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(6rem, 20vw, 12rem)",
+                fontWeight: 700,
+                color: "rgba(255,255,255,0.02)",
+                letterSpacing: "-0.05em",
+                pointerEvents: "none",
+                whiteSpace: "nowrap",
+                userSelect: "none",
+              }}
+            >
+              AS
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Responsive CSS — inline to avoid CSS compilation issues */}
+      {/* Responsive CSS */}
       <style>{`
         .nav-desktop-links { display: flex; }
         .nav-hamburger { display: none; }
         @media (max-width: 767px) {
           .nav-desktop-links { display: none !important; }
           .nav-hamburger { display: flex !important; }
+          .nav-cv-btn { display: none !important; }
         }
       `}</style>
     </>

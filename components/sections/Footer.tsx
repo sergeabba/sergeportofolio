@@ -43,7 +43,11 @@ export default function Footer() {
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--text-tertiary)" }}>
                &copy; {new Date().getFullYear()} Mbaitadjim Abba Serge
             </span>
-            <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>🇹🇩</span>
+            <svg width="22" height="15" viewBox="0 0 30 20" style={{ borderRadius: 2, flexShrink: 0 }}>
+              <rect x="0" y="0" width="10" height="20" fill="#002664" />
+              <rect x="10" y="0" width="10" height="20" fill="#FECB00" />
+              <rect x="20" y="0" width="10" height="20" fill="#EA2839" />
+            </svg>
           </div>
         </div>
       </div>

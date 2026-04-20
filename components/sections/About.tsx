@@ -5,6 +5,40 @@ import { useRef, useEffect, useState } from "react";
 import MouseSpotCard from "@/components/MouseSpotCard";
 import { ABOUT_FACTS } from "@/lib/data";
 
+function FlagIcon({ type, size = 24 }: { type: "td" | "fr" | "gb"; size?: number }) {
+  const h = Math.round(size * 0.67);
+  const w = Math.round(size);
+  const s = size / 30;
+  if (type === "td") {
+    return (
+      <svg width={w} height={h} viewBox="0 0 30 20" style={{ borderRadius: 2, flexShrink: 0 }}>
+        <rect x="0" y="0" width="10" height="20" fill="#002664" />
+        <rect x="10" y="0" width="10" height="20" fill="#FECB00" />
+        <rect x="20" y="0" width="10" height="20" fill="#EA2839" />
+      </svg>
+    );
+  }
+  if (type === "fr") {
+    return (
+      <svg width={w} height={h} viewBox="0 0 30 20" style={{ borderRadius: 2, flexShrink: 0 }}>
+        <rect x="0" y="0" width="10" height="20" fill="#002395" />
+        <rect x="10" y="0" width="10" height="20" fill="#FFFFFF" />
+        <rect x="20" y="0" width="10" height="20" fill="#ED2939" />
+      </svg>
+    );
+  }
+  return (
+    <svg width={w} height={h} viewBox="0 0 30 20" style={{ borderRadius: 2, flexShrink: 0 }}>
+      <rect x="0" y="0" width="30" height="10" fill="#012169" />
+      <rect x="0" y="10" width="30" height="10" fill="#C8102E" />
+      <path d="M0,0 L30,20 M30,0 L0,20" stroke="#FFFFFF" strokeWidth="4" />
+      <path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" strokeWidth="2.5" />
+      <path d="M15,0 V20 M0,10 H30" stroke="#FFFFFF" strokeWidth="6" />
+      <path d="M15,0 V20 M0,10 H30" stroke="#C8102E" strokeWidth="3.5" />
+    </svg>
+  );
+}
+
 function Counter({ target, suffix }: { target: number; suffix: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0 });
@@ -167,9 +201,9 @@ export default function About() {
                 </div>
                 <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
                   {[
-                    { flag: "\u{1F1F9}\u{1F1E9}", name: "Tchadien", level: "Natif" },
-                    { flag: "\u{1F1EB}\u{1F1F7}", name: "Fran\u00e7ais", level: "Natif" },
-                    { flag: "\u{1F1EC}\u{1F1E7}", name: "Anglais", level: "Interm\u00e9diaire" },
+                    { flag: "td" as const, name: "Tchadien", level: "Natif" },
+                    { flag: "fr" as const, name: "Fran\u00e7ais", level: "Natif" },
+                    { flag: "gb" as const, name: "Anglais", level: "Interm\u00e9diaire" },
                   ].map((lang) => (
                     <div
                       key={lang.name}
@@ -184,7 +218,7 @@ export default function About() {
                       onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "var(--accent-soft)"; }}
                       onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
                     >
-                      <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>{lang.flag}</span>
+                      <FlagIcon type={lang.flag} size={28} />
                       <div>
                         <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)" }}>{lang.name}</div>
                         <div style={{ fontSize: "0.65rem", color: "var(--text-tertiary)", fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace" }}>{lang.level}</div>

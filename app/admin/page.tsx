@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import type { Projet } from "@/lib/types";
 import { useRouter } from "next/navigation";
@@ -41,14 +42,14 @@ function SortableProjectCard({ projet, handleOpenModal, handleDelete }: Sortable
           <GripVertical size={16} />
         </div>
 
-        <div style={{ height: 160, position: "relative", background: "var(--bg-layer)" }}>
-          {projet.src && (
-            <img src={projet.src} alt={projet.titre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          )}
-          <span style={{ position: "absolute", top: "0.5rem", right: "0.5rem", background: "#ffffff", color: "#191c1f", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-            {projet.cat}
-          </span>
-        </div>
+         <div style={{ height: 160, position: "relative", background: "var(--bg-layer)" }}>
+           {projet.src && (
+             <Image src={projet.src} alt={projet.titre} fill className="object-cover" sizes="(max-width: 768px) 100vw, 300px" />
+           )}
+           <span style={{ position: "absolute", top: "0.5rem", right: "0.5rem", background: "#ffffff", color: "#191c1f", padding: "0.2rem 0.6rem", borderRadius: "9999px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+             {projet.cat}
+           </span>
+         </div>
 
         <div style={{ padding: "1.25rem" }}>
           <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "1.1rem", marginBottom: "0.5rem" }}>{projet.titre}</h3>
@@ -379,7 +380,7 @@ export default function AdminDashboard() {
                          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
                             {formData.gallery.map((url, i) => (
                                <div key={url} style={{ position: "relative", width: 60, height: 60, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" }}>
-                                  <img src={url} alt="Gallery item" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                  <Image src={url} alt="Gallery item" fill className="object-cover" sizes="60px" />
                                   <button type="button" onClick={() => setFormData({...formData, gallery: formData.gallery.filter(u => u !== url)})} style={{ position: "absolute", top: 0, right: 0, background: "rgba(226,59,74,0.8)", border: "none", color: "#fff", cursor: "pointer", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", borderRadius: "0 0 0 8px" }}>&times;</button>
                                </div>
                             ))}

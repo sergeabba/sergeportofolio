@@ -280,20 +280,20 @@ export default function Projects() {
                   {/* Galerie Thumbnails (if any) */}
                   {previewProjet.gallery && previewProjet.gallery.length > 0 && (
                      <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
-                        <div 
-                           onClick={() => setActiveImage(previewProjet.src!)}
-                           style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
-                        >
-                           <img src={previewProjet.src!} alt="Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        </div>
+                            <div 
+                               onClick={() => setActiveImage(previewProjet.src!)}
+                               style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
+                            >
+                               <Image src={previewProjet.src!} alt="Cover" fill className="object-cover" sizes="100px" />
+                            </div>
                         {previewProjet.gallery.map((gImg, idx) => (
-                           <div 
-                             key={idx}
-                             onClick={() => setActiveImage(gImg)}
-                             style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
-                          >
-                             <img src={gImg} alt={`Gallery ${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                          </div>
+                            <div 
+                              key={idx}
+                              onClick={() => setActiveImage(gImg)}
+                              style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
+                            >
+                               <Image src={gImg} alt={`Gallery ${idx}`} fill className="object-cover" sizes="100px" />
+                            </div>
                         ))}
                      </div>
                   )}
@@ -326,32 +326,34 @@ export default function Projects() {
                        <h4 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie complète</h4>
                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1.5rem" }}>
                          {allImages.map((img, idx) => (
-                           <div 
-                             key={idx} 
-                             onClick={() => setActiveImage(img)}
-                             style={{ 
-                               position: "relative", 
-                               borderRadius: "var(--radius-card)", 
-                               overflow: "hidden", 
-                               cursor: "pointer", 
-                               border: activeImage === img ? "2px solid var(--revo-blue)" : "2px solid transparent",
-                               transition: "all 0.3s",
-                               aspectRatio: "4/3",
-                               background: "var(--bg-elevated)"
-                             }}
-                             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
-                             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                           >
-                             <img 
-                               src={img} 
-                               alt={`Project visual ${idx}`} 
-                               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-                               loading="lazy" 
-                             />
-                             {activeImage === img && (
-                               <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,255,0.1)", pointerEvents: "none" }} />
-                             )}
-                           </div>
+                            <div 
+                              key={idx} 
+                              onClick={() => setActiveImage(img)}
+                              style={{ 
+                                position: "relative", 
+                                borderRadius: "var(--radius-card)", 
+                                overflow: "hidden", 
+                                cursor: "pointer", 
+                                border: activeImage === img ? "2px solid var(--revo-blue)" : "2px solid transparent",
+                                transition: "all 0.3s",
+                                aspectRatio: "4/3",
+                                background: "var(--bg-elevated)"
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
+                              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                            >
+                              <Image 
+                                src={img} 
+                                alt={`Project visual ${idx}`} 
+                                fill 
+                                className="object-cover" 
+                                sizes="(max-width: 768px) 100vw, 33vw" 
+                                loading="lazy" 
+                              />
+                              {activeImage === img && (
+                                <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,255,0.1)", pointerEvents: "none" }} />
+                              )}
+                            </div>
                          ))}
                        </div>
                      </div>
@@ -400,15 +402,16 @@ export default function Projects() {
                     <div className="flex flex-col gap-4 mt-6 pt-4 border-t border-[var(--border)]">
                       <h4 style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie</h4>
                       {previewProjet.gallery.map((gImg, idx) => (
-                        <div key={idx} style={{ position: "relative", width: "100%", background: "var(--bg-elevated)", borderRadius: "8px", overflow: "hidden", display: "flex", justifyContent: "center" }}>
-                          {/* We use next/image with auto height for responsive images */}
-                          <img 
-                            src={gImg} 
-                            alt={`Gallery ${idx}`} 
-                            style={{ width: "100%", height: "auto", objectFit: "contain", maxHeight: "70vh" }} 
-                            loading="lazy"
-                          />
-                        </div>
+                         <div key={idx} style={{ position: "relative", width: "100%", aspectRatio: "16/9", background: "var(--bg-elevated)", borderRadius: "8px", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+                           <Image 
+                             src={gImg} 
+                             alt={`Gallery ${idx}`} 
+                             fill 
+                             className="object-contain"
+                             sizes="100vw"
+                             loading="lazy"
+                           />
+                         </div>
                       ))}
                     </div>
                   )}

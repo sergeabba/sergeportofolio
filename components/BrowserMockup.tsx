@@ -31,6 +31,15 @@ export default function BrowserMockup({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    const mql = window.matchMedia("(max-width: 767px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -95,14 +104,22 @@ export default function BrowserMockup({
     }
   }, [isHovered]);
 
+  useEffect(() => {
+    if (!isMobile) return;
+    const interval = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % allImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isMobile, allImages.length]);
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || isMobile) return;
       const rect = containerRef.current.getBoundingClientRect();
       mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
       mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
     },
-    [mouseX, mouseY]
+    [mouseX, mouseY, isMobile]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -111,16 +128,26 @@ export default function BrowserMockup({
     mouseY.set(0);
   }, [mouseX, mouseY]);
 
+  const handleTouchStart = useCallback(() => {
+    setIsHovered(true);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setTimeout(() => setIsHovered(false), 1500);
+  }, []);
+
   const currentSrc = allImages[activeIdx] || src;
 
   return (
     <div
       ref={containerRef}
-      style={{ perspective: 800, cursor: onClick ? "pointer" : "default" }}
+      style={{ perspective: isMobile ? 600 : 800, cursor: onClick ? "pointer" : "default" }}
       onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -132,8 +159,8 @@ export default function BrowserMockup({
     >
       <motion.div
         style={{
-          rotateX,
-          rotateY,
+          rotateX: isMobile ? 0 : rotateX,
+          rotateY: isMobile ? 0 : rotateY,
           transformStyle: "preserve-3d",
           borderRadius: "var(--r-card)",
           overflow: "hidden",
@@ -153,7 +180,6 @@ export default function BrowserMockup({
         }
         transition={{ duration: 0.3 }}
       >
-        {/* Browser Chrome */}
         <div
           style={{
             display: "flex",
@@ -165,33 +191,9 @@ export default function BrowserMockup({
           }}
         >
           <div style={{ display: "flex", gap: 5 }}>
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: "#ff5f57",
-                display: "inline-block",
-              }}
-            />
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: "#febc2e",
-                display: "inline-block",
-              }}
-            />
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: "#28c840",
-                display: "inline-block",
-              }}
-            />
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57", display: "inline-block" }} />
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e", display: "inline-block" }} />
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840", display: "inline-block" }} />
           </div>
           <div
             style={{
@@ -201,7 +203,7 @@ export default function BrowserMockup({
               padding: "0.2rem 0.65rem",
               fontSize: "0.55rem",
               color: "var(--text-tertiary)",
-              fontFamily: "var(--font-body)",
+              fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -209,40 +211,16 @@ export default function BrowserMockup({
           >
             {url || alt}
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: 4,
-              opacity: isHovered ? 1 : 0.3,
-              transition: "opacity 0.3s",
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 2,
-                background: "var(--text-tertiary)",
-                display: "inline-block",
-              }}
-            />
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 2,
-                background: "var(--text-tertiary)",
-                display: "inline-block",
-              }}
-            />
+          <div style={{ display: "flex", gap: 4, opacity: isHovered ? 1 : 0.3, transition: "opacity 0.3s" }}>
+            <span style={{ width: 6, height: 6, borderRadius: 2, background: "var(--text-tertiary)", display: "inline-block" }} />
+            <span style={{ width: 6, height: 6, borderRadius: 2, background: "var(--text-tertiary)", display: "inline-block" }} />
           </div>
         </div>
 
-        {/* Image Content */}
         <div
           style={{
             position: "relative",
-            height: 220,
+            height: isMobile ? 180 : 220,
             overflow: "hidden",
             background: "var(--bg-layer)",
           }}
@@ -273,7 +251,6 @@ export default function BrowserMockup({
             </motion.div>
           </AnimatePresence>
 
-          {/* Tags overlay */}
           {tags && tags.length > 0 && (
             <div
               style={{
@@ -307,7 +284,6 @@ export default function BrowserMockup({
             </div>
           )}
 
-          {/* Screen reflection */}
           <div
             style={{
               position: "absolute",
@@ -319,7 +295,6 @@ export default function BrowserMockup({
             }}
           />
 
-          {/* Hover CTA */}
           <AnimatePresence>
             {isHovered && (
               <motion.div

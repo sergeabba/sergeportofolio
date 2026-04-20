@@ -154,6 +154,44 @@ export default function About() {
                   </div>
                 ))}
               </motion.div>
+
+              {/* Langues */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0 }}
+                transition={{ duration: 0.6, delay: 0.4, ease }}
+              >
+                <div style={{ marginBottom: "0.6rem" }}>
+                  <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Langues</span>
+                </div>
+                <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+                  {[
+                    { flag: "\u{1F1F9}\u{1F1E9}", name: "Fran\u00e7ais", level: "Natif" },
+                    { flag: "\u{1F1EC}\u{1F1E7}", name: "Anglais", level: "B2" },
+                  ].map((lang) => (
+                    <div
+                      key={lang.name}
+                      className="glass"
+                      style={{
+                        display: "flex", alignItems: "center", gap: "0.6rem",
+                        padding: "0.65rem 1rem", borderRadius: "var(--radius-md)",
+                        flex: "1 1 0", minWidth: 120,
+                        transition: "transform 0.25s, border-color 0.25s",
+                        cursor: "default",
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = "var(--accent-soft)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
+                    >
+                      <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>{lang.flag}</span>
+                      <div>
+                        <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)" }}>{lang.name}</div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-tertiary)", fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace" }}>{lang.level}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             </div>
           </motion.div>
 

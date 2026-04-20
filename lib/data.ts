@@ -19,31 +19,58 @@ export const HERO_ROLES = [
   "Créateur de contenu gaming",
 ];
 
-export const SKILL_CATEGORIES = [
+export const SKILL_CATEGORIES: { title: string; icon: string; tags: string[]; tagIcons?: Record<string, string> }[] = [
   {
     title: "Analyse & Visu. Données",
+    icon: "ph-chart-bar",
     tags: ["SQL", "Pandas", "NumPy", "SciPy", "Power BI", "Matplotlib", "Seaborn", "Geoplotlib"],
+    tagIcons: { "SQL": "ph-database", "Pandas": "ph-table", "NumPy": "ph-calculator", "Power BI": "ph-chart-polar", "Matplotlib": "ph-chart-line", "Seaborn": "ph-chart-donut" },
   },
   {
     title: "IA Générative & Prompt",
+    icon: "ph-brain",
     tags: ["Midjourney", "NanoBanana Pro", "DALL-E", "Sora", "Suno", "Riffusion"],
+    tagIcons: { "Midjourney": "ph-magic-wand", "DALL-E": "ph-image", "Sora": "ph-video", "Suno": "ph-music-note" },
   },
   {
     title: "Programmation",
+    icon: "ph-code",
     tags: ["Python", "C++", "C"],
+    tagIcons: { "Python": "ph-logo-python", "C++": "ph-file-cpp" },
   },
   {
     title: "Systèmes & OS",
+    icon: "ph-desktop",
     tags: ["Windows", "Linux Mint", "VirtualBox", "Scripting Shell", "Spark", "PySpark"],
+    tagIcons: { "Linux Mint": "ph-linux-logo", "Windows": "ph-windows-logo", "Spark": "ph-lightning", "VirtualBox": "ph-hard-drives" },
   },
   {
     title: "Design & UI/UX",
+    icon: "ph-pen-nib",
     tags: ["Photoshop", "Illustrator", "Adobe XD", "Figma", "Canva"],
+    tagIcons: { "Figma": "ph-figma-logo", "Photoshop": "ph-image", "Illustrator": "ph-pencil-simple", "Canva": "ph-palette" },
   },
   {
     title: "Bureautique & Réseaux",
+    icon: "ph-file-text",
     tags: ["Word", "Excel", "Sheets", "TikTok IA & Gaming"],
+    tagIcons: { "Excel": "ph-table", "Sheets": "ph-table", "Word": "ph-file-doc" },
   },
+];
+
+export const TOOL_ENVIRONMENT = [
+  { name: "VS Code", icon: "ph-vscode-logo" },
+  { name: "Git", icon: "ph-git-branch" },
+  { name: "GitHub", icon: "ph-github-logo" },
+  { name: "Vercel", icon: "ph-triangle" },
+  { name: "Figma", icon: "ph-figma-logo" },
+  { name: "Supabase", icon: "ph-database" },
+  { name: "Next.js", icon: "ph-globe" },
+  { name: "React", icon: "ph-atom" },
+  { name: "Node.js", icon: "ph-nodejs-logo" },
+  { name: "Terminal", icon: "ph-terminal" },
+  { name: "Docker", icon: "ph-package" },
+  { name: "Postman", icon: "ph-send" },
 ];
 
 export const SKILL_BARS = {

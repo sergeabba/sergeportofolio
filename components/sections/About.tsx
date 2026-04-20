@@ -167,8 +167,9 @@ export default function About() {
                 </div>
                 <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
                   {[
-                    { flag: "\u{1F1F9}\u{1F1E9}", name: "Fran\u00e7ais", level: "Natif" },
-                    { flag: "\u{1F1EC}\u{1F1E7}", name: "Anglais", level: "B2" },
+                    { flag: "\u{1F1F9}\u{1F1E9}", name: "Tchadien", level: "Natif" },
+                    { flag: "\u{1F1EB}\u{1F1F7}", name: "Fran\u00e7ais", level: "Natif" },
+                    { flag: "\u{1F1EC}\u{1F1E7}", name: "Anglais", level: "Interm\u00e9diaire" },
                   ].map((lang) => (
                     <div
                       key={lang.name}

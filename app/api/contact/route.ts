@@ -49,7 +49,16 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
-    if (!emailPattern.test(email)) {
+    if (name.length > 100) {
+      return NextResponse.json({ error: "Nom trop long (max 100 caractères)" }, { status: 400 });
+    }
+    if (subject.length > 200) {
+      return NextResponse.json({ error: "Sujet trop long (max 200 caractères)" }, { status: 400 });
+    }
+    if (message.length > 5000) {
+      return NextResponse.json({ error: "Message trop long (max 5000 caractères)" }, { status: 400 });
+    }
+    if (!emailPattern.test(email) || email.length > 254) {
       return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
     }
 
@@ -57,14 +66,10 @@ export async function POST(req: NextRequest) {
     const TO_EMAIL = process.env.CONTACT_EMAIL ?? "abbaserge2@gmail.com";
 
     if (!RESEND_API_KEY) {
-      // ── Dev: log console uniquement ──
-      console.log("📬 [DEV] Nouveau message portfolio — configurez RESEND_API_KEY pour l'envoi réel :");
-      console.log({ name, email, subject, message });
       return NextResponse.json({ success: true }, { status: 200 });
     }
 
     // ── Production: envoi réel via Resend ──
-    console.log(`📧 Sending email: from=${FROM_EMAIL} to=${TO_EMAIL} replyTo=${email}`);
 
     const resend = new Resend(RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
@@ -98,17 +103,16 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("❌ Resend error:", JSON.stringify(error, null, 2));
+      console.error("[contact] resend error:", error.name);
       return NextResponse.json(
-        { error: "Erreur envoi email", details: error.message },
+        { error: "Erreur lors de l'envoi. Réessayez plus tard." },
         { status: 500 },
       );
     }
 
-    console.log("✅ Email sent successfully, id:", data?.id);
-    return NextResponse.json({ success: true, emailId: data?.id }, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("❌ Contact API error:", error);
+    console.error("[contact] unexpected error:", error instanceof Error ? error.name : "unknown");
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

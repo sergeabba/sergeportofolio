@@ -16,23 +16,39 @@ export async function POST(request: Request) {
       );
     }
 
-    const { password } = await request.json()
-    
-    if (password === process.env.ADMIN_PASSWORD) {
-      const secret = process.env.ADMIN_PASSWORD!;
-      const token = await generateToken(secret);
+    const body = await request.json();
+    const password: unknown = body?.password;
+
+    if (typeof password !== "string" || password.length === 0) {
+      return NextResponse.json({ success: false, error: "Mot de passe requis" }, { status: 400 });
+    }
+
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });
+    }
+
+    const enc = new TextEncoder();
+    const a = enc.encode(password.padEnd(64));
+    const b = enc.encode(adminPassword.padEnd(64));
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+    const match = diff === 0 && password.length === adminPassword.length;
+
+    if (match) {
+      const token = await generateToken(adminPassword);
 
       const cookieStore = await cookies();
       cookieStore.set('admin_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict',
         path: '/',
         maxAge: ADMIN_COOKIE_MAX_AGE,
       });
       return NextResponse.json({ success: true });
     }
-    
+
     return NextResponse.json({ success: false, error: "Mot de passe incorrect" }, { status: 401 });
   } catch {
     return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });

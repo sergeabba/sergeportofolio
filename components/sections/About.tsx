@@ -8,7 +8,6 @@ import { ABOUT_FACTS } from "@/lib/data";
 function FlagIcon({ type, size = 24 }: { type: "td" | "fr" | "gb"; size?: number }) {
   const h = Math.round(size * 0.67);
   const w = Math.round(size);
-  const s = size / 30;
   if (type === "td") {
     return (
       <svg width={w} height={h} viewBox="0 0 30 20" style={{ borderRadius: 2, flexShrink: 0 }}>
@@ -295,7 +294,9 @@ export default function About() {
                       </div>
                       <div>
                         <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.82rem", color: "var(--text)", marginBottom: "0.1rem" }}>{title}</div>
-                        <div className="mono" style={{ fontSize: "0.68rem", color: "var(--text-tertiary)" }} dangerouslySetInnerHTML={{ __html: `${sub} &middot; ${place}` }} />
+                        <div className="mono" style={{ fontSize: "0.68rem", color: "var(--text-tertiary)" }}>
+                        <span dangerouslySetInnerHTML={{ __html: sub }} />{" · "}{place}
+                      </div>
                       </div>
                     </motion.div>
                   ))}

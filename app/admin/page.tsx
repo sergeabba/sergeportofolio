@@ -115,7 +115,7 @@ export default function AdminDashboard() {
     router.refresh();
   };
 
-  const handleOpenModal = (projet?: any) => {
+  const handleOpenModal = (projet?: Projet & { id: string }) => {
     if (projet) {
       setEditingId(projet.id);
       setFormData({
@@ -142,10 +142,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+  const validateFile = (f: File): string | null => {
+    if (!ALLOWED_MIME.includes(f.type)) return `Type non autorisé : ${f.type}`;
+    if (f.size > MAX_FILE_SIZE) return `Fichier trop lourd (max 5 Mo) : ${f.name}`;
+    return null;
+  };
+
   // Upload Fichier
   const handleFileUpload = async (fileToUpload: File) => {
-    const fileExt = fileToUpload.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+    const err = validateFile(fileToUpload);
+    if (err) { alert(err); return null; }
+
+    const safeExt = fileToUpload.type.split("/")[1] ?? "jpg";
+    const fileName = `${crypto.randomUUID()}.${safeExt}`;
     const filePath = `uploads/${fileName}`;
 
     const { error: uploadError } = await supabase.storage.from('portfolio').upload(filePath, fileToUpload);

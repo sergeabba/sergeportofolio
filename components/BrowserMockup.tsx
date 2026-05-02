@@ -295,8 +295,41 @@ export default function BrowserMockup({
             }}
           />
 
+          {/* Gallery dot indicators */}
+          {allImages.length > 1 && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "0.55rem",
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                gap: "0.3rem",
+                zIndex: 4,
+              }}
+            >
+              {allImages.map((_, idx) => (
+                <motion.span
+                  key={idx}
+                  animate={{
+                    width: idx === activeIdx ? 14 : 5,
+                    background: idx === activeIdx ? "#ffffff" : "rgba(255,255,255,0.4)",
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  style={{
+                    height: 5,
+                    borderRadius: 9999,
+                    display: "inline-block",
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => { e.stopPropagation(); setActiveIdx(idx); }}
+                />
+              ))}
+            </div>
+          )}
+
           <AnimatePresence>
-            {isHovered && (
+            {isHovered && allImages.length <= 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}

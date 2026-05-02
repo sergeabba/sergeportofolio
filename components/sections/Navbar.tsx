@@ -57,7 +57,6 @@ const NAV_NUMBERS: Record<string, string> = {
   contact: "05",
 };
 
-const springOut = { type: "spring", stiffness: 300, damping: 30 };
 const staggerItem = {
   initial: { opacity: 0, x: -40, filter: "blur(8px)" },
   animate: { opacity: 1, x: 0, filter: "blur(0px)" },
@@ -183,21 +182,34 @@ export default function Navbar() {
                   key={id}
                   onClick={() => nav(id)}
                   style={{
-                    background: isActive ? "rgba(255,255,255,0.10)" : "none",
+                    background: "none",
                     border: "none",
                     cursor: "pointer",
                     fontFamily: "var(--font-body)",
                     fontSize: "0.82rem",
                     fontWeight: isActive ? 600 : 400,
                     letterSpacing: "0.01em",
-                    color: isActive ? "#ffffff" : "rgba(255,255,255,0.6)",
+                    color: isActive ? "#ffffff" : "rgba(255,255,255,0.55)",
                     padding: "0.45rem 0.85rem",
                     borderRadius: "6px",
-                    transition: "all 0.2s",
+                    transition: "color 0.2s, font-weight 0.2s",
                     whiteSpace: "nowrap",
+                    position: "relative",
                   }}
-                  whileHover={{ color: "#ffffff", background: "rgba(255,255,255,0.08)" } as never}
+                  whileHover={{ color: "#ffffff" } as never}
                 >
+                  {isActive && (
+                    <motion.span
+                      layoutId="navActivePill"
+                      style={{
+                        position: "absolute", inset: 0,
+                        borderRadius: 6,
+                        background: "rgba(255,255,255,0.10)",
+                        zIndex: -1,
+                      }}
+                      transition={{ type: "spring", stiffness: 380, damping: 36 }}
+                    />
+                  )}
                   {NAV_LABELS[id] || id}
                 </motion.button>
               );

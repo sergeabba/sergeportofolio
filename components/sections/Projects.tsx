@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";
@@ -167,31 +167,62 @@ export default function Projects() {
 
           {/* Filter pills */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "2.5rem" }}>
-            {FILTER_CATEGORIES.map(cat => (
-              <button key={cat} onClick={() => setFilter(cat)}
-                style={{
-                  background: filter === cat ? "var(--revo-black)" : "var(--bg-elevated)",
-                  color: filter === cat ? "#ffffff" : "var(--text-secondary)",
-                  borderRadius: 9999,
-                  padding: "0.5rem 1.25rem",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  fontFamily: "var(--font-body)",
-                  cursor: "pointer",
-                  border: "none",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.opacity = "0.85"; }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
-              >{cat}</button>
-            ))}
+            {FILTER_CATEGORIES.map(cat => {
+              const isActive = filter === cat;
+              return (
+                <motion.button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  style={{
+                    position: "relative",
+                    background: "transparent",
+                    color: isActive ? "#ffffff" : "var(--text-secondary)",
+                    borderRadius: 9999,
+                    padding: "0.5rem 1.25rem",
+                    fontSize: "0.8rem",
+                    fontWeight: isActive ? 600 : 500,
+                    fontFamily: "var(--font-body)",
+                    cursor: "pointer",
+                    border: "1px solid",
+                    borderColor: isActive ? "transparent" : "var(--border)",
+                    zIndex: 0,
+                    transition: "color 0.2s, border-color 0.2s",
+                  }}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="filterActivePill"
+                      style={{
+                        position: "absolute", inset: 0,
+                        borderRadius: 9999,
+                        background: "var(--revo-black)",
+                        zIndex: -1,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    />
+                  )}
+                  {cat}
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Grid */}
           {projetsLoading ? (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2rem" }}>
               {Array.from({ length: 4 }, (_, i) => (
-                <div key={i} style={{ height: 420, borderRadius: "var(--radius-card)", background: "var(--bg-elevated)" }} />
+                <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <div className="skeleton" style={{ height: 240, borderRadius: "var(--radius-card)" }} />
+                  <div className="skeleton" style={{ height: 22, width: "65%", borderRadius: 6 }} />
+                  <div className="skeleton" style={{ height: 14, width: "90%", borderRadius: 6 }} />
+                  <div className="skeleton" style={{ height: 14, width: "70%", borderRadius: 6 }} />
+                  <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem" }}>
+                    <div className="skeleton" style={{ height: 34, width: 80, borderRadius: 9999 }} />
+                    <div className="skeleton" style={{ height: 34, width: 100, borderRadius: 9999 }} />
+                  </div>
+                </div>
               ))}
             </div>
           ) : filteredProjets.length === 0 ? (

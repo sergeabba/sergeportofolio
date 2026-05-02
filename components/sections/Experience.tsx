@@ -36,12 +36,13 @@ export default function Experience() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ x: 4 }}
                 >
                   {/* Timeline dot */}
                   <div style={{ position: "absolute", left: -5, top: "0.65rem", width: 12, height: 12, borderRadius: "50%", background: accent, boxShadow: isCurrent ? `0 0 16px ${accent}40` : "none" }} />
 
                   {/* Card */}
-                  <div className="card-flat" style={{ background: "var(--bg)", padding: "clamp(1.25rem, 2.5vw, 2rem)" }}>
+                  <div className="card-flat card-interactive" style={{ background: "var(--bg)", padding: "clamp(1.25rem, 2.5vw, 2rem)" }}>
                     {/* Date badge */}
                     <span style={{
                       display: "inline-block",

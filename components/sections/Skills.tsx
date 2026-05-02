@@ -260,10 +260,16 @@ export default function Skills() {
                     {cat.tags.map((tag) => {
                       const TagIcon = tag.icon;
                       return (
-                        <span key={tag.label} className="skill-tag">
+                        <motion.span
+                          key={tag.label}
+                          className="skill-tag"
+                          whileHover={{ y: -3, scale: 1.06, filter: "brightness(1.12)" }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                        >
                           {TagIcon && <TagIcon size={12} strokeWidth={2} style={{ opacity: 0.6, flexShrink: 0 }} />}
                           {tag.label}
-                        </span>
+                        </motion.span>
                       );
                     })}
                   </div>
@@ -307,6 +313,8 @@ export default function Skills() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.03, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+                    whileHover={{ y: -2, scale: 1.07 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <ToolIcon size={13} strokeWidth={1.8} style={{ color: "var(--revo-blue)", flexShrink: 0 }} />
                     {tool.name}

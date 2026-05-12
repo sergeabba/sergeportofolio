@@ -240,15 +240,21 @@ export default function AdminDashboard() {
       if (url) finalPhotoUrl = url;
     }
     const payload = { ...profile, photoUrl: finalPhotoUrl };
-    const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    setSavingProfile(false);
-    if (res.ok) {
-      setProfile(payload);
-      setPhotoFile(null);
-      setPhotoPreview(null);
-      showToast("Profil sauvegardé !");
-    } else {
-      showToast("Erreur lors de la sauvegarde", "error");
+    try {
+      const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setProfile(payload);
+        setPhotoFile(null);
+        setPhotoPreview(null);
+        showToast("Profil sauvegardé !");
+      } else {
+        showToast(json.error ?? `Erreur ${res.status}`, "error");
+      }
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Erreur réseau", "error");
+    } finally {
+      setSavingProfile(false);
     }
   };
 

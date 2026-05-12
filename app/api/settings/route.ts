@@ -1,33 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth";
-import { createClient } from "@supabase/supabase-js";
+import { promises as fs } from "fs";
+import path from "path";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const SETTINGS_PATH = path.join(process.cwd(), "data", "settings.json");
 
 async function isAdmin(): Promise<boolean> {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_token")?.value;
   if (!token) return false;
-  const secret = process.env.ADMIN_PASSWORD ?? "";
-  return verifyToken(token, secret);
+  return verifyToken(token, process.env.ADMIN_PASSWORD ?? "");
+}
+
+async function readSettings(): Promise<Record<string, unknown>> {
+  try {
+    const raw = await fs.readFile(SETTINGS_PATH, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+async function writeSettings(data: Record<string, unknown>): Promise<void> {
+  await fs.mkdir(path.dirname(SETTINGS_PATH), { recursive: true });
+  await fs.writeFile(SETTINGS_PATH, JSON.stringify(data, null, 2), "utf-8");
 }
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { data } = await supabaseAdmin.from("settings").select("*").eq("key", "profile").single();
-  return NextResponse.json(data?.value ?? {});
+  const data = await readSettings();
+  return NextResponse.json(data.profile ?? {});
 }
 
 export async function POST(req: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const body = await req.json();
-  const { error } = await supabaseAdmin
-    .from("settings")
-    .upsert({ key: "profile", value: body }, { onConflict: "key" });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ success: true });
+  try {
+    const body = await req.json();
+    const existing = await readSettings();
+    await writeSettings({ ...existing, profile: body });
+    return NextResponse.json({ success: true });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

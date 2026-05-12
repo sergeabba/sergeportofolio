@@ -34,7 +34,11 @@
       "Bash(npx kill-port:*)",
       "Bash(ls D:/portofolio/.env*)",
       "Read(//c/Users/hp/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/**)",
-      "Bash(python scripts/search.py \"portfolio interactive fluidity micro-interactions web\" --domain ux -n 20)"
+      "Bash(python scripts/search.py \"portfolio interactive fluidity micro-interactions web\" --domain ux -n 20)",
+      "WebFetch(domain:nsoleyportfolio.vercel.app)",
+      "Bash(grep -E \"\\\\.\\(json|ts|tsx|css\\)$\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

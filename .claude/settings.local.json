@@ -38,7 +38,8 @@
       "WebFetch(domain:nsoleyportfolio.vercel.app)",
       "Bash(grep -E \"\\\\.\\(json|ts|tsx|css\\)$\")",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

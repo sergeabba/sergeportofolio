@@ -15,6 +15,7 @@ interface BrowserMockupProps {
   src: string;
   alt: string;
   url?: string;
+  liveUrl?: string;
   gallery?: string[];
   tags?: string[];
   onClick?: () => void;
@@ -24,10 +25,12 @@ export default function BrowserMockup({
   src,
   alt,
   url,
+  liveUrl,
   gallery,
   tags,
   onClick,
 }: BrowserMockupProps) {
+  const [showLive, setShowLive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -103,6 +106,17 @@ export default function BrowserMockup({
       return () => clearTimeout(t);
     }
   }, [isHovered]);
+
+  useEffect(() => {
+    if (!liveUrl || isMobile) return;
+    let t: ReturnType<typeof setTimeout>;
+    if (isHovered) {
+      t = setTimeout(() => setShowLive(true), 600);
+    } else {
+      setShowLive(false);
+    }
+    return () => clearTimeout(t);
+  }, [isHovered, liveUrl, isMobile]);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -220,35 +234,89 @@ export default function BrowserMockup({
         <div
           style={{
             position: "relative",
-            height: isMobile ? 180 : 220,
+            height: isMobile ? 180 : 240,
             overflow: "hidden",
             background: "var(--bg-layer)",
           }}
         >
           <AnimatePresence mode="wait">
-            <motion.div
-              key={`${activeIdx}-${currentSrc}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-              style={{
-                position: "absolute",
-                inset: 0,
-                y: scrollY,
-                scale: scrollScale,
-                transformOrigin: "center top",
-              }}
-            >
-              <Image
-                src={currentSrc}
-                alt={alt}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
-                className="object-cover object-top"
-                loading="lazy"
-              />
-            </motion.div>
+            {showLive && liveUrl ? (
+              <motion.div
+                key="live"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                style={{ position: "absolute", inset: 0 }}
+              >
+                <iframe
+                  src={liveUrl}
+                  title={`Aperçu live — ${alt}`}
+                  style={{
+                    width: "200%",
+                    height: "200%",
+                    border: "none",
+                    transform: "scale(0.5)",
+                    transformOrigin: "top left",
+                    pointerEvents: "none",
+                    background: "#fff",
+                  }}
+                  sandbox="allow-scripts allow-same-origin"
+                  loading="lazy"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`${activeIdx}-${currentSrc}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  y: scrollY,
+                  scale: scrollScale,
+                  transformOrigin: "center top",
+                }}
+              >
+                <Image
+                  src={currentSrc}
+                  alt={alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+                  className="object-cover object-top"
+                  loading="lazy"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Live indicator */}
+          <AnimatePresence>
+            {showLive && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -6 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  position: "absolute", top: "0.5rem", right: "0.5rem",
+                  zIndex: 5, display: "flex", alignItems: "center", gap: "0.3rem",
+                  background: "rgba(0,168,126,0.92)", backdropFilter: "blur(8px)",
+                  color: "#fff", borderRadius: 9999,
+                  padding: "0.2rem 0.6rem", fontSize: "0.5rem",
+                  fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+                }}
+              >
+                <motion.span
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                  style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", display: "inline-block" }}
+                />
+                Live
+              </motion.div>
+            )}
           </AnimatePresence>
 
           {tags && tags.length > 0 && (
@@ -284,12 +352,25 @@ export default function BrowserMockup({
             </div>
           )}
 
+          {/* Shimmer overlay on hover */}
+          <motion.div
+            animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(120deg, transparent 30%, rgba(73,79,223,0.10) 50%, transparent 70%)",
+              pointerEvents: "none",
+              zIndex: 1,
+            }}
+          />
+
           <div
             style={{
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 40%, transparent 70%, rgba(255,255,255,0.02) 100%)",
+                "linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.28) 100%)",
               pointerEvents: "none",
               zIndex: 1,
             }}

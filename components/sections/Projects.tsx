@@ -6,28 +6,47 @@ import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
 import type { Projet } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
-import { X, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ExternalLink, ChevronLeft, ChevronRight, Globe, Image as ImageIcon } from "lucide-react";
 import BrowserMockup from "@/components/BrowserMockup";
 
 function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: number; onPreview: (p: Projet) => void }) {
   let safeSrc = projet.src?.trim() || "/projets/gaming/gaming-2.jpg";
   if (!safeSrc.startsWith("/") && !safeSrc.startsWith("http")) safeSrc = "/" + safeSrc;
   safeSrc = safeSrc.replace(/\\/g, "/");
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ display: "flex", flexDirection: "column" }}
+      transition={{ delay: index * 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      style={{ display: "flex", flexDirection: "column", position: "relative" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
+      {/* Index number */}
+      <motion.span
+        animate={{ opacity: hovered ? 1 : 0.3, x: hovered ? 0 : -4 }}
+        transition={{ duration: 0.25 }}
+        style={{
+          position: "absolute", top: "-1.4rem", left: 0,
+          fontFamily: "var(--font-display)", fontWeight: 700,
+          fontSize: "0.65rem", letterSpacing: "0.1em",
+          color: "var(--revo-blue)", textTransform: "uppercase",
+          zIndex: 2,
+        }}
+      >
+        {String(index + 1).padStart(2, "0")}
+      </motion.span>
+
       {/* Browser Mockup (Interactive Preview) */}
       <div style={{ marginBottom: "1.25rem" }}>
         <BrowserMockup
           src={safeSrc}
           alt={projet.titre}
           url={projet.lien}
+          liveUrl={projet.liveUrl ?? (projet.lien && !projet.lien.includes("github.com") ? projet.lien : undefined)}
           gallery={projet.gallery}
           tags={projet.tags}
           onClick={() => onPreview({ ...projet, src: safeSrc })}
@@ -35,14 +54,28 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
       </div>
 
       {/* Content */}
-      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.15rem, 1.8vw, 1.5rem)", letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text)", marginBottom: "0.5rem" }}>
-        {projet.titre}
-      </h3>
-      <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "1.25rem" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem", marginBottom: "0.4rem" }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text)" }}>
+          {projet.titre}
+        </h3>
+        <span style={{ flexShrink: 0, fontSize: "0.6rem", padding: "0.2rem 0.65rem", background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: "9999px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginTop: "0.1rem" }}>
+          {projet.cat}
+        </span>
+      </div>
+      <p style={{ fontSize: "0.88rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "1.25rem" }}>
         {projet.desc}
       </p>
 
-      {/* Actions (Aperçu + Lien) */}
+      {/* Tags */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginBottom: "1rem" }}>
+        {projet.tags.slice(0, 3).map(t => (
+          <span key={t} style={{ fontSize: "0.6rem", padding: "0.2rem 0.6rem", background: "var(--bg-elevated)", color: "var(--text-tertiary)", borderRadius: "9999px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
+            #{t}
+          </span>
+        ))}
+      </div>
+
+      {/* Actions */}
       <div style={{ marginTop: "auto", display: "flex", gap: "0.75rem", alignItems: "center" }}>
         <button
           onClick={() => onPreview({ ...projet, src: safeSrc })}
@@ -70,6 +103,7 @@ export default function Projects() {
   // State pour la Preview Modal
   const [previewProjet, setPreviewProjet] = useState<Projet | null>(null);
   const [activeImage, setActiveImage] = useState<string>("");
+  const [modalTab, setModalTab] = useState<"gallery" | "live">("gallery");
 
   const allImages = useMemo(() => {
     if (!previewProjet) return [];
@@ -89,8 +123,12 @@ export default function Projects() {
   }, [allImages, currentImageIndex]);
 
   useEffect(() => {
-     if(previewProjet) setActiveImage(previewProjet.src);
-     else setActiveImage("");
+    if (previewProjet) {
+      setActiveImage(previewProjet.src);
+      setModalTab("gallery");
+    } else {
+      setActiveImage("");
+    }
   }, [previewProjet]);
 
   useEffect(() => {
@@ -157,16 +195,27 @@ export default function Projects() {
     <>
       <section id="realisations" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
         <div className="container">
-          <p className="section-eyebrow">Réalisations</p>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)", marginBottom: "1rem" }}>
-            Mes projets.
-          </h2>
-          <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
-            Interfaces Power BI, Miniature youtube , IA générative et designs Canva.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem" }}>
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.12em", color: "var(--revo-blue)", textTransform: "uppercase" }}>04</span>
+              <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+              <p className="section-eyebrow" style={{ margin: 0 }}>Réalisations</p>
+            </div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)", marginBottom: "0.75rem" }}>
+              Mes projets.
+            </h2>
+            <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
+              Interfaces Power BI, miniatures YouTube, IA générative et designs Canva.
+            </p>
+          </motion.div>
 
-          {/* Filter pills */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "2.5rem" }}>
+          {/* Filter pills + project count */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "3rem", alignItems: "center" }}>
             {FILTER_CATEGORIES.map(cat => {
               const isActive = filter === cat;
               return (
@@ -207,6 +256,18 @@ export default function Projects() {
                 </motion.button>
               );
             })}
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={filter}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.2 }}
+                style={{ marginLeft: "auto", fontSize: "0.72rem", color: "var(--text-tertiary)", fontFamily: "var(--font-body)", fontWeight: 500 }}
+              >
+                {filteredProjets.length} projet{filteredProjets.length > 1 ? "s" : ""}
+              </motion.span>
+            </AnimatePresence>
           </div>
 
           {/* Grid */}
@@ -228,7 +289,7 @@ export default function Projects() {
           ) : filteredProjets.length === 0 ? (
             <p style={{ textAlign: "center", color: "var(--text-tertiary)", padding: "3rem 0" }}>Aucun projet pour cette catégorie.</p>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "clamp(1.5rem, 3vw, 2.5rem)", paddingTop: "1.6rem" }}>
               <AnimatePresence mode="popLayout">
                 {filteredProjets.map((p, i) => (
                   <ProjectCard key={p.id || p.titre} projet={p} index={i} onPreview={setPreviewProjet} />
@@ -269,128 +330,171 @@ export default function Projects() {
 
                {/* === DESKTOP LAYOUT (Hidden on mobile) === */}
                <div className="hidden md:flex flex-col w-full h-full" style={{ maxHeight: "95vh" }}>
-                  {/* Image large */}
-                 <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
-                   <Image
-                     src={activeImage || previewProjet.src!}
-                     alt={previewProjet.titre}
-                     fill
-                     className="object-contain" // Contain pour voir l'image entière sans couper
-                     sizes="100vw"
-                     priority
-                   />
 
-                   {/* Navigation Arrows */}
-                   {allImages.length > 1 && (
-                     <>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                          style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
-                          onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
-                          aria-label="Image précédente"
-                        >
-                         <ChevronLeft size={24} strokeWidth={2.5} />
-                       </button>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                          style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
-                          onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
-                          aria-label="Image suivante"
-                        >
-                         <ChevronRight size={24} strokeWidth={2.5} />
-                       </button>
-                     </>
-                   )}
-                 </div>
+                {/* Tab bar */}
+                <div style={{ display: "flex", gap: "0.25rem", padding: "0.75rem 1.5rem", borderBottom: "1px solid var(--border)", background: "var(--bg-elevated)", flexShrink: 0 }}>
+                  <button
+                    onClick={() => setModalTab("gallery")}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "0.4rem",
+                      padding: "0.4rem 1rem", borderRadius: 9999, border: "none", cursor: "pointer",
+                      fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.75rem", letterSpacing: "0.02em",
+                      background: modalTab === "gallery" ? "var(--revo-black)" : "transparent",
+                      color: modalTab === "gallery" ? "#fff" : "var(--text-secondary)",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    <ImageIcon size={13} /> Captures
+                  </button>
+                  {previewProjet.lien && (
+                    <button
+                      onClick={() => setModalTab("live")}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "0.4rem",
+                        padding: "0.4rem 1rem", borderRadius: 9999, border: "none", cursor: "pointer",
+                        fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.75rem", letterSpacing: "0.02em",
+                        background: modalTab === "live" ? "var(--revo-blue)" : "transparent",
+                        color: modalTab === "live" ? "#fff" : "var(--text-secondary)",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      <Globe size={13} /> Aperçu live
+                    </button>
+                  )}
+                </div>
 
+                {/* Live iframe tab */}
+                {modalTab === "live" && previewProjet.lien ? (
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                    {/* Browser chrome bar */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.5rem 1rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
+                      <div style={{ display: "flex", gap: 5 }}>
+                        <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57", display: "inline-block" }} />
+                        <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e", display: "inline-block" }} />
+                        <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840", display: "inline-block" }} />
+                      </div>
+                      <div style={{ flex: 1, background: "var(--bg-layer)", borderRadius: 9999, padding: "0.25rem 0.75rem", fontSize: "0.65rem", color: "var(--text-tertiary)", fontFamily: "ui-monospace, monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {previewProjet.lien}
+                      </div>
+                      <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-tertiary)", display: "flex", alignItems: "center" }}>
+                        <ExternalLink size={13} />
+                      </a>
+                    </div>
+                    <iframe
+                      src={previewProjet.lien}
+                      title={`Aperçu live — ${previewProjet.titre}`}
+                      style={{ flex: 1, border: "none", width: "100%", minHeight: "55vh", background: "#fff" }}
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {/* Image large */}
+                    <div style={{ position: "relative", width: "100%", flexShrink: 0, height: "50vh", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid var(--border)" }}>
+                      <Image
+                        src={activeImage || previewProjet.src!}
+                        alt={previewProjet.titre}
+                        fill
+                        className="object-contain"
+                        sizes="100vw"
+                        priority
+                      />
 
-                {/* Scrollable content below */}
-                <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto", flexGrow: 1 }}>
-                  {/* Galerie Thumbnails (if any) */}
-                  {previewProjet.gallery && previewProjet.gallery.length > 0 && (
-                     <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
-                            <div 
-                               onClick={() => setActiveImage(previewProjet.src!)}
-                               style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
-                            >
-                               <Image src={previewProjet.src!} alt="Cover" fill className="object-cover" sizes="100px" />
-                            </div>
-                        {previewProjet.gallery.map((gImg, idx) => (
-                            <div 
+                      {/* Navigation Arrows */}
+                      {allImages.length > 1 && (
+                        <>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                            style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                            onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                            onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                            aria-label="Image précédente"
+                          >
+                            <ChevronLeft size={24} strokeWidth={2.5} />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                            style={{ position: "absolute", right: "1rem", top: "50%", transform: "translateY(-50%)", zIndex: 10, background: "rgba(0,0,0,0.4)", color: "#fff", border: "none", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backdropFilter: "blur(4px)", transition: "all 0.2s" }}
+                            onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
+                            onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.4)"}
+                            aria-label="Image suivante"
+                          >
+                            <ChevronRight size={24} strokeWidth={2.5} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Scrollable content below */}
+                    <div style={{ padding: "1.5rem 2rem", background: "var(--bg)", display: "flex", flexDirection: "column", gap: "1.25rem", overflowY: "auto", flexGrow: 1 }}>
+                      {/* Galerie Thumbnails (if any) */}
+                      {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                        <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                          <div
+                            onClick={() => setActiveImage(previewProjet.src!)}
+                            style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === previewProjet.src ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === previewProjet.src ? 1 : 0.6, transition: "all 0.2s" }}
+                          >
+                            <Image src={previewProjet.src!} alt="Cover" fill className="object-cover" sizes="100px" />
+                          </div>
+                          {previewProjet.gallery.map((gImg, idx) => (
+                            <div
                               key={idx}
                               onClick={() => setActiveImage(gImg)}
                               style={{ flexShrink: 0, width: 100, height: 70, position: "relative", borderRadius: 8, overflow: "hidden", cursor: "pointer", border: activeImage === gImg ? "2px solid var(--revo-blue)" : "2px solid transparent", opacity: activeImage === gImg ? 1 : 0.6, transition: "all 0.2s" }}
                             >
-                               <Image src={gImg} alt={`Gallery ${idx}`} fill className="object-cover" sizes="100px" />
+                              <Image src={gImg} alt={`Gallery ${idx}`} fill className="object-cover" sizes="100px" />
                             </div>
-                        ))}
-                     </div>
-                  )}
+                          ))}
+                        </div>
+                      )}
 
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-                      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
-                      <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.6rem", background: "var(--revo-blue)", color: "#ffffff", borderRadius: "9999px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{previewProjet.cat}</span>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+                          <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.5rem", color: "var(--text)", margin: 0 }}>{previewProjet.titre}</h3>
+                          <span style={{ fontSize: "0.65rem", padding: "0.2rem 0.6rem", background: "var(--revo-blue)", color: "#ffffff", borderRadius: "9999px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{previewProjet.cat}</span>
+                        </div>
+                        <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
+                      </div>
+
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
+                        <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                          {previewProjet.tags.map(t => (
+                            <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
+                          ))}
+                        </div>
+                        {previewProjet.lien && (
+                          <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
+                            {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
+                          </a>
+                        )}
+                      </div>
+
+                      {/* Desktop Gallery Feed */}
+                      {previewProjet.gallery && previewProjet.gallery.length > 0 && (
+                        <div className="flex flex-col gap-6 mt-10 pt-8 border-t border-[var(--border)]">
+                          <h4 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie complète</h4>
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1.5rem" }}>
+                            {allImages.map((img, idx) => (
+                              <div
+                                key={idx}
+                                onClick={() => setActiveImage(img)}
+                                style={{ position: "relative", borderRadius: "var(--radius-card)", overflow: "hidden", cursor: "pointer", border: activeImage === img ? "2px solid var(--revo-blue)" : "2px solid transparent", transition: "all 0.3s", aspectRatio: "4/3", background: "var(--bg-elevated)" }}
+                                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
+                                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                              >
+                                <Image src={img} alt={`Project visual ${idx}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" loading="lazy" />
+                                {activeImage === img && (
+                                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,255,0.1)", pointerEvents: "none" }} />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: 800 }}>{previewProjet.desc}</p>
-                  </div>
-                  
-                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid var(--border)", marginTop: "0.25rem" }}>
-                     <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                       {previewProjet.tags.map(t => (
-                         <span key={t} style={{ background: "var(--bg-layer)", color: "var(--text-secondary)", borderRadius: 9999, padding: "0.3rem 0.8rem", fontSize: "0.65rem", fontWeight: 500 }}>#{t}</span>
-                       ))}
-                     </div>
- 
-                     {previewProjet.lien && (
-                       <a href={previewProjet.lien} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-                         {previewProjet.lienLabel || "Aller sur le site"} <ExternalLink size={16} strokeWidth={2.5} />
-                       </a>
-                     )}
-                   </div>
-
-                   {/* Desktop Gallery Feed (Mirrors Mobile Experience for many images) */}
-                   {previewProjet.gallery && previewProjet.gallery.length > 0 && (
-                     <div className="flex flex-col gap-6 mt-10 pt-8 border-t border-[var(--border)]">
-                       <h4 style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Galerie complète</h4>
-                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1.5rem" }}>
-                         {allImages.map((img, idx) => (
-                            <div 
-                              key={idx} 
-                              onClick={() => setActiveImage(img)}
-                              style={{ 
-                                position: "relative", 
-                                borderRadius: "var(--radius-card)", 
-                                overflow: "hidden", 
-                                cursor: "pointer", 
-                                border: activeImage === img ? "2px solid var(--revo-blue)" : "2px solid transparent",
-                                transition: "all 0.3s",
-                                aspectRatio: "4/3",
-                                background: "var(--bg-elevated)"
-                              }}
-                              onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
-                              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                            >
-                              <Image 
-                                src={img} 
-                                alt={`Project visual ${idx}`} 
-                                fill 
-                                className="object-cover" 
-                                sizes="(max-width: 768px) 100vw, 33vw" 
-                                loading="lazy" 
-                              />
-                              {activeImage === img && (
-                                <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,255,0.1)", pointerEvents: "none" }} />
-                              )}
-                            </div>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                 </div>
-
+                  </>
+                )}
               </div>
 
               {/* === MOBILE LAYOUT (Hidden on desktop) === */}

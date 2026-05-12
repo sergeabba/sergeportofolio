@@ -15,7 +15,7 @@ const CSP = [
   // API calls: self + Supabase REST/realtime + Resend (server-side only, but kept for safety)
   `connect-src 'self' https://${SUPABASE_HOST} https://api.resend.com https://api.github.com`,
   // No frames, objects, base-uri, form-action locked to self
-  "frame-src 'none'",
+  "frame-src https:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

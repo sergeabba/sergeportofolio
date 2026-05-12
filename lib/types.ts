@@ -7,7 +7,9 @@ export interface Projet {
   tags: string[];
   lien?: string;
   lienLabel?: string;
+  liveUrl?: string;
   gallery?: string[];
+  position?: number;
 }
 
 export interface ExperienceItem {

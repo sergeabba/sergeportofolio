@@ -221,17 +221,30 @@ export default function Navbar() {
             <motion.button
               onClick={toggle}
               aria-label="Basculer le thème"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.14)",
-                color: "rgba(255,255,255,0.7)", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
+                width: 34, height: 34, borderRadius: "50%",
+                background: theme === "dark" ? "rgba(255,255,255,0.07)" : "rgba(25,28,31,0.07)",
+                border: theme === "dark" ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(25,28,31,0.14)",
+                color: theme === "dark" ? "rgba(255,255,255,0.75)" : "rgba(25,28,31,0.75)",
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                overflow: "hidden", position: "relative",
+                transition: "background 0.3s, border-color 0.3s, color 0.3s",
               }}
             >
-              {theme === "dark" ? <Moon size={13} strokeWidth={1.5} /> : <Sun size={13} strokeWidth={1.5} />}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={theme}
+                  initial={{ opacity: 0, rotate: -60, scale: 0.5 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 60, scale: 0.5 }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  {theme === "dark" ? <Moon size={14} strokeWidth={1.8} /> : <Sun size={14} strokeWidth={1.8} />}
+                </motion.span>
+              </AnimatePresence>
             </motion.button>
 
             <motion.a
@@ -392,9 +405,10 @@ export default function Navbar() {
                 alignItems: "center",
               }}
             >
-              <button
+              <motion.button
                 onClick={toggle}
                 aria-label="Basculer le thème"
+                whileTap={{ scale: 0.92 }}
                 style={{
                   width: 48, height: 48, borderRadius: "50%",
                   background: "rgba(255,255,255,0.06)",
@@ -403,8 +417,19 @@ export default function Navbar() {
                   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                 }}
               >
-                {theme === "dark" ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
-              </button>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={theme}
+                    initial={{ opacity: 0, rotate: -60, scale: 0.5 }}
+                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                    exit={{ opacity: 0, rotate: 60, scale: 0.5 }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ display: "flex" }}
+                  >
+                    {theme === "dark" ? <Sun size={18} strokeWidth={1.8} /> : <Moon size={18} strokeWidth={1.8} />}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.button>
               <a
                 href="/cv.pdf" download onClick={() => setMenuOpen(false)}
                 style={{

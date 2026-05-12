@@ -347,7 +347,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.03, opacity: 0.9 }}
                 whileTap={{ scale: 0.97 }}
               >
-                ▶ Voir mes projets
+                Voir mes projets
               </motion.a>
               <motion.a
                 href="#contact"

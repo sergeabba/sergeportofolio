@@ -9,15 +9,19 @@ interface PreloaderProps {
   onDone: () => void;
 }
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export default function Preloader({ name, subName, onDone }: PreloaderProps) {
   const [pct, setPct] = useState(0);
   const [phase, setPhase] = useState<"loading" | "done" | "exit">("loading");
-  const [showLetters, setShowLetters] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const stableDone = useCallback(onDone, []);
 
   useEffect(() => {
     let frame: number;
     let start: number | null = null;
-    const duration = 2400;
+    const duration = 2200;
 
     const tick = (ts: number) => {
       if (!start) start = ts;
@@ -26,92 +30,104 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
       const eased = 1 - Math.pow(1 - progress, 3);
       setPct(Math.round(eased * 100));
 
-      if (progress >= 0.25 && !showLetters) setShowLetters(true);
+      if (progress >= 0.2 && !show) setShow(true);
 
       if (progress < 1) {
         frame = requestAnimationFrame(tick);
       } else {
         setPhase("done");
-        setTimeout(() => setPhase("exit"), 800);
-        setTimeout(() => onDone(), 1700);
+        setTimeout(() => setPhase("exit"), 700);
+        setTimeout(() => stableDone(), 1600);
       }
     };
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [onDone, showLetters]);
+  }, [stableDone]);
 
+  // "Abba Serge" = name, "Mbaitadjim" = subName
   const mainName = subName || name;
   const subText = subName ? name : undefined;
+  const words = mainName.split(" ");
 
   return (
     <AnimatePresence>
       {phase !== "exit" && (
         <motion.div
           exit={{ y: "-100%" }}
-          transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: 0.95, ease: [0.76, 0, 0.24, 1] }}
           style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-            gap: "2.5rem",
-            background: "#191c1f",
-            overflow: "hidden",
+            position: "fixed", inset: 0, zIndex: 9999,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexDirection: "column", background: "#191c1f", overflow: "hidden",
           }}
         >
-          {/* Gradient orb */}
+          {/* Orb */}
           <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.08, 0.14, 0.08],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.07, 0.13, 0.07] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             style={{
-              position: "absolute",
-              width: 600,
-              height: 600,
-              borderRadius: "50%",
+              position: "absolute", width: 700, height: 700, borderRadius: "50%",
               background: "radial-gradient(circle, #494fdf 0%, transparent 70%)",
-              filter: "blur(100px)",
-              pointerEvents: "none",
+              filter: "blur(120px)", pointerEvents: "none",
             }}
           />
 
-          {/* Name container - no overflow hidden, use clipPath instead */}
-          <div
-            style={{
-              position: "relative",
-              zIndex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.4rem",
-              perspective: 600,
-            }}
-          >
-            {/* Main name */}
-            {mainName.split(" ").map((word, wi) => (
-              <div key={wi} style={{ overflow: "hidden", paddingTop: "0.15em", paddingBottom: "0.15em" }}>
+          {/* Name block */}
+          <div style={{
+            position: "relative", zIndex: 1,
+            display: "flex", flexDirection: "column", alignItems: "center",
+            /* Enough vertical padding so descenders and ascenders never clip */
+            padding: "0.5em 1em",
+            gap: "0.15em",
+          }}>
+            {/* Sub-name (last name) — smaller, colored, appears first */}
+            {subText && (
+              <div style={{ overflow: "hidden", lineHeight: 1, paddingBottom: "0.12em" }}>
                 <motion.span
-                  initial={{ y: "100%" }}
-                  animate={showLetters ? { y: "0%" } : { y: "100%" }}
-                  transition={{
-                    delay: 0.1 + wi * 0.15,
-                    duration: 0.9,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
+                  initial={{ y: "110%" }}
+                  animate={show ? { y: "0%" } : { y: "110%" }}
+                  transition={{ delay: 0.05, duration: 0.75, ease }}
                   style={{
                     display: "block",
                     fontFamily: "var(--font-display)",
-                    fontSize: "clamp(2.4rem, 7vw, 5rem)",
-                    fontWeight: 900,
+                    fontSize: "clamp(1.1rem, 3vw, 2.2rem)",
+                    fontWeight: 400,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.35)",
+                    textAlign: "center",
+                  }}
+                >
+                  {subText}
+                </motion.span>
+              </div>
+            )}
+
+            {/* Main name words — large, staggered */}
+            {words.map((word, wi) => (
+              <div
+                key={wi}
+                style={{
+                  overflow: "hidden",
+                  /* Extra padding so tall caps + descenders are never clipped */
+                  paddingTop: "0.08em",
+                  paddingBottom: "0.12em",
+                  lineHeight: 1,
+                }}
+              >
+                <motion.span
+                  initial={{ y: "110%" }}
+                  animate={show ? { y: "0%" } : { y: "110%" }}
+                  transition={{ delay: 0.18 + wi * 0.12, duration: 0.85, ease }}
+                  style={{
+                    display: "block",
+                    fontFamily: "var(--font-display)",
+                    fontSize: "clamp(3rem, 10vw, 7.5rem)",
+                    fontWeight: 800,
                     color: "#ffffff",
                     letterSpacing: "-0.04em",
-                    lineHeight: 1.1,
+                    lineHeight: 1,
                     whiteSpace: "nowrap",
                     textAlign: "center",
                   }}
@@ -120,98 +136,44 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
                 </motion.span>
               </div>
             ))}
-
-            {/* Sub name */}
-            {subText && (
-              <div style={{ overflow: "hidden", paddingTop: "0.1em", paddingBottom: "0.1em" }}>
-                <motion.span
-                  initial={{ y: "100%" }}
-                  animate={showLetters ? { y: "0%" } : { y: "100%" }}
-                  transition={{
-                    delay: 0.35,
-                    duration: 0.8,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  style={{
-                    display: "block",
-                    fontFamily: "var(--font-display)",
-                    fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
-                    fontWeight: 500,
-                    fontStyle: "italic",
-                    background: "linear-gradient(135deg, #494fdf, #a78bfa)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    letterSpacing: "-0.03em",
-                    whiteSpace: "nowrap",
-                    textAlign: "center",
-                  }}
-                >
-                  {subText}
-                </motion.span>
-              </div>
-            )}
           </div>
 
-          {/* Progress */}
-          <div
+          {/* Progress bar */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
             style={{
-              position: "relative",
-              zIndex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.8rem",
+              position: "relative", zIndex: 1, marginTop: "3rem",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem",
             }}
           >
-            <div
-              style={{
-                width: 200,
-                height: 2,
-                background: "rgba(255,255,255,0.06)",
-                borderRadius: 2,
-                overflow: "hidden",
-              }}
-            >
+            <div style={{ width: 180, height: 1.5, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
               <motion.div
-                initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
-                transition={{ duration: 0.08, ease: "linear" }}
-                style={{
-                  height: "100%",
-                  background: "linear-gradient(90deg, #494fdf, #a78bfa)",
-                  borderRadius: 2,
-                }}
+                transition={{ duration: 0.06, ease: "linear" }}
+                style={{ height: "100%", background: "linear-gradient(90deg, #494fdf, #a78bfa)", borderRadius: 2 }}
               />
             </div>
-
-            <span
-              style={{
-                fontFamily:
-                  "ui-monospace, 'SF Mono', Menlo, Consolas, monospace",
-                fontSize: "0.7rem",
-                fontWeight: 500,
-                color: "rgba(255,255,255,0.2)",
-                letterSpacing: "0.12em",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {String(pct).padStart(2, "0")}%
+            <span style={{
+              fontFamily: "ui-monospace, 'SF Mono', Menlo, monospace",
+              fontSize: "0.65rem", fontWeight: 500,
+              color: "rgba(255,255,255,0.18)",
+              letterSpacing: "0.14em",
+              fontVariantNumeric: "tabular-nums",
+            }}>
+              {String(pct).padStart(3, "0")}
             </span>
-          </div>
+          </motion.div>
 
-          {/* Decorative line */}
+          {/* Done line */}
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
-            animate={phase === "done" ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            animate={phase === "done" ? { scaleX: 1, opacity: 1 } : {}}
+            transition={{ duration: 0.5, ease }}
             style={{
-              position: "absolute",
-              bottom: "12%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 60,
-              height: 1,
+              position: "absolute", bottom: "10%", left: "50%", transform: "translateX(-50%)",
+              width: 50, height: 1,
               background: "linear-gradient(90deg, transparent, #494fdf, transparent)",
             }}
           />

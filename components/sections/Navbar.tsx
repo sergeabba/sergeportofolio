@@ -240,15 +240,16 @@ export default function Navbar() {
               whileTap={{ scale: 0.97 }}
               className="nav-cv-btn"
               style={{
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                padding: "0.4rem 1.2rem", borderRadius: "9999px",
+                display: "inline-flex", alignItems: "center", gap: "0.4rem",
+                padding: "0.4rem 1.1rem", borderRadius: "9999px",
                 background: "#ffffff", color: "#191c1f",
                 fontFamily: "var(--font-body)", fontWeight: 600,
                 fontSize: "0.78rem", textDecoration: "none",
-                letterSpacing: "0.01em",
+                letterSpacing: "0.01em", whiteSpace: "nowrap",
               }}
             >
-              CV
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Télécharger CV
             </motion.a>
 
             {/* Mobile hamburger */}

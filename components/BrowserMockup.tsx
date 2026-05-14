@@ -11,6 +11,26 @@ import {
   animate,
 } from "framer-motion";
 
+function toEmbedUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    // youtube.com/watch?v=ID  or  youtu.be/ID
+    if (u.hostname.includes("youtube.com") && u.searchParams.get("v")) {
+      const id = u.searchParams.get("v")!;
+      return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1`;
+    }
+    if (u.hostname === "youtu.be") {
+      const id = u.pathname.slice(1);
+      return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1`;
+    }
+  } catch {}
+  return url;
+}
+
+function isYouTubeUrl(url: string): boolean {
+  return /youtube\.com|youtu\.be/.test(url);
+}
+
 interface BrowserMockupProps {
   src: string;
   alt: string;
@@ -76,7 +96,9 @@ export default function BrowserMockup({
   const scrollY = useMotionValue(0);
   const scrollScale = useMotionValue(1);
 
-  const showIframe = !!(liveUrl && !iframeBlocked && !isMobile && inView);
+  const embedUrl = liveUrl ? toEmbedUrl(liveUrl) : undefined;
+  const isYT = !!(liveUrl && isYouTubeUrl(liveUrl));
+  const showIframe = !!(embedUrl && !iframeBlocked && !isMobile && inView);
   const allImages = [src, ...(gallery || [])];
 
   useEffect(() => {
@@ -253,7 +275,7 @@ export default function BrowserMockup({
               </AnimatePresence>
               <iframe
                 ref={iframeRef}
-                src={liveUrl}
+                src={embedUrl}
                 title={`Aperçu live — ${alt}`}
                 style={{
                   width: "200%",
@@ -262,10 +284,11 @@ export default function BrowserMockup({
                   transform: "scale(0.5)",
                   transformOrigin: "top left",
                   pointerEvents: "none",
-                  background: "#fff",
+                  background: isYT ? "#000" : "#fff",
                   display: "block",
                 }}
-                sandbox="allow-scripts allow-same-origin"
+                allow={isYT ? "accelerometer; encrypted-media; picture-in-picture" : undefined}
+                sandbox={isYT ? "allow-scripts allow-same-origin allow-presentation" : "allow-scripts allow-same-origin"}
                 loading="lazy"
                 onLoad={(e) => {
                   try {

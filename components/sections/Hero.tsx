@@ -269,7 +269,11 @@ export default function Hero() {
                   fontFamily: "var(--font-display)", fontWeight: 500,
                   fontSize: "clamp(3.5rem, 12vw, 10rem)",
                   letterSpacing: "-0.055em", lineHeight: 0.88,
-                  color: "#ffffff", textTransform: "uppercase",
+                  background: "linear-gradient(135deg, #ffffff 40%, rgba(255,255,255,0.55) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  textTransform: "uppercase",
                 }}
                 initial={{ opacity: 0, y: "110%" }}
                 animate={{ opacity: 1, y: 0 }}

@@ -13,23 +13,17 @@ export default function CTABanner() {
         position: "relative",
       }}
     >
-      {/* Subtle orb */}
-      <div
-        style={{
-          position: "absolute",
-          width: 600,
-          height: 600,
-          borderRadius: "50%",
-          background: "var(--revo-blue)",
-          opacity: 0.07,
-          filter: "blur(120px)",
-          top: "-30%",
-          right: "-10%",
-          pointerEvents: "none",
-        }}
-      />
+      {/* Grid overlay */}
+      <div className="bg-grid-pattern" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }} />
 
-      <div className="container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+      {/* Orbs */}
+      <div style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", background: "var(--revo-blue)", opacity: 0.10, filter: "blur(130px)", top: "-30%", right: "-10%", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "#a855f7", opacity: 0.07, filter: "blur(100px)", bottom: "-20%", left: "-5%", pointerEvents: "none" }} />
+
+      {/* Top separator */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(73,79,223,0.5) 50%, transparent)" }} />
+
+      <div className="container" style={{ position: "relative", zIndex: 2, textAlign: "center" }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

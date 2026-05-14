@@ -22,7 +22,7 @@ export default function Home() {
 
   return (
     <>
-      <Preloader name="Abba Serge" subName="Mbaitadjim" onDone={handleDone} />
+      <Preloader name="Mbaitadjim" subName="Abba Serge" onDone={handleDone} />
       <AnimatePresence>
         {loaded && (
           <motion.div
@@ -35,9 +35,13 @@ export default function Home() {
               <Navbar />
               <Hero />
               <TechTicker />
+              <div className="section-sep" />
               <About />
+              <div className="section-sep" />
               <Skills />
+              <div className="section-sep" />
               <Projects />
+              <div className="section-sep" />
               <Experience />
               <CTABanner />
               <Contact />

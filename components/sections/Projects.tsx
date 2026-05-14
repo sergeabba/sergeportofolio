@@ -21,18 +21,27 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ delay: index * 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      style={{ display: "flex", flexDirection: "column", position: "relative" }}
+      style={{
+        display: "flex", flexDirection: "column", position: "relative",
+        background: "var(--bg-elevated)",
+        borderRadius: "var(--r-card)",
+        border: "1px solid var(--border)",
+        padding: "1.25rem",
+        boxShadow: "var(--shadow-md)",
+        transition: "box-shadow 0.3s, transform 0.3s",
+      }}
+      whileHover={{ y: -4, boxShadow: "var(--shadow-xl)" } as never}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Index number */}
       <motion.span
-        animate={{ opacity: hovered ? 1 : 0.3, x: hovered ? 0 : -4 }}
+        animate={{ opacity: hovered ? 1 : 0.4, x: hovered ? 0 : -4 }}
         transition={{ duration: 0.25 }}
         style={{
-          position: "absolute", top: "-1.4rem", left: 0,
+          position: "absolute", top: "1rem", right: "1.25rem",
           fontFamily: "var(--font-display)", fontWeight: 700,
-          fontSize: "0.65rem", letterSpacing: "0.1em",
+          fontSize: "0.6rem", letterSpacing: "0.1em",
           color: "var(--revo-blue)", textTransform: "uppercase",
           zIndex: 2,
         }}
@@ -68,11 +77,19 @@ function ProjectCard({ projet, index, onPreview }: { projet: Projet; index: numb
 
       {/* Tags */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginBottom: "1rem" }}>
-        {projet.tags.slice(0, 3).map(t => (
-          <span key={t} style={{ fontSize: "0.6rem", padding: "0.2rem 0.6rem", background: "var(--bg-elevated)", color: "var(--text-tertiary)", borderRadius: "9999px", fontFamily: "var(--font-body)", fontWeight: 500 }}>
-            #{t}
-          </span>
-        ))}
+        {projet.tags.slice(0, 3).map((t, ti) => {
+          const tagColors = [
+            { bg: "rgba(73,79,223,0.08)", color: "var(--revo-blue)", border: "rgba(73,79,223,0.18)" },
+            { bg: "rgba(168,85,247,0.08)", color: "#a855f7", border: "rgba(168,85,247,0.18)" },
+            { bg: "rgba(0,168,126,0.08)", color: "var(--revo-mint)", border: "rgba(0,168,126,0.18)" },
+          ];
+          const c = tagColors[ti % 3];
+          return (
+            <span key={t} style={{ fontSize: "0.62rem", padding: "0.2rem 0.65rem", background: c.bg, color: c.color, borderRadius: "9999px", fontFamily: "var(--font-body)", fontWeight: 600, border: `1px solid ${c.border}` }}>
+              #{t}
+            </span>
+          );
+        })}
       </div>
 
       {/* Actions */}

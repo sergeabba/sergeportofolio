@@ -1,15 +1,16 @@
 "use client";
 
 import { motion, type Easing } from "framer-motion";
+import { Mail, Phone, Linkedin, Github, Youtube, Facebook } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
 
 const LINKS = [
-  { label: "Email", value: "abbaserge2@gmail.com", href: "mailto:abbaserge2@gmail.com" },
-  { label: "Téléphone", value: "+221 78 546 08 74", href: "tel:+221785460874" },
-  { label: "LinkedIn", value: "linkedin.com/in/sergeabba", href: "https://linkedin.com/in/sergeabba" },
-  { label: "GitHub", value: "github.com/sergeabba", href: "https://github.com/sergeabba" },
-  { label: "YouTube Gaming", value: "@thelegendofdon4125", href: "https://www.youtube.com/@thelegendofdon4125" },
-  { label: "Facebook", value: "The Legend of Don", href: "https://www.facebook.com/thelegendofdon/followers" },
+  { label: "Email", value: "abbaserge2@gmail.com", href: "mailto:abbaserge2@gmail.com", icon: Mail, color: "#ea4335" },
+  { label: "Téléphone", value: "+221 78 546 08 74", href: "tel:+221785460874", icon: Phone, color: "var(--revo-mint)" },
+  { label: "LinkedIn", value: "linkedin.com/in/sergeabba", href: "https://linkedin.com/in/sergeabba", icon: Linkedin, color: "#0a66c2" },
+  { label: "GitHub", value: "github.com/sergeabba", href: "https://github.com/sergeabba", icon: Github, color: "var(--text)" },
+  { label: "YouTube Gaming", value: "@thelegendofdon4125", href: "https://www.youtube.com/@thelegendofdon4125", icon: Youtube, color: "#ff0000" },
+  { label: "Facebook", value: "The Legend of Don", href: "https://www.facebook.com/thelegendofdon/followers", icon: Facebook, color: "#1877f2" },
 ];
 
 const ease: Easing = [0.22, 1, 0.36, 1];
@@ -25,14 +26,9 @@ export default function Contact() {
         overflow: "hidden",
       }}
     >
-      {/* Subtle decorative orb */}
-      <div
-        style={{
-          position: "absolute", width: 400, height: 400, borderRadius: "50%",
-          background: "var(--revo-blue)", opacity: 0.04,
-          filter: "blur(100px)", top: 0, right: "5%", pointerEvents: "none",
-        }}
-      />
+      {/* Decorative orbs */}
+      <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", background: "var(--revo-blue)", opacity: 0.07, filter: "blur(110px)", top: "-10%", right: "0%", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: "var(--revo-mint)", opacity: 0.05, filter: "blur(90px)", bottom: "0%", left: "5%", pointerEvents: "none" }} />
 
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         {/* Header */}
@@ -79,8 +75,8 @@ export default function Contact() {
             </p>
 
             {/* Contact rows */}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {LINKS.map(({ label, value, href }, i) => (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              {LINKS.map(({ label, value, href, icon: Icon, color }, i) => (
                 <motion.a
                   key={label}
                   href={href}
@@ -90,39 +86,47 @@ export default function Contact() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0 }}
                   transition={{ delay: 0.1 + i * 0.06, duration: 0.5, ease }}
-                  whileHover={{ x: 4 }}
+                  whileHover={{ x: 5 }}
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "0.9rem 0",
-                    borderBottom: "1px solid var(--border)",
+                    padding: "0.75rem 1rem",
+                    borderRadius: "var(--r-md)",
                     textDecoration: "none",
                     color: "var(--text)",
-                    gap: "1rem",
-                    transition: "color 0.2s",
+                    gap: "0.85rem",
+                    border: "1px solid transparent",
+                    transition: "background 0.2s, border-color 0.2s",
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--revo-blue)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "var(--bg-elevated)";
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.borderColor = "transparent";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 >
-                  <span
-                    style={{
-                      fontSize: "0.63rem", fontWeight: 700,
-                      letterSpacing: "0.08em", textTransform: "uppercase",
-                      color: "var(--text-tertiary)", minWidth: 92, flexShrink: 0,
-                    }}
-                  >
-                    {label}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "0.88rem", fontWeight: 500, color: "inherit",
-                      textAlign: "right", overflow: "hidden",
-                      textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}
-                  >
-                    {value}
-                  </span>
+                  {/* Icon badge */}
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                    background: `${color}12`,
+                    border: `1px solid ${color}22`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <Icon size={16} strokeWidth={1.8} style={{ color }} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.05rem", minWidth: 0 }}>
+                    <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-tertiary)", lineHeight: 1 }}>
+                      {label}
+                    </span>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 500, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {value}
+                    </span>
+                  </div>
+                  <svg style={{ marginLeft: "auto", color: "var(--text-tertiary)", flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
                 </motion.a>
               ))}
             </div>
@@ -153,6 +157,7 @@ export default function Contact() {
                 borderRadius: "var(--r-card)",
                 border: "1px solid var(--border)",
                 padding: "clamp(1.5rem, 3vw, 2.25rem)",
+                boxShadow: "var(--shadow-lg)",
               }}
             >
               <h3

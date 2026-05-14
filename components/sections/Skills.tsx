@@ -140,44 +140,53 @@ export default function Skills() {
           transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .skill-card:hover::after { transform: scaleX(1); }
+        /* Card type 0 — bleu */
         .skill-card-0 {
-          background: linear-gradient(145deg, var(--bg-elevated), var(--bg));
+          background: var(--bg-elevated);
           color: var(--text);
-          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.2);
-          border: 1px solid var(--border);
+          box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.9);
+          border: 1px solid rgba(73,79,223,0.14);
         }
-        .skill-card-0 .skill-zone { border-top: 1px solid var(--border); }
+        .skill-card-0::before { background: linear-gradient(135deg, rgba(73,79,223,0.07) 0%, transparent 55%) !important; }
+        .skill-card-0 .skill-zone { border-top: 1px solid rgba(73,79,223,0.10); }
+        .skill-card-0 .skill-icon-wrap { background: rgba(73,79,223,0.08); border-color: rgba(73,79,223,0.18); }
         .skill-card-0 .skill-tag {
-          background: linear-gradient(145deg, var(--bg-layer), var(--bg));
-          color: var(--text-secondary);
-          box-shadow: inset 0 1px 2px rgba(255,255,255,0.5), 0 4px 6px -2px rgba(0,0,0,0.05);
-          border: 1px solid var(--border);
+          background: rgba(73,79,223,0.07);
+          color: var(--revo-blue);
+          box-shadow: var(--shadow-xs);
+          border: 1px solid rgba(73,79,223,0.15);
         }
+        /* Card type 1 — violet */
         .skill-card-1 {
-          background: linear-gradient(145deg, var(--bg), var(--bg-elevated));
+          background: var(--bg-elevated);
           color: var(--text);
-          box-shadow: 0 15px 35px -10px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.3);
-          border: 1px solid var(--border);
+          box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.9);
+          border: 1px solid rgba(168,85,247,0.14);
         }
-        .skill-card-1 .skill-zone { border-top: 1px solid var(--border); }
+        .skill-card-1::before { background: linear-gradient(135deg, rgba(168,85,247,0.07) 0%, transparent 55%) !important; }
+        .skill-card-1 .skill-zone { border-top: 1px solid rgba(168,85,247,0.10); }
+        .skill-card-1 .skill-icon-wrap { background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.18); }
         .skill-card-1 .skill-tag {
-          background: linear-gradient(145deg, var(--bg-elevated), var(--border));
-          color: var(--text);
-          box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 4px 10px -2px rgba(0,0,0,0.08);
-          border: 1px solid var(--border);
+          background: rgba(168,85,247,0.07);
+          color: #a855f7;
+          box-shadow: var(--shadow-xs);
+          border: 1px solid rgba(168,85,247,0.15);
         }
+        /* Card type 2 — vert mint */
         .skill-card-2 {
-          background: linear-gradient(145deg, var(--bg-elevated), var(--bg));
+          background: var(--bg-elevated);
           color: var(--text);
-          box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
-          border: 1px solid var(--border);
+          box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.9);
+          border: 1px solid rgba(0,168,126,0.14);
         }
-        .skill-card-2 .skill-zone { border-top: 1px solid var(--border); }
+        .skill-card-2::before { background: linear-gradient(135deg, rgba(0,168,126,0.07) 0%, transparent 55%) !important; }
+        .skill-card-2 .skill-zone { border-top: 1px solid rgba(0,168,126,0.10); }
+        .skill-card-2 .skill-icon-wrap { background: rgba(0,168,126,0.08); border-color: rgba(0,168,126,0.18); }
         .skill-card-2 .skill-tag {
-          background: linear-gradient(145deg, var(--bg-layer), var(--bg));
-          color: var(--text-secondary);
-          box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 5px 12px -2px rgba(0,0,0,0.15);
-          border: 1px solid var(--border);
+          background: rgba(0,168,126,0.07);
+          color: var(--revo-mint);
+          box-shadow: var(--shadow-xs);
+          border: 1px solid rgba(0,168,126,0.15);
         }
         .skill-tag {
           position: relative; overflow: hidden;
@@ -210,7 +219,10 @@ export default function Skills() {
         }
       `}</style>
 
-      <section id="competences" style={{ background: "var(--bg-layer)", padding: "clamp(5rem, 10vw, 8rem) 0" }}>
+      <section id="competences" style={{ background: "var(--bg)", padding: "clamp(5rem, 10vw, 8rem) 0", position: "relative", overflow: "hidden" }}>
+        {/* Decorative orbs */}
+        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "var(--revo-blue)", opacity: 0.04, filter: "blur(130px)", top: "-10%", right: "-15%", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#a855f7", opacity: 0.04, filter: "blur(100px)", bottom: "5%", left: "-5%", pointerEvents: "none" }} />
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -238,14 +250,15 @@ export default function Skills() {
                   transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
                   className={`skill-card skill-card-${cardType}`}
                 >
-                  <div style={{
+                  <div className="skill-icon-wrap" style={{
                     position: "relative", zIndex: 10,
-                    width: 38, height: 38, borderRadius: 9,
+                    width: 40, height: 40, borderRadius: 10,
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    background: "rgba(73,79,223,0.08)", border: "1px solid rgba(73,79,223,0.12)",
-                    marginBottom: "0.9rem",
+                    border: "1px solid",
+                    marginBottom: "1rem",
+                    transition: "transform 0.3s",
                   }}>
-                    <CatIcon size={18} strokeWidth={1.8} style={{ color: "var(--revo-blue)" }} />
+                    <CatIcon size={20} strokeWidth={1.8} style={{ color: "currentColor", opacity: 0.85 }} />
                   </div>
 
                   <h3 style={{

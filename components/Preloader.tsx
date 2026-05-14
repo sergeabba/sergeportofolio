@@ -83,7 +83,7 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
           }}>
             {/* Sub-name (last name) — smaller, colored, appears first */}
             {subText && (
-              <div style={{ overflow: "hidden", lineHeight: 1, paddingBottom: "0.12em" }}>
+              <div style={{ overflow: "hidden", paddingTop: "0.2em", paddingBottom: "0.2em" }}>
                 <motion.span
                   initial={{ y: "110%" }}
                   animate={show ? { y: "0%" } : { y: "110%" }}
@@ -97,6 +97,7 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
                     textTransform: "uppercase",
                     color: "rgba(255,255,255,0.35)",
                     textAlign: "center",
+                    lineHeight: 1.2,
                   }}
                 >
                   {subText}
@@ -110,10 +111,8 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
                 key={wi}
                 style={{
                   overflow: "hidden",
-                  /* Extra padding so tall caps + descenders are never clipped */
-                  paddingTop: "0.08em",
-                  paddingBottom: "0.12em",
-                  lineHeight: 1,
+                  paddingTop: "0.15em",
+                  paddingBottom: "0.15em",
                 }}
               >
                 <motion.span
@@ -127,7 +126,7 @@ export default function Preloader({ name, subName, onDone }: PreloaderProps) {
                     fontWeight: 800,
                     color: "#ffffff",
                     letterSpacing: "-0.04em",
-                    lineHeight: 1,
+                    lineHeight: 1.1,
                     whiteSpace: "nowrap",
                     textAlign: "center",
                   }}

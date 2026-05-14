@@ -15,13 +15,18 @@ export default function Experience() {
         </h2>
 
         <div style={{ position: "relative", maxWidth: 800, marginLeft: "calc(24px + 16px)" }}>
-          {/* Vertical line */}
+          {/* Vertical line — gradient pour plus de profondeur */}
           <motion.div
-            style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 2, background: "var(--border-strong)" }}
+            style={{
+              position: "absolute", left: 0, top: 0, bottom: 0, width: 2,
+              background: "linear-gradient(to bottom, var(--revo-blue) 0%, var(--revo-mint) 50%, transparent 100%)",
+              opacity: 0.35,
+              transformOrigin: "top",
+            }}
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           />
 
           <div style={{ display: "flex", flexDirection: "column", gap: "clamp(2rem, 4vw, 3rem)" }}>
@@ -39,10 +44,23 @@ export default function Experience() {
                   whileHover={{ x: 4 }}
                 >
                   {/* Timeline dot */}
-                  <div style={{ position: "absolute", left: -5, top: "0.65rem", width: 12, height: 12, borderRadius: "50%", background: accent, boxShadow: isCurrent ? `0 0 16px ${accent}40` : "none" }} />
+                  <div style={{
+                    position: "absolute", left: -6, top: "0.7rem",
+                    width: 14, height: 14, borderRadius: "50%",
+                    background: accent,
+                    boxShadow: isCurrent
+                      ? `0 0 0 3px var(--bg-elevated), 0 0 0 5px ${accent}55, 0 0 20px ${accent}60`
+                      : `0 0 0 3px var(--bg-elevated), 0 0 0 4px ${accent}30`,
+                    transition: "box-shadow 0.3s",
+                  }} />
 
                   {/* Card */}
-                  <div className="card-flat card-interactive" style={{ background: "var(--bg)", padding: "clamp(1.25rem, 2.5vw, 2rem)" }}>
+                  <div className="card-flat card-interactive" style={{
+                    background: "var(--bg-elevated)",
+                    padding: "clamp(1.25rem, 2.5vw, 2rem)",
+                    borderLeft: `3px solid ${accent}`,
+                    boxShadow: "var(--shadow-md)",
+                  }}>
                     {/* Date badge */}
                     <span style={{
                       display: "inline-block",

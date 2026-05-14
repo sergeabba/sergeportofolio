@@ -80,7 +80,7 @@ export default function About() {
   }, []);
 
   return (
-    <section id="quisuisje" style={{ background: "var(--bg)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
+    <section id="quisuisje" style={{ background: "var(--bg-elevated)", padding: "clamp(6rem, 10vw, 9rem) 0", position: "relative", overflow: "hidden" }}>
       {/* Floating orbes */}
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />

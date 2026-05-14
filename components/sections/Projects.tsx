@@ -122,6 +122,8 @@ export default function Projects() {
   const [previewProjet, setPreviewProjet] = useState<Projet | null>(null);
   const [activeImage, setActiveImage] = useState<string>("");
   const [modalTab, setModalTab] = useState<"gallery" | "live">("gallery");
+  const [iframeBlocked, setIframeBlocked] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   const allImages = useMemo(() => {
     if (!previewProjet) return [];
@@ -144,6 +146,8 @@ export default function Projects() {
     if (previewProjet) {
       setActiveImage(previewProjet.src);
       setModalTab("gallery");
+      setIframeBlocked(false);
+      setIframeLoaded(false);
     } else {
       setActiveImage("");
     }
@@ -371,7 +375,7 @@ export default function Projects() {
                   </button>
                   {previewProjet.lien && (
                     <button
-                      onClick={() => setModalTab("live")}
+                      onClick={() => { setModalTab("live"); setIframeBlocked(false); setIframeLoaded(false); }}
                       style={{
                         display: "flex", alignItems: "center", gap: "0.4rem",
                         padding: "0.4rem 1rem", borderRadius: 9999, border: "none", cursor: "pointer",
@@ -403,7 +407,7 @@ export default function Projects() {
                         <ExternalLink size={13} />
                       </a>
                     </div>
-                    {/youtube\.com|youtu\.be|instagram\.com|tiktok\.com|twitter\.com|x\.com|facebook\.com|linkedin\.com/.test(previewProjet.lien) ? (
+                    {/youtube\.com|youtu\.be|instagram\.com|tiktok\.com|twitter\.com|x\.com|facebook\.com|linkedin\.com/.test(previewProjet.lien) || iframeBlocked ? (
                       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.25rem", padding: "2rem", background: "var(--bg-elevated)", minHeight: "55vh", textAlign: "center" }}>
                         <Globe size={40} style={{ color: "var(--text-tertiary)", opacity: 0.5 }} />
                         <div>
@@ -427,13 +431,43 @@ export default function Projects() {
                         </a>
                       </div>
                     ) : (
-                      <iframe
-                        src={previewProjet.lien}
-                        title={`Aperçu live — ${previewProjet.titre}`}
-                        style={{ flex: 1, border: "none", width: "100%", minHeight: "55vh", background: "#fff" }}
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                        loading="lazy"
-                      />
+                      <div style={{ flex: 1, position: "relative", minHeight: "55vh" }}>
+                        {!iframeLoaded && (
+                          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-elevated)" }}>
+                            <div style={{ width: 24, height: 24, borderRadius: "50%", border: "2px solid var(--border)", borderTopColor: "var(--accent)", animation: "spin 0.7s linear infinite" }} />
+                          </div>
+                        )}
+                        <iframe
+                          key={previewProjet.lien}
+                          src={previewProjet.lien}
+                          title={`Aperçu live — ${previewProjet.titre}`}
+                          style={{ border: "none", width: "100%", height: "100%", minHeight: "55vh", background: "#fff", display: "block" }}
+                          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                          loading="lazy"
+                          onLoad={() => {
+                            try {
+                              // Si X-Frame-Options bloque, contentDocument sera null ou inaccessible
+                              setIframeLoaded(true);
+                            } catch {
+                              setIframeBlocked(true);
+                            }
+                          }}
+                          onError={() => setIframeBlocked(true)}
+                           ref={(el) => {
+                            if (!el) return;
+                            setTimeout(() => {
+                              try {
+                                const doc = el.contentDocument;
+                                if (!doc || doc.location.href === "about:blank") {
+                                  setIframeBlocked(true);
+                                }
+                              } catch {
+                                setIframeBlocked(true);
+                              }
+                            }, 4000);
+                          }}
+                        />
+                      </div>
                     )}
                   </div>
                 ) : (

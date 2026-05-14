@@ -3,6 +3,7 @@
 import { motion, type Easing } from "framer-motion";
 import { Mail, Phone, Linkedin, Github, Youtube, Facebook } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
+import { SplitWords, FadeUp, EyebrowReveal, StaggerContainer, StaggerItem } from "@/components/TextReveal";
 
 const LINKS = [
   { label: "Email", value: "abbaserge2@gmail.com", href: "mailto:abbaserge2@gmail.com", icon: Mail, color: "#ea4335" },
@@ -32,18 +33,20 @@ export default function Contact() {
 
       <div className="container" style={{ position: "relative", zIndex: 1 }}>
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0 }}
-          transition={{ duration: 0.6, ease }}
-          style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}
-        >
-          <span className="section-label">Contact</span>
-          <h2 className="section-heading" style={{ maxWidth: "16ch" }}>
-            Construisons quelque chose ensemble
-          </h2>
-        </motion.div>
+        <div style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}>
+          <EyebrowReveal delay={0.05}>
+            <span className="section-label" style={{ margin: 0 }}>Contact</span>
+          </EyebrowReveal>
+          <SplitWords
+            text="Construisons quelque chose ensemble"
+            delay={0.12}
+            stagger={0.06}
+            duration={0.8}
+            as="h2"
+            className="section-heading"
+            style={{ marginTop: "0.5rem", maxWidth: "16ch" }}
+          />
+        </div>
 
         {/* Two-column grid */}
         <div
@@ -55,37 +58,30 @@ export default function Contact() {
           }}
         >
           {/* ── Left: Info + Links ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.6, delay: 0.05, ease }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.8,
-                marginBottom: "2.5rem",
-                maxWidth: "38ch",
-              }}
-            >
-              Disponible pour un stage, une mission freelance ou une opportunité en entreprise.
-              Je vous réponds sous&nbsp;24&nbsp;h.
-            </p>
+          <div>
+            <FadeUp delay={0.1} blur>
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.8,
+                  marginBottom: "2.5rem",
+                  maxWidth: "38ch",
+                }}
+              >
+                Disponible pour un stage, une mission freelance ou une opportunité en entreprise.
+                Je vous réponds sous&nbsp;24&nbsp;h.
+              </p>
+            </FadeUp>
 
             {/* Contact rows */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-              {LINKS.map(({ label, value, href, icon: Icon, color }, i) => (
+            <StaggerContainer stagger={0.07} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+              {LINKS.map(({ label, value, href, icon: Icon, color }) => (
+                <StaggerItem key={label} y={16}>
                 <motion.a
-                  key={label}
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
                   rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  initial={{ opacity: 0, x: -16 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0 }}
-                  transition={{ delay: 0.1 + i * 0.06, duration: 0.5, ease }}
                   whileHover={{ x: 5 }}
                   style={{
                     display: "flex",
@@ -128,29 +124,19 @@ export default function Contact() {
                   </div>
                   <svg style={{ marginLeft: "auto", color: "var(--text-tertiary)", flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
                 </motion.a>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0 }}
-              transition={{ delay: 0.55, duration: 0.5, ease }}
-              style={{ marginTop: "2rem" }}
-            >
+            <FadeUp delay={0.2} style={{ marginTop: "2rem" }}>
               <a href="/cv.pdf" download className="btn-primary">
                 Télécharger le CV →
               </a>
-            </motion.div>
-          </motion.div>
+            </FadeUp>
+          </div>
 
           {/* ── Right: Form ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.65, delay: 0.1, ease }}
-          >
+          <FadeUp delay={0.15}>
             <div
               style={{
                 background: "var(--bg-elevated)",
@@ -174,7 +160,7 @@ export default function Contact() {
               </h3>
               <ContactForm />
             </div>
-          </motion.div>
+          </FadeUp>
         </div>
       </div>
     </section>

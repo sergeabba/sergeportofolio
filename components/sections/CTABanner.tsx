@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SplitWords, FadeUp } from "@/components/TextReveal";
 
 export default function CTABanner() {
   return (
@@ -24,37 +25,37 @@ export default function CTABanner() {
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(73,79,223,0.5) 50%, transparent)" }} />
 
       <div className="container" style={{ position: "relative", zIndex: 2, textAlign: "center" }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2
+        <div>
+          <SplitWords
+            text="Prêt à transformer la donnée en décisions ?"
+            delay={0.05}
+            stagger={0.055}
+            duration={0.85}
+            as="h2"
             style={{
               fontFamily: "var(--font-display)",
               fontWeight: 500,
               fontSize: "clamp(2rem, 6vw, 4.5rem)",
               letterSpacing: "-0.04em",
-              lineHeight: 1.05,
+              lineHeight: 1.1,
               color: "#ffffff",
               marginBottom: "2rem",
-              maxWidth: "24ch",
-              marginInline: "auto",
+              justifyContent: "center",
             }}
-          >
-            Prêt à transformer la donnée en&nbsp;décisions&nbsp;?
-          </h2>
-          <p
-            style={{
-              fontSize: "1rem",
-              color: "rgba(255,255,255,0.65)",
-              marginBottom: "2.5rem",
-              lineHeight: 1.7,
-            }}
-          >
-            Disponible pour un stage, un projet freelance ou une opportunité.
-          </p>
+          />
+          <FadeUp delay={0.45} blur>
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "rgba(255,255,255,0.65)",
+                marginBottom: "2.5rem",
+                lineHeight: 1.7,
+              }}
+            >
+              Disponible pour un stage, un projet freelance ou une opportunité.
+            </p>
+          </FadeUp>
+          <FadeUp delay={0.6}>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <a href="/cv.pdf" download className="btn-white">
               Télécharger le CV
@@ -91,7 +92,8 @@ export default function CTABanner() {
               Me contacter
             </a>
           </div>
-        </motion.div>
+          </FadeUp>
+        </div>
       </div>
     </section>
   );

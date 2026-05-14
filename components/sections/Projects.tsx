@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { SplitWords, FadeUp, EyebrowReveal } from "@/components/TextReveal";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { FILTER_CATEGORIES, PROJETS_DATA } from "@/lib/data";
@@ -212,24 +213,29 @@ export default function Projects() {
     <>
       <section id="realisations" style={{ background: "var(--bg)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
         <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem" }}>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.12em", color: "var(--revo-blue)", textTransform: "uppercase" }}>04</span>
-              <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-              <p className="section-eyebrow" style={{ margin: 0 }}>Réalisations</p>
-            </div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)", marginBottom: "0.75rem" }}>
-              Mes projets.
-            </h2>
-            <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
-              Interfaces Power BI, miniatures YouTube, IA générative et designs Canva.
-            </p>
-          </motion.div>
+          <div>
+            <EyebrowReveal delay={0.05}>
+              <span className="section-eyebrow" style={{ margin: 0 }}>Réalisations</span>
+            </EyebrowReveal>
+            <SplitWords
+              text="Mes projets."
+              delay={0.12}
+              stagger={0.12}
+              duration={0.8}
+              as="h2"
+              style={{
+                fontFamily: "var(--font-display)", fontWeight: 500,
+                fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em",
+                lineHeight: 1.1, color: "var(--text)",
+                marginTop: "0.5rem", marginBottom: "0.75rem",
+              }}
+            />
+            <FadeUp delay={0.3} blur>
+              <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", maxWidth: 500, lineHeight: 1.7, marginBottom: "2rem" }}>
+                Interfaces Power BI, miniatures YouTube, IA générative et designs Canva.
+              </p>
+            </FadeUp>
+          </div>
 
           {/* Filter pills + project count */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "3rem", alignItems: "center" }}>

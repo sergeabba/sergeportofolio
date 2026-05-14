@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { EXPERIENCES } from "@/lib/data";
+import { SplitWords, FadeUp, EyebrowReveal, SlideIn } from "@/components/TextReveal";
 
 const ACCENTS = ["var(--revo-blue)", "var(--revo-mint)", "var(--text-tertiary)", "var(--text-tertiary)"];
 
@@ -9,10 +10,22 @@ export default function Experience() {
   return (
     <section id="experience" style={{ background: "var(--bg-elevated)", padding: "clamp(4rem, 8vw, 6.5rem) 0" }}>
       <div className="container">
-        <p className="section-eyebrow">Parcours</p>
-        <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1, color: "var(--text)", marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}>
-          Expérience & Formation.
-        </h2>
+        <EyebrowReveal delay={0.05}>
+          <span className="section-eyebrow" style={{ margin: 0 }}>Parcours</span>
+        </EyebrowReveal>
+        <SplitWords
+          text="Expérience & Formation."
+          delay={0.12}
+          stagger={0.09}
+          duration={0.8}
+          as="h2"
+          style={{
+            fontFamily: "var(--font-display)", fontWeight: 500,
+            fontSize: "clamp(1.8rem, 3.5vw, 3rem)", letterSpacing: "-0.03em",
+            lineHeight: 1.1, color: "var(--text)",
+            marginTop: "0.5rem", marginBottom: "clamp(2.5rem, 5vw, 4rem)",
+          }}
+        />
 
         <div style={{ position: "relative", maxWidth: 800, marginLeft: "calc(24px + 16px)" }}>
           {/* Vertical line — gradient pour plus de profondeur */}
@@ -34,15 +47,7 @@ export default function Experience() {
               const accent = ACCENTS[i] ?? ACCENTS[0];
               const isCurrent = i === 0;
               return (
-                <motion.div
-                  key={item.title + item.org}
-                  style={{ paddingLeft: "2rem", position: "relative" }}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  whileHover={{ x: 4 }}
-                >
+                <SlideIn key={item.title + item.org} delay={i * 0.1} from="left" style={{ paddingLeft: "2rem", position: "relative" }}>
                   {/* Timeline dot */}
                   <div style={{
                     position: "absolute", left: -6, top: "0.7rem",
@@ -117,7 +122,7 @@ export default function Experience() {
                       </div>
                     )}
                   </div>
-                </motion.div>
+                </SlideIn>
               );
             })}
           </div>

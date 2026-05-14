@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Mail, Phone, Linkedin, Github, Youtube, Facebook } from "lucide-react";
 import { CONTACT_LINKS } from "@/lib/data";
+import { FadeUp, StaggerContainer, StaggerItem } from "@/components/TextReveal";
 
 const LINK_ICONS: Record<string, typeof Mail> = {
   Email: Mail,
@@ -35,6 +36,7 @@ export default function Footer() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2rem" }}>
 
           {/* Logo + tagline */}
+          <FadeUp delay={0.05}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
             <div style={{
               width: 44, height: 44, borderRadius: "50%",
@@ -50,15 +52,16 @@ export default function Footer() {
               Data · IA · Design
             </span>
           </div>
+          </FadeUp>
 
           {/* Social icons avec badges */}
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <StaggerContainer stagger={0.07} style={{ display: "flex", gap: "0.75rem" }}>
             {socials.map(({ label, href }) => {
               const Icon = LINK_ICONS[label] || LINK_ICONS["Facebook Gaming"];
               const color = SOCIAL_COLORS[label] || "var(--text-secondary)";
               return (
+                <StaggerItem key={label} y={16}>
                 <motion.a
-                  key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -90,14 +93,16 @@ export default function Footer() {
                 >
                   {Icon && <Icon size={20} strokeWidth={1.6} />}
                 </motion.a>
+                </StaggerItem>
               );
             })}
-          </div>
+          </StaggerContainer>
 
           {/* Divider */}
           <div style={{ width: "100%", height: 1, background: "var(--border)" }} />
 
           {/* Copyright */}
+          <FadeUp delay={0.2}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.82rem", color: "var(--text-tertiary)" }}>
               &copy; {new Date().getFullYear()} Mbaitadjim Abba Serge
@@ -108,6 +113,7 @@ export default function Footer() {
               <rect x="20" y="0" width="10" height="20" fill="#EA2839" />
             </svg>
           </div>
+          </FadeUp>
 
         </div>
       </div>

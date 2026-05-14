@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import MouseSpotCard from "@/components/MouseSpotCard";
 import { ABOUT_FACTS } from "@/lib/data";
+import { SplitWords, FadeUp, EyebrowReveal, StaggerContainer, StaggerItem } from "@/components/TextReveal";
 
 function FlagIcon({ type, size = 24 }: { type: "td" | "fr" | "gb"; size?: number }) {
   const h = Math.round(size * 0.67);
@@ -85,20 +86,25 @@ export default function About() {
       <div className="orb orb-blue orb-2" style={{ width: 500, height: 500, top: "5%", right: "-20%" }} />
       <div className="orb orb-rose" style={{ width: 300, height: 300, bottom: "10%", left: "-8%", opacity: 0.1 }} />
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0 }}
-        transition={{ duration: 0.65, ease }}
-      >
-        <div className="container" style={{ position: "relative", zIndex: 1 }}>
-          <span className="section-label">À propos</span>
-          <h2 className="section-heading">Qui suis-je&nbsp;?</h2>
+      <div className="container" style={{ position: "relative", zIndex: 1 }}>
+        <EyebrowReveal delay={0.05}>
+          <span className="section-label" style={{ margin: 0 }}>À propos</span>
+        </EyebrowReveal>
+        <SplitWords
+          text="Qui suis-je ?"
+          delay={0.12}
+          stagger={0.1}
+          duration={0.8}
+          as="h2"
+          className="section-heading"
+          style={{ marginTop: "0.5rem" }}
+        />
+        <FadeUp delay={0.35} blur>
           <p className="section-desc" style={{ marginTop: "0.6rem" }}>
             Data Analyst junior & IT Support, passionné par la donnée, l&apos;IA et la création visuelle.
           </p>
-        </div>
-      </motion.div>
+        </FadeUp>
+      </div>
 
       {/* Glow line separator */}
       <div className="container" style={{ position: "relative", zIndex: 1 }}>

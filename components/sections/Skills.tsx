@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SplitWords, FadeUp, EyebrowReveal, StaggerContainer, StaggerItem } from "@/components/TextReveal";
 import {
   BarChart3, Brain, Code2, Monitor, Pen, FileText,
   Database, Table2, Calculator, PieChart, LineChart, Donut,
@@ -224,31 +225,32 @@ export default function Skills() {
         <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "var(--revo-blue)", opacity: 0.04, filter: "blur(130px)", top: "-10%", right: "-15%", pointerEvents: "none" }} />
         <div style={{ position: "absolute", width: 350, height: 350, borderRadius: "50%", background: "#a855f7", opacity: 0.04, filter: "blur(100px)", bottom: "5%", left: "-5%", pointerEvents: "none" }} />
         <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="section-label">Compétences</span>
-            <h2 className="section-heading" style={{ marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}>
-              Outils, langages & plateformes.
-            </h2>
-          </motion.div>
+          <div>
+            <EyebrowReveal delay={0.05}>
+              <span className="section-label" style={{ margin: 0 }}>Compétences</span>
+            </EyebrowReveal>
+            <SplitWords
+              text="Outils, langages & plateformes."
+              delay={0.12}
+              stagger={0.07}
+              duration={0.8}
+              as="h2"
+              className="section-heading"
+              style={{ marginTop: "0.5rem", marginBottom: "clamp(2.5rem, 5vw, 4rem)" }}
+            />
+          </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
+          <StaggerContainer stagger={0.09} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
             {SKILL_CATS.map((cat, i) => {
               const cardType = i % 3;
               const CatIcon = cat.icon;
 
               return (
+                <StaggerItem key={cat.title} y={28}>
                 <motion.div
-                  key={cat.title}
-                  initial={{ opacity: 0, y: 20, rotateX: 8 }}
-                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                  viewport={{ once: true, amount: 0 }}
-                  transition={{ delay: i * 0.07, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
                   className={`skill-card skill-card-${cardType}`}
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="skill-icon-wrap" style={{
                     position: "relative", zIndex: 10,
@@ -287,18 +289,13 @@ export default function Skills() {
                     })}
                   </div>
                 </motion.div>
+                </StaggerItem>
               );
             })}
-          </div>
+          </StaggerContainer>
 
           {/* Outils et Environnement */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            style={{ marginTop: "clamp(2.5rem, 5vw, 4rem)" }}
-          >
+          <FadeUp delay={0.1} style={{ marginTop: "clamp(2.5rem, 5vw, 4rem)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
               <div style={{
                 width: 34, height: 34, borderRadius: 9,
@@ -335,7 +332,7 @@ export default function Skills() {
                 );
               })}
             </div>
-          </motion.div>
+          </FadeUp>
         </div>
       </section>
     </>

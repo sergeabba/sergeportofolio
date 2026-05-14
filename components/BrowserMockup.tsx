@@ -31,6 +31,7 @@ export default function BrowserMockup({
   onClick,
 }: BrowserMockupProps) {
   const [showLive, setShowLive] = useState(false);
+  const [iframeBlocked, setIframeBlocked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -117,6 +118,12 @@ export default function BrowserMockup({
     }
     return () => clearTimeout(t);
   }, [isHovered, liveUrl, isMobile]);
+
+  // Reset blocked state when liveUrl changes
+  useEffect(() => {
+    setIframeBlocked(false);
+    setShowLive(false);
+  }, [liveUrl]);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -240,7 +247,7 @@ export default function BrowserMockup({
           }}
         >
           <AnimatePresence mode="wait">
-            {showLive && liveUrl ? (
+            {showLive && liveUrl && !iframeBlocked ? (
               <motion.div
                 key="live"
                 initial={{ opacity: 0 }}
@@ -263,6 +270,34 @@ export default function BrowserMockup({
                   }}
                   sandbox="allow-scripts allow-same-origin"
                   loading="lazy"
+                  onLoad={(e) => {
+                    try {
+                      const doc = (e.target as HTMLIFrameElement).contentDocument;
+                      if (!doc || doc.location.href === "about:blank") {
+                        setIframeBlocked(true);
+                        setShowLive(false);
+                      }
+                    } catch {
+                      setIframeBlocked(true);
+                      setShowLive(false);
+                    }
+                  }}
+                  onError={() => { setIframeBlocked(true); setShowLive(false); }}
+                  ref={(el) => {
+                    if (!el) return;
+                    setTimeout(() => {
+                      try {
+                        const doc = el.contentDocument;
+                        if (!doc || doc.location.href === "about:blank") {
+                          setIframeBlocked(true);
+                          setShowLive(false);
+                        }
+                      } catch {
+                        setIframeBlocked(true);
+                        setShowLive(false);
+                      }
+                    }, 4000);
+                  }}
                 />
               </motion.div>
             ) : (
@@ -294,7 +329,7 @@ export default function BrowserMockup({
 
           {/* Live indicator */}
           <AnimatePresence>
-            {showLive && (
+            {showLive && !iframeBlocked && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: -6 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}

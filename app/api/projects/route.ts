@@ -22,10 +22,14 @@ export async function GET() {
   return NextResponse.json(data ?? []);
 }
 
+function sanitize({ liveUrl: _, ...rest }: Record<string, unknown>) {
+  return rest;
+}
+
 export async function POST(req: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const body = await req.json();
+    const body = sanitize(await req.json());
     const { data, error } = await supabase.from("projets").insert([body]).select().single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);
@@ -37,8 +41,9 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const { id, ...body } = await req.json();
+    const { id, ...rest } = await req.json();
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    const body = sanitize(rest);
     const { data, error } = await supabase.from("projets").update(body).eq("id", id).select().single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);

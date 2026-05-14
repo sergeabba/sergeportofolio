@@ -39,7 +39,8 @@
       "Bash(grep -E \"\\\\.\\(json|ts|tsx|css\\)$\")",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(git push *)"
     ]
   }
 }

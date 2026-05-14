@@ -173,12 +173,11 @@ export default function AdminDashboard() {
   // ── Fetch projects ──
   const fetchProjets = useCallback(async () => {
     setLoadingProjets(true);
-    let { data, error } = await supabase.from("projets").select("*").order("position", { ascending: true, nullsFirst: false });
-    if (error) {
-      const fb = await supabase.from("projets").select("*").order("created_at", { ascending: false });
-      data = fb.data;
-    }
-    if (data) setProjets(data);
+    try {
+      const res = await fetch("/api/projects");
+      const data = await res.json();
+      if (Array.isArray(data)) setProjets(data);
+    } catch { /* ignore */ }
     setLoadingProjets(false);
   }, []);
 
@@ -274,8 +273,9 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Supprimer ce projet ?")) return;
-    const { error } = await supabase.from("projets").delete().eq("id", id);
-    if (error) showToast("Erreur suppression", "error");
+    const res = await fetch("/api/projects", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) showToast(json.error ?? "Erreur suppression", "error");
     else { showToast("Projet supprimé"); fetchProjets(); }
   };
 
@@ -296,9 +296,15 @@ export default function AdminDashboard() {
       liveUrl: formData.liveUrl || null, gallery: finalGallery,
       ...(!editingId && { position: projets.length }),
     };
-    if (editingId) await supabase.from("projets").update(payload).eq("id", editingId);
-    else await supabase.from("projets").insert([payload]);
+    let res: Response;
+    if (editingId) {
+      res = await fetch("/api/projects", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...payload }) });
+    } else {
+      res = await fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    }
+    const json = await res.json().catch(() => ({}));
     setUploading(false);
+    if (!res.ok) { showToast(json.error ?? "Erreur serveur", "error"); return; }
     setIsModalOpen(false);
     showToast(editingId ? "Projet mis à jour !" : "Projet créé !");
     fetchProjets();
@@ -316,7 +322,9 @@ export default function AdminDashboard() {
     const newIdx = projets.findIndex(p => p.id === over.id);
     const reordered = arrayMove(projets, oldIdx, newIdx).map((p, i) => ({ ...p, position: i }));
     setProjets(reordered);
-    await Promise.all(reordered.map(p => supabase.from("projets").update({ position: p.position }).eq("id", p.id)));
+    await Promise.all(reordered.map(p =>
+      fetch("/api/projects", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: p.id, position: p.position }) })
+    ));
   };
 
   const categories = useMemo(() => ["Tous", ...Array.from(new Set(projets.map(p => p.cat)))], [projets]);

@@ -403,13 +403,38 @@ export default function Projects() {
                         <ExternalLink size={13} />
                       </a>
                     </div>
-                    <iframe
-                      src={previewProjet.lien}
-                      title={`Aperçu live — ${previewProjet.titre}`}
-                      style={{ flex: 1, border: "none", width: "100%", minHeight: "55vh", background: "#fff" }}
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                      loading="lazy"
-                    />
+                    {/youtube\.com|youtu\.be|instagram\.com|tiktok\.com|twitter\.com|x\.com|facebook\.com|linkedin\.com/.test(previewProjet.lien) ? (
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.25rem", padding: "2rem", background: "var(--bg-elevated)", minHeight: "55vh", textAlign: "center" }}>
+                        <Globe size={40} style={{ color: "var(--text-tertiary)", opacity: 0.5 }} />
+                        <div>
+                          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "0.5rem", fontWeight: 500 }}>
+                            Ce site n&apos;autorise pas l&apos;intégration en aperçu.
+                          </p>
+                          <p style={{ color: "var(--text-tertiary)", fontSize: "0.78rem" }}>
+                            Ouvrez le lien dans un nouvel onglet pour voir le contenu.
+                          </p>
+                        </div>
+                        <a
+                          href={previewProjet.lien}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.55rem 1.2rem", borderRadius: 9999, background: "var(--accent)", color: "#fff", fontSize: "0.82rem", fontWeight: 600, textDecoration: "none", transition: "opacity 0.15s" }}
+                          onMouseEnter={e => (e.currentTarget.style.opacity = "0.85")}
+                          onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                        >
+                          <ExternalLink size={13} />
+                          Ouvrir le lien
+                        </a>
+                      </div>
+                    ) : (
+                      <iframe
+                        src={previewProjet.lien}
+                        title={`Aperçu live — ${previewProjet.titre}`}
+                        style={{ flex: 1, border: "none", width: "100%", minHeight: "55vh", background: "#fff" }}
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                 ) : (
                   <>

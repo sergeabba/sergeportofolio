@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, Phone, Linkedin, Github, Youtube, Facebook } from "lucide-react";
 import { CONTACT_LINKS } from "@/lib/data";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/TextReveal";
+import { useTheme } from "@/lib/theme";
 
 const LINK_ICONS: Record<string, typeof Mail> = {
   Email: Mail,
@@ -22,6 +23,7 @@ const SOCIAL_COLORS: Record<string, string> = {
 };
 
 export default function Footer() {
+  const { theme } = useTheme();
   const socials = CONTACT_LINKS.filter((l) =>
     ["LinkedIn", "GitHub", "Facebook", "YouTube Gaming"].includes(l.label)
   );
@@ -38,16 +40,14 @@ export default function Footer() {
           {/* Logo + tagline */}
           <FadeUp delay={0.05}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: "50%",
-              background: "var(--revo-black)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-display)", fontWeight: 800,
-              fontSize: "0.75rem", color: "#fff", letterSpacing: "0.02em",
-              boxShadow: "var(--shadow-md)",
-            }}>
-              AS
-            </div>
+            <img
+              src={theme === "dark" ? "/logo-dark-transparent.png" : "/logo-light-transparent.png"}
+              alt="LD Logo"
+              style={{
+                width: 80, height: 80, borderRadius: 12,
+                objectFit: "contain",
+              }}
+            />
             <span style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--text-tertiary)", letterSpacing: "0.04em" }}>
               Data · IA · Design
             </span>

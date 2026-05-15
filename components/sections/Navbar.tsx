@@ -149,21 +149,19 @@ export default function Navbar() {
             style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", zIndex: menuOpen ? 200 : 1 }}
             whileHover={{ opacity: 0.8 }}
           >
-            <span
+            <img
+              src={theme === "dark" ? "/logo-dark-transparent.png" : "/logo-light-transparent.png"}
+              alt="LD Logo"
               style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "#ffffff", color: "#191c1f",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "0.65rem", fontWeight: 800, fontFamily: "var(--font-display)",
-                flexShrink: 0,
+                width: 56, height: 56, borderRadius: 10,
+                objectFit: "contain", flexShrink: 0,
               }}
-            >
-              AS
-            </span>
+            />
             <span
               style={{
                 fontFamily: "var(--font-display)", fontWeight: 500,
-                fontSize: "1rem", letterSpacing: "-0.02em", color: "#ffffff",
+                fontSize: "1rem", letterSpacing: "-0.02em",
+                color: theme === "dark" ? "#ffffff" : "var(--text-primary)",
               }}
             >
               Abba Serge
@@ -189,14 +187,16 @@ export default function Navbar() {
                     fontSize: "0.82rem",
                     fontWeight: isActive ? 600 : 400,
                     letterSpacing: "0.01em",
-                    color: isActive ? "#ffffff" : "rgba(255,255,255,0.55)",
+                    color: isActive
+                      ? (theme === "dark" ? "#ffffff" : "var(--revo-black)")
+                      : (theme === "dark" ? "rgba(255,255,255,0.55)" : "rgba(25,28,31,0.55)"),
                     padding: "0.45rem 0.85rem",
                     borderRadius: "6px",
                     transition: "color 0.2s, font-weight 0.2s",
                     whiteSpace: "nowrap",
                     position: "relative",
                   }}
-                  whileHover={{ color: "#ffffff" } as never}
+                  whileHover={{ color: theme === "dark" ? "#ffffff" : "var(--revo-black)" } as never}
                 >
                   {isActive && (
                     <motion.span
@@ -204,7 +204,7 @@ export default function Navbar() {
                       style={{
                         position: "absolute", inset: 0,
                         borderRadius: 6,
-                        background: "rgba(255,255,255,0.10)",
+                        background: theme === "dark" ? "rgba(255,255,255,0.10)" : "rgba(25,28,31,0.08)",
                         zIndex: -1,
                       }}
                       transition={{ type: "spring", stiffness: 380, damping: 36 }}
@@ -255,7 +255,8 @@ export default function Navbar() {
               style={{
                 display: "inline-flex", alignItems: "center", gap: "0.4rem",
                 padding: "0.4rem 1.1rem", borderRadius: "9999px",
-                background: "#ffffff", color: "#191c1f",
+                background: theme === "dark" ? "#ffffff" : "var(--revo-black)",
+                color: theme === "dark" ? "#191c1f" : "#ffffff",
                 fontFamily: "var(--font-body)", fontWeight: 600,
                 fontSize: "0.78rem", textDecoration: "none",
                 letterSpacing: "0.01em", whiteSpace: "nowrap",
@@ -282,7 +283,7 @@ export default function Navbar() {
               {[0, 1, 2].map((i) => (
                 <motion.span
                   key={i}
-                  style={{ display: "block", width: 18, height: 1.5, background: "#ffffff", borderRadius: 2, transformOrigin: "center" }}
+                  style={{ display: "block", width: 18, height: 1.5, background: theme === "dark" ? "#ffffff" : "var(--revo-black)", borderRadius: 2, transformOrigin: "center" }}
                   animate={
                     menuOpen
                       ? i === 1 ? { opacity: 0, scaleX: 0 }
@@ -461,7 +462,7 @@ export default function Navbar() {
                 userSelect: "none",
               }}
             >
-              AS
+              LD
             </div>
           </motion.div>
         )}

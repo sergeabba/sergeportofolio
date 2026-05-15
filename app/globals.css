@@ -461,3 +461,11 @@ textarea.form-input {
 [data-tooltip]:hover::after {
   opacity: 1; transform: translateX(-50%) translateY(0);
 }
+
+
+/* ══ Nav-glass light mode ══ */
+[data-theme="light"] .nav-glass,
+:root:not([data-theme="dark"]) .nav-glass {
+  background: rgba(255,255,255,0.92);
+  border-bottom-color: rgba(25,28,31,0.08);
+}

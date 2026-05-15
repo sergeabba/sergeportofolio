@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     title: "Mbaitadjim Abba Serge — Data Analyst junior",
     description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
     countryName: "Sénégal",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Mbaitadjim Abba Serge Data Analyst Portfolio", type: "image/jpeg" }],
+    images: [{ url: "/logo-light.jpg", width: 1024, height: 1024, alt: "LD — Mbaitadjim Abba Serge Portfolio", type: "image/jpeg" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Mbaitadjim Abba Serge  Data Analyst junior",
     description: "Data Analyst junior, avec une première expérience professionnelle en Big Data  Dakar, Sénégal",
-    images: ["/og-image.jpg"],
+    images: ["/logo-light.jpg"],
     creator: "@sergeabba",
   },
   robots: {

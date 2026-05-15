@@ -162,6 +162,7 @@ export default function Navbar() {
                 fontFamily: "var(--font-display)", fontWeight: 500,
                 fontSize: "1rem", letterSpacing: "-0.02em",
                 color: theme === "dark" ? "#ffffff" : "var(--text-primary)",
+                display: "inline-flex", alignItems: "center", lineHeight: 1,
               }}
             >
               Abba Serge

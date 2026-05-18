@@ -146,10 +146,18 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const [roleIdx, setRoleIdx] = useState(0);
+  const [photoUrl, setPhotoUrl] = useState("/photo.jpg");
 
   useEffect(() => {
     const t = setInterval(() => setRoleIdx(i => (i + 1) % ROLES.length), 2800);
     return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/profile")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.photoUrl) setPhotoUrl(data.photoUrl); })
+      .catch(() => {/* keep fallback /photo.jpg */});
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -458,7 +466,7 @@ export default function Hero() {
                 />
 
                 <Image
-                  src="/photo.jpg"
+                  src={photoUrl}
                   alt="Mbaitadjim Abba Serge"
                   width={340}
                   height={440}

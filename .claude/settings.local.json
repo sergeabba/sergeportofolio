@@ -41,7 +41,8 @@
       "Bash(git commit *)",
       "Bash(node -e ' *)",
       "Bash(git push *)",
-      "Bash(curl -s http://localhost:3000/admin)"
+      "Bash(curl -s http://localhost:3000/admin)",
+      "Bash(curl *)"
     ]
   }
 }

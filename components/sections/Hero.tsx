@@ -146,7 +146,7 @@ export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const [roleIdx, setRoleIdx] = useState(0);
-  const [photoUrl, setPhotoUrl] = useState("/photo.jpg");
+  const [photoUrl, setPhotoUrl] = useState("");
 
   useEffect(() => {
     const t = setInterval(() => setRoleIdx(i => (i + 1) % ROLES.length), 2800);
@@ -465,21 +465,23 @@ export default function Hero() {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
 
-                <Image
-                  src={photoUrl}
-                  alt="Mbaitadjim Abba Serge"
-                  width={340}
-                  height={440}
-                  style={{
-                    width: "100%",
-                    height: "clamp(200px, 50vw, 430px)",
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    display: "block",
-                    filter: "brightness(0.95) contrast(1.05)",
-                  }}
-                  priority
-                />
+                {photoUrl && (
+                  <Image
+                    src={photoUrl}
+                    alt="Mbaitadjim Abba Serge"
+                    width={340}
+                    height={440}
+                    style={{
+                      width: "100%",
+                      height: "clamp(200px, 50vw, 430px)",
+                      objectFit: "cover",
+                      objectPosition: "center top",
+                      display: "block",
+                      filter: "brightness(0.95) contrast(1.05)",
+                    }}
+                    priority
+                  />
+                )}
               </motion.div>
 
               {/* Floating dot decoration */}

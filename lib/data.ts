@@ -56,6 +56,12 @@ export const SKILL_CATEGORIES: { title: string; icon: string; tags: string[]; ta
     tags: ["Word", "Excel", "Sheets", "TikTok IA & Gaming"],
     tagIcons: { "Excel": "ph-table", "Sheets": "ph-table", "Word": "ph-file-doc" },
   },
+  {
+    title: "Montage Vidéo",
+    icon: "ph-video-camera",
+    tags: ["CapCut", "Transitions", "Color Grading", "Motion Graphics", "Sound Design"],
+    tagIcons: { "CapCut": "ph-film-strip", "Transitions": "ph-arrows-left-right", "Color Grading": "ph-palette", "Motion Graphics": "ph-sparkle", "Sound Design": "ph-music-note" },
+  },
 ];
 
 export const TOOL_ENVIRONMENT = [
@@ -184,7 +190,7 @@ export const CONTACT_LINKS: ContactLink[] = [
   },
 ];
 
-export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva", "Data"];
+export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva", "Data", "Montage Vidéo"];
 
 export const ABOUT_FACTS = [
   { key: "Formation", val: "Master Big Data & Data Stratégie" },
@@ -198,7 +204,7 @@ export const ABOUT_FACTS = [
 export const MARQUEE_SKILLS = [
   "Power BI", "Python", "SQL", "Pandas", "Spark",
   "IA Générative", "Prompt Engineering", "Figma", "Photoshop",
-  "Windows", "Linux Mint", "VirtualBox", "Big Data",
+  "Windows", "Linux Mint", "VirtualBox", "Big Data", "CapCut",
 ];
 
 export const MARQUEE_ICONS: Record<string, string> = {
@@ -217,6 +223,7 @@ export const MARQUEE_ICONS: Record<string, string> = {
   "Linux Mint": "ph-linux-logo",
   "VirtualBox": "ph-hard-drives",
   "Big Data": "ph-stack",
+  "CapCut": "ph-film-strip",
 };
 
 // Nouveaux projets DATA pour équilibrer portfolio

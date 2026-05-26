@@ -35,3 +35,16 @@ export interface SkillBar {
   level: number;
   accent?: boolean;
 }
+
+export interface SkillTag {
+  label: string;
+  icon?: string;
+}
+
+export interface SkillCategory {
+  id: string;
+  title: string;
+  icon: string;
+  tags: SkillTag[];
+  position?: number;
+}

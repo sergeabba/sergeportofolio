@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import {
   Plus, Edit2, Trash2, LogOut, Loader2, Link as LinkIcon,
   Image as ImageIcon, GripVertical, Upload, User, FolderOpen,
-  CheckCircle, AlertCircle, X, ChevronRight, Camera,
+  CheckCircle, AlertCircle, X, ChevronRight, Camera, Zap,
 } from "lucide-react";
+import type { SkillCategory, SkillTag } from "@/lib/types";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
   useSensor, useSensors, DragEndEvent,
@@ -141,8 +142,8 @@ const DEFAULT_PROFILE: ProfileData = {
 export default function AdminDashboard() {
   const router = useRouter();
 
-  // tabs: "projects" | "profile"
-  const [tab, setTab] = useState<"projects" | "profile">("projects");
+  // tabs
+  const [tab, setTab] = useState<"projects" | "profile" | "skills">("projects");
 
   // ── Projects state ──
   const [projets, setProjets] = useState<(Projet & { id: string })[]>([]);
@@ -165,6 +166,13 @@ export default function AdminDashboard() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Skills state ──
+  const [skills, setSkills] = useState<SkillCategory[]>([]);
+  const [loadingSkills, setLoadingSkills] = useState(true);
+  const [savingSkills, setSavingSkills] = useState(false);
+  const [editingSkillIdx, setEditingSkillIdx] = useState<number | null>(-1);
+  const [skillForm, setSkillForm] = useState({ title: "", icon: "BarChart3", tags: "" });
 
   // ── Toast ──
   const [toast, setToast] = useState<{ msg: string; type: ToastType } | null>(null);
@@ -194,7 +202,39 @@ export default function AdminDashboard() {
     setLoadingProfile(false);
   }, []);
 
-  useEffect(() => { fetchProjets(); fetchProfile(); }, [fetchProjets, fetchProfile]);
+  // ── Fetch skills ──
+  const fetchSkills = useCallback(async () => {
+    setLoadingSkills(true);
+    try {
+      const res = await fetch("/api/skills");
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) setSkills(data);
+      else {
+        setSkills([
+          { id: "1", title: "Analyse & Visu. Données", icon: "BarChart3", tags: [{ label: "SQL", icon: "Database" }, { label: "Pandas", icon: "Table2" }, { label: "NumPy", icon: "Calculator" }, { label: "Power BI", icon: "PieChart" }] },
+          { id: "2", title: "IA Générative & Prompt", icon: "Brain", tags: [{ label: "Midjourney", icon: "Sparkles" }, { label: "DALL-E", icon: "Image" }, { label: "Sora", icon: "Video" }, { label: "Suno", icon: "Music" }] },
+          { id: "3", title: "Programmation", icon: "Code2", tags: [{ label: "Python", icon: "Terminal" }, { label: "C++", icon: "Cpu" }, { label: "C", icon: "Cpu" }] },
+          { id: "4", title: "Systèmes & OS", icon: "Monitor", tags: [{ label: "Windows", icon: "Monitor" }, { label: "Linux Mint", icon: "Terminal" }, { label: "VirtualBox", icon: "Package" }, { label: "Spark", icon: "Sparkles" }] },
+          { id: "5", title: "Design & UI/UX", icon: "Pen", tags: [{ label: "Photoshop", icon: "Image" }, { label: "Illustrator", icon: "Pen" }, { label: "Figma", icon: "Pen" }, { label: "Canva", icon: "Pen" }] },
+          { id: "6", title: "Bureautique & Réseaux", icon: "FileText", tags: [{ label: "Word", icon: "FileText" }, { label: "Excel", icon: "Table2" }, { label: "Sheets", icon: "Table2" }] },
+          { id: "7", title: "Montage Vidéo", icon: "Film", tags: [{ label: "CapCut", icon: "Film" }, { label: "Transitions", icon: "ArrowLeftRight" }, { label: "Color Grading", icon: "Palette" }, { label: "Motion Graphics", icon: "Sparkles" }, { label: "Sound Design", icon: "Music2" }] },
+        ]);
+      }
+    } catch { /* use defaults */ }
+    setLoadingSkills(false);
+  }, []);
+
+  const saveSkills = useCallback(async (data: SkillCategory[]) => {
+    setSavingSkills(true);
+    try {
+      const res = await fetch("/api/skills", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (res.ok) showToast("Compétences sauvegardées !");
+      else showToast("Erreur sauvegarde", "error");
+    } catch { showToast("Erreur réseau", "error"); }
+    setSavingSkills(false);
+  }, [showToast]);
+
+  useEffect(() => { fetchProjets(); fetchProfile(); fetchSkills(); }, [fetchProjets, fetchProfile, fetchSkills]);
 
   // ── Logout ──
   const handleLogout = async () => {
@@ -347,6 +387,7 @@ export default function AdminDashboard() {
 
           {([
             { id: "projects", icon: <FolderOpen size={15} />, label: "Projets" },
+            { id: "skills", icon: <Zap size={15} />, label: "Compétences" },
             { id: "profile", icon: <User size={15} />, label: "Profil & Hero" },
           ] as const).map(item => (
             <button key={item.id} onClick={() => setTab(item.id)} style={{
@@ -420,6 +461,104 @@ export default function AdminDashboard() {
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
                   {displayed.map(p => <SortableProjectCard key={p.id} projet={p} onEdit={handleOpenModal} onDelete={handleDelete} />)}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ── TAB: SKILLS ── */}
+          {tab === "skills" && (
+            <>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
+                <div>
+                  <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "1.6rem", letterSpacing: "-0.03em", marginBottom: "0.25rem" }}>Compétences</h1>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>{skills.length} catégorie{skills.length > 1 ? "s" : ""} · Gérez vos skills affichés sur le portfolio</p>
+                </div>
+                <button onClick={() => { setEditingSkillIdx(null); setSkillForm({ title: "", icon: "BarChart3", tags: "" }); }} className="btn-primary" style={{ padding: "0.6rem 1.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Plus size={15} /> Ajouter catégorie
+                </button>
+              </div>
+
+              {/* Add/Edit form */}
+              {editingSkillIdx !== -1 && (
+                <div style={{ background: "var(--bg-elevated)", borderRadius: "var(--r-card)", padding: "1.5rem", border: "1px solid var(--border)", marginBottom: "1.5rem" }}>
+                  <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
+                    {editingSkillIdx !== null ? "Modifier catégorie" : "Nouvelle catégorie"}
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+                    <Field label="Titre *">
+                      <input value={skillForm.title} onChange={e => setSkillForm(f => ({ ...f, title: e.target.value }))} className="form-input" style={{ width: "100%" }} placeholder="Ex: Montage Vidéo" />
+                    </Field>
+                    <Field label="Icône" hint="BarChart3, Brain, Code2, Monitor, Pen, FileText, Film, etc.">
+                      <select value={skillForm.icon} onChange={e => setSkillForm(f => ({ ...f, icon: e.target.value }))} className="form-input" style={{ width: "100%", backgroundColor: "var(--bg-elevated)" }}>
+                        {["BarChart3", "Brain", "Code2", "Monitor", "Pen", "FileText", "Film", "Database", "Terminal", "Sparkles", "Globe", "Wrench", "Package", "Layers"].map(ic => (
+                          <option key={ic} value={ic}>{ic}</option>
+                        ))}
+                      </select>
+                    </Field>
+                  </div>
+                  <Field label="Tags (séparés par virgule)" hint="Ex: CapCut, Transitions, Color Grading">
+                    <input value={skillForm.tags} onChange={e => setSkillForm(f => ({ ...f, tags: e.target.value }))} className="form-input" style={{ width: "100%" }} placeholder="Skill 1, Skill 2, Skill 3..." />
+                  </Field>
+                  <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem" }}>
+                    <button
+                      onClick={() => {
+                        if (!skillForm.title.trim()) { showToast("Titre requis", "error"); return; }
+                        const tags: SkillTag[] = skillForm.tags.split(",").map(t => t.trim()).filter(Boolean).map(t => ({ label: t }));
+                        if (editingSkillIdx !== null) {
+                          const updated = [...skills];
+                          updated[editingSkillIdx] = { ...updated[editingSkillIdx], title: skillForm.title, icon: skillForm.icon, tags };
+                          setSkills(updated);
+                          saveSkills(updated);
+                        } else {
+                          const newCat: SkillCategory = { id: crypto.randomUUID(), title: skillForm.title, icon: skillForm.icon, tags, position: skills.length };
+                          const updated = [...skills, newCat];
+                          setSkills(updated);
+                          saveSkills(updated);
+                        }
+                        setEditingSkillIdx(-1);
+                      }}
+                      className="btn-primary"
+                      style={{ padding: "0.55rem 1.25rem", display: "flex", alignItems: "center", gap: "0.4rem" }}
+                    >
+                      <CheckCircle size={14} /> {editingSkillIdx !== null ? "Mettre à jour" : "Créer"}
+                    </button>
+                    <button onClick={() => setEditingSkillIdx(-1)} style={{ padding: "0.55rem 1rem", borderRadius: "9999px", border: "1px solid var(--border)", background: "transparent", color: "var(--text)", fontSize: "0.82rem", fontWeight: 600, cursor: "pointer" }}>
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {loadingSkills ? (
+                <div style={{ display: "flex", justifyContent: "center", padding: "4rem" }}><Loader2 size={28} className="animate-spin" color="var(--revo-blue)" /></div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  {skills.map((cat, idx) => (
+                    <div key={cat.id} style={{ background: "var(--bg-elevated)", borderRadius: "var(--r-card)", padding: "1.25rem 1.5rem", border: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(73,79,223,0.08)", border: "1px solid rgba(73,79,223,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <Zap size={16} color="var(--revo-blue)" />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontWeight: 600, fontSize: "0.92rem", marginBottom: "0.3rem" }}>{cat.title}</p>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+                          {cat.tags.map(tag => (
+                            <span key={tag.label} style={{ background: "rgba(73,79,223,0.07)", color: "var(--revo-blue)", padding: "0.2rem 0.55rem", borderRadius: "9999px", fontSize: "0.68rem", fontWeight: 600, border: "1px solid rgba(73,79,223,0.12)" }}>
+                              {tag.label}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0 }}>
+                        <button onClick={() => { setEditingSkillIdx(idx); setSkillForm({ title: cat.title, icon: cat.icon, tags: cat.tags.map(t => t.label).join(", ") }); }} style={{ background: "var(--bg)", border: "1px solid var(--border)", padding: "0.4rem", borderRadius: "8px", cursor: "pointer", color: "var(--text)", display: "flex" }}>
+                          <Edit2 size={14} />
+                        </button>
+                        <button onClick={() => { const updated = skills.filter((_, i) => i !== idx); setSkills(updated); saveSkills(updated); }} style={{ background: "rgba(226,59,74,0.05)", border: "1px solid rgba(226,59,74,0.15)", padding: "0.4rem", borderRadius: "8px", cursor: "pointer", color: "var(--danger)", display: "flex" }}>
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </>
@@ -545,7 +684,7 @@ export default function AdminDashboard() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                   <Field label="Catégorie *">
                     <select required value={formData.cat} onChange={e => setFormData(f => ({ ...f, cat: e.target.value }))} className="form-input" style={{ width: "100%", backgroundColor: "var(--bg-elevated)" }}>
-                      {["Gaming", "IA Générative", "Canva", "Web", "Data"].map(c => <option key={c} value={c}>{c}</option>)}
+                      {["Gaming", "IA Générative", "Canva", "Web", "Data", "Montage Vidéo"].map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </Field>
                   <Field label="Tags (virgules)">

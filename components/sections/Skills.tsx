@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SplitWords, FadeUp, EyebrowReveal, StaggerContainer, StaggerItem } from "@/components/TextReveal";
 import {
@@ -8,9 +9,23 @@ import {
   Sparkles, Image, Video, Music,
   Terminal, Cpu,
   Wrench, GitBranch, Globe, Atom, Package, Send,
-  Layers,
+  Layers, Film, ArrowLeftRight, Palette, Music2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type { SkillCategory } from "@/lib/types";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  BarChart3, Brain, Code2, Monitor, Pen, FileText,
+  Database, Table2, Calculator, PieChart, LineChart, Donut,
+  Sparkles, Image, Video, Music, Terminal, Cpu,
+  Wrench, GitBranch, Globe, Atom, Package, Send, Layers,
+  Film, ArrowLeftRight, Palette, Music2,
+};
+
+function resolveIcon(name?: string): LucideIcon | undefined {
+  if (!name) return undefined;
+  return ICON_MAP[name];
+}
 
 interface SkillCat {
   title: string;
@@ -18,7 +33,7 @@ interface SkillCat {
   tags: { label: string; icon?: LucideIcon }[];
 }
 
-const SKILL_CATS: SkillCat[] = [
+const DEFAULT_SKILL_CATS: SkillCat[] = [
   {
     title: "Analyse & Visu. Données",
     icon: BarChart3,
@@ -87,7 +102,29 @@ const SKILL_CATS: SkillCat[] = [
       { label: "TikTok IA & Gaming", icon: Video },
     ],
   },
+  {
+    title: "Montage Vidéo",
+    icon: Film,
+    tags: [
+      { label: "CapCut", icon: Film },
+      { label: "Transitions", icon: ArrowLeftRight },
+      { label: "Color Grading", icon: Palette },
+      { label: "Motion Graphics", icon: Sparkles },
+      { label: "Sound Design", icon: Music2 },
+    ],
+  },
 ];
+
+function convertApiSkills(apiData: SkillCategory[]): SkillCat[] {
+  return apiData.map(cat => ({
+    title: cat.title,
+    icon: resolveIcon(cat.icon) || BarChart3,
+    tags: cat.tags.map(t => ({
+      label: t.label,
+      icon: resolveIcon(t.icon),
+    })),
+  }));
+}
 
 interface ToolItem {
   name: string;
@@ -110,6 +147,19 @@ const TOOLS: ToolItem[] = [
 ];
 
 export default function Skills() {
+  const [skillCats, setSkillCats] = useState<SkillCat[]>(DEFAULT_SKILL_CATS);
+
+  useEffect(() => {
+    fetch("/api/skills")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setSkillCats(convertApiSkills(data));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       <style>{`
@@ -241,7 +291,7 @@ export default function Skills() {
           </div>
 
           <StaggerContainer stagger={0.09} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
-            {SKILL_CATS.map((cat, i) => {
+            {skillCats.map((cat, i) => {
               const cardType = i % 3;
               const CatIcon = cat.icon;
 

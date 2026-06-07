@@ -66,21 +66,41 @@ export default function Experience() {
                     borderLeft: `3px solid ${accent}`,
                     boxShadow: "var(--shadow-md)",
                   }}>
-                    {/* Date badge */}
-                    <span style={{
-                      display: "inline-block",
-                      background: isCurrent ? "var(--revo-blue)" : "var(--bg-elevated)",
-                      color: isCurrent ? "#ffffff" : "var(--text-tertiary)",
-                      borderRadius: 9999,
-                      padding: "0.25rem 0.8rem",
-                      fontSize: "0.65rem",
-                      fontWeight: 500,
-                      letterSpacing: "0.04em",
-                      fontFamily: "monospace",
-                      marginBottom: "0.75rem",
-                    }}>
-                      {item.date}
-                    </span>
+                    {/* Date badge + "En cours" indicator */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
+                      <span style={{
+                        display: "inline-block",
+                        background: isCurrent ? "var(--revo-blue)" : "var(--bg-elevated)",
+                        color: isCurrent ? "#ffffff" : "var(--text-tertiary)",
+                        borderRadius: 9999,
+                        padding: "0.25rem 0.8rem",
+                        fontSize: "0.65rem",
+                        fontWeight: 500,
+                        letterSpacing: "0.04em",
+                        fontFamily: "monospace",
+                      }}>
+                        {item.date}
+                      </span>
+                      {isCurrent && (
+                        <span style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          background: "rgba(16, 185, 129, 0.1)",
+                          border: "1px solid rgba(16, 185, 129, 0.3)",
+                          borderRadius: 9999,
+                          padding: "0.2rem 0.7rem",
+                          fontSize: "0.6rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.05em",
+                          color: "#10b981",
+                          textTransform: "uppercase",
+                        }}>
+                          <span className="pulse-dot" />
+                          En cours
+                        </span>
+                      )}
+                    </div>
 
                     {/* Title */}
                     <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(1.1rem, 2vw, 1.4rem)", letterSpacing: "-0.02em", color: "var(--text)", marginBottom: "0.2rem" }}>

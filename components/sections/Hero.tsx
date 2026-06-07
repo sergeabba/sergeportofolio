@@ -156,8 +156,10 @@ export default function Hero() {
   useEffect(() => {
     fetch("/api/profile")
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.photoUrl) setPhotoUrl(data.photoUrl); })
-      .catch(() => {/* keep fallback /photo.jpg */});
+      .then(data => {
+        if (data?.photoUrl && data.photoUrl !== "/photo.jpg") setPhotoUrl(data.photoUrl);
+      })
+      .catch(() => {});
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -465,7 +467,7 @@ export default function Hero() {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
 
-                {photoUrl && (
+                {photoUrl ? (
                   <Image
                     src={photoUrl}
                     alt="Mbaitadjim Abba Serge"
@@ -481,6 +483,28 @@ export default function Hero() {
                     }}
                     priority
                   />
+                ) : (
+                  <div style={{
+                    width: "100%",
+                    height: "clamp(200px, 50vw, 430px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+                  }}>
+                    <span style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "clamp(3rem, 8vw, 5rem)",
+                      fontWeight: 700,
+                      letterSpacing: "-0.04em",
+                      background: "linear-gradient(135deg, var(--revo-blue), var(--revo-mint))",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}>
+                      SA
+                    </span>
+                  </div>
                 )}
               </motion.div>
 

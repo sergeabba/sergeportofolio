@@ -305,6 +305,15 @@ section[id] { scroll-margin-top: 72px; }
   0%, 100% { transform: scale(1); opacity: 0.4; }
   50%       { transform: scale(2.2); opacity: 0; }
 }
+.pulse-dot {
+  position: relative; width: 6px; height: 6px;
+  border-radius: 50%; background: #10b981; flex-shrink: 0;
+}
+.pulse-dot::after {
+  content: ""; position: absolute; inset: -3px;
+  border-radius: 50%; background: #10b981;
+  opacity: 0.5; animation: pulse-dot 2s ease-in-out infinite;
+}
 
 /* ══ Marquee ══ */
 @keyframes marquee {

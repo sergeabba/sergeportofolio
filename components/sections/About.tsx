@@ -253,20 +253,39 @@ export default function About() {
                 <div style={{ marginBottom: "0.85rem" }}>
                   <span className="pill pill-accent" style={{ fontSize: "0.6rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em" }}>Expérience pro.</span>
                 </div>
-                <motion.div className="glass" style={{ display: "flex", alignItems: "center", gap: "0.85rem", padding: "1rem 1.1rem" }} whileHover={{ x: 4, borderColor: "var(--glass-border-h)" }} transition={{ duration: 0.3 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "#FCA5A5", flexShrink: 0 }}>
-                    W
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.83rem", color: "var(--text)", marginBottom: "0.15rem" }}>
-                      Stage &mdash; Data Analyse
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <motion.div className="glass" style={{ display: "flex", alignItems: "center", gap: "0.85rem", padding: "1rem 1.1rem", borderColor: "rgba(16,185,129,0.25)" }} whileHover={{ x: 4, borderColor: "rgba(16,185,129,0.5)" }} transition={{ duration: 0.3 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "#93C5FD", flexShrink: 0 }}>
+                      MS
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin 2024&ndash; Oct. 2025</span>
-                      <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.18)", color: "#86EFAC" }}>Terminé</span>
+                    <div>
+                      <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.83rem", color: "var(--text)", marginBottom: "0.15rem" }}>
+                        Stage &mdash; Rédacteur Web & CM
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                        <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin 2026&ndash; Sept. 2026</span>
+                        <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(16,185,129,0.08)", borderColor: "rgba(16,185,129,0.25)", color: "#10b981", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+                          <span className="pulse-dot" style={{ width: 5, height: 5 }} />
+                          En cours
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                  <motion.div className="glass" style={{ display: "flex", alignItems: "center", gap: "0.85rem", padding: "1rem 1.1rem" }} whileHover={{ x: 4, borderColor: "var(--glass-border-h)" }} transition={{ duration: 0.3 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "var(--radius-sm)", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.72rem", fontWeight: 800, color: "#FCA5A5", flexShrink: 0 }}>
+                      W
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "0.83rem", color: "var(--text)", marginBottom: "0.15rem" }}>
+                        Stage &mdash; Data Analyse
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span className="mono" style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Juin 2024&ndash; Oct. 2025</span>
+                        <span className="pill" style={{ fontSize: "0.55rem", background: "rgba(34,197,94,0.06)", borderColor: "rgba(34,197,94,0.18)", color: "#86EFAC" }}>Terminé</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
 
               {/* Formation */}

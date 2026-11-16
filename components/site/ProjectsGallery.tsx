@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import Image from "next/image";
 import type { Projet } from "@/lib/types";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Close } from "./Icons";
@@ -22,6 +23,8 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const filtered = useRef(false);
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -40,6 +43,36 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
     [current]
   );
 
+  // Après un changement de filtre, les nouvelles cartes s'affichent directement
+  // (l'animation est alors assurée par la View Transition).
+  useLayoutEffect(() => {
+    if (!filtered.current) return;
+    listRef.current?.querySelectorAll("li").forEach((li) => li.classList.add("is-visible"));
+  }, [filter]);
+
+  const changeFilter = (cat: string) => {
+    if (cat === filter) return;
+    filtered.current = true;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && "startViewTransition" in document) {
+      document.startViewTransition(() => flushSync(() => setFilter(cat)));
+    } else {
+      setFilter(cat);
+    }
+  };
+
+  // Inclinaison 3D légère qui suit la souris
+  const onTilt = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--rx", (((e.clientY - r.top) / r.height - 0.5) * -6).toFixed(2));
+    e.currentTarget.style.setProperty("--ry", (((e.clientX - r.left) / r.width - 0.5) * 8).toFixed(2));
+  };
+  const resetTilt = (e: React.PointerEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.setProperty("--rx", "0");
+    e.currentTarget.style.setProperty("--ry", "0");
+  };
+
   const open = (i: number) => {
     setOpenIndex(i);
     setImageIndex(0);
@@ -48,8 +81,12 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
   useEffect(() => {
     const d = dialogRef.current;
     if (!d) return;
-    if (current && !d.open) d.showModal();
+    if (current && !d.open) {
+      d.showModal();
+      window.__lenis?.stop();
+    }
     if (!current && d.open) d.close();
+    if (!current) window.__lenis?.start();
   }, [current]);
 
   const step = useCallback(
@@ -73,7 +110,7 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
               type="button"
               className="filter"
               aria-pressed={filter === cat}
-              onClick={() => setFilter(cat)}
+              onClick={() => changeFilter(cat)}
             >
               {cat}
               <span className="filter__count">{count}</span>
@@ -82,10 +119,24 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
         </div>
       )}
 
-      <ul className="works">
+      <ul className="works" ref={listRef}>
         {visible.map((p, i) => (
-          <li key={p.id ?? p.titre}>
-            <button type="button" className="work" onClick={() => open(i)} aria-haspopup="dialog">
+          <li
+            key={p.id ?? p.titre}
+            data-reveal
+            style={{
+              ["--d" as string]: i % 3,
+              viewTransitionName: `work-${projects.indexOf(p)}`,
+            }}
+          >
+            <button
+              type="button"
+              className="work"
+              onClick={() => open(i)}
+              onPointerMove={onTilt}
+              onPointerLeave={resetTilt}
+              aria-haspopup="dialog"
+            >
               <Image
                 src={p.src}
                 alt=""

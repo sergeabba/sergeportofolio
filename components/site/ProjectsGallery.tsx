@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { Projet } from "@/lib/types";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Close } from "./Icons";
@@ -23,8 +22,6 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
-  const filtered = useRef(false);
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -43,50 +40,11 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
     [current]
   );
 
-  // Après un changement de filtre, les nouvelles cartes s'affichent directement
-  // (l'animation est alors assurée par la View Transition).
-  useLayoutEffect(() => {
-    if (!filtered.current) return;
-    listRef.current?.querySelectorAll("li").forEach((li) => li.classList.add("is-visible"));
-  }, [filter]);
-
-  const changeFilter = (cat: string) => {
-    if (cat === filter) return;
-    filtered.current = true;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduce && "startViewTransition" in document) {
-      document.startViewTransition(() => flushSync(() => setFilter(cat)));
-    } else {
-      setFilter(cat);
-    }
-  };
-
-  // Inclinaison 3D légère qui suit la souris
-  const onTilt = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const r = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--rx", (((e.clientY - r.top) / r.height - 0.5) * -6).toFixed(2));
-    e.currentTarget.style.setProperty("--ry", (((e.clientX - r.left) / r.width - 0.5) * 8).toFixed(2));
-  };
-  const resetTilt = (e: React.PointerEvent<HTMLButtonElement>) => {
-    e.currentTarget.style.setProperty("--rx", "0");
-    e.currentTarget.style.setProperty("--ry", "0");
-  };
-
-  const open = (i: number) => {
-    setOpenIndex(i);
-    setImageIndex(0);
-  };
-
   useEffect(() => {
     const d = dialogRef.current;
     if (!d) return;
-    if (current && !d.open) {
-      d.showModal();
-      window.__lenis?.stop();
-    }
+    if (current && !d.open) d.showModal();
     if (!current && d.open) d.close();
-    if (!current) window.__lenis?.start();
   }, [current]);
 
   const step = useCallback(
@@ -101,61 +59,56 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
   };
 
   return (
-    <>
-      {categories.length > 2 && (
-        <div className="filters" role="group" aria-label="Filtrer les réalisations">
-          {categories.map(([cat, count]) => (
-            <button
-              key={cat}
-              type="button"
-              className="filter"
-              aria-pressed={filter === cat}
-              onClick={() => changeFilter(cat)}
-            >
-              {cat}
-              <span className="filter__count">{count}</span>
-            </button>
-          ))}
+    <div className="hs" data-hscroll>
+      <div className="hs__pin">
+        <div className="container hs__head">
+          <div>
+            <h2 id="realisations-title" className="h2">Réalisations</h2>
+          </div>
+          {categories.length > 2 && (
+            <div className="filters" role="group" aria-label="Filtrer les réalisations">
+              {categories.map(([cat, count]) => (
+                <button key={cat} type="button" className="filter" aria-pressed={filter === cat} onClick={() => setFilter(cat)}>
+                  {cat}
+                  <span>{count}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      )}
 
-      <ul className="works" ref={listRef}>
-        {visible.map((p, i) => (
-          <li
-            key={p.id ?? p.titre}
-            data-reveal
-            style={{
-              ["--d" as string]: i % 3,
-              viewTransitionName: `work-${projects.indexOf(p)}`,
-            }}
-          >
-            <button
-              type="button"
-              className="work"
-              onClick={() => open(i)}
-              onPointerMove={onTilt}
-              onPointerLeave={resetTilt}
-              aria-haspopup="dialog"
-            >
-              <Image
-                src={p.src}
-                alt=""
-                fill
-                sizes="(min-width: 1100px) 50vw, (min-width: 700px) 50vw, 100vw"
-                unoptimized={!canOptimize(p.src)}
-              />
-              <span className="work__arrow" aria-hidden="true">
-                <ArrowUpRight />
-              </span>
-              <span className="work__body">
-                <span className="work__cat">{p.cat}</span>
-                <h3 className="work__title">{p.titre}</h3>
-                <span className="work__desc">{p.desc}</span>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+        <ul className="hs__track">
+          {visible.map((p, i) => (
+            <li key={p.id ?? p.titre}>
+              <button
+                type="button"
+                className="work"
+                onClick={() => {
+                  setOpenIndex(i);
+                  setImageIndex(0);
+                }}
+                aria-haspopup="dialog"
+                aria-label={`${p.titre} — ${p.cat}`}
+              >
+                <Image src={p.src} alt="" fill sizes="(min-width: 900px) 40vw, 82vw" unoptimized={!canOptimize(p.src)} />
+                <span className="work__label">
+                  <b>{p.titre}</b>
+                  <i aria-hidden="true">
+                    <ArrowUpRight />
+                  </i>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className="container">
+          <div className="hs__bar" aria-hidden="true">
+            <i />
+          </div>
+          <p className="hs__hint">Faites glisser pour voir la suite →</p>
+        </div>
+      </div>
 
       <dialog
         ref={dialogRef}
@@ -193,8 +146,8 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
               </div>
               <div className="modal__info">
                 <span className="modal__cat">{current.cat}</span>
-                <h2 id="modal-title" className="modal__title">{current.titre}</h2>
-                <p style={{ margin: 0, color: "var(--on-night-2)" }}>{current.desc}</p>
+                <h2 id="modal-title" className="h3">{current.titre}</h2>
+                <p style={{ margin: 0, color: "var(--ink-2)" }}>{current.desc}</p>
                 {(current.tags ?? []).length > 0 && (
                   <ul className="chips">
                     {current.tags.map((t) => (
@@ -219,7 +172,7 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
                   </div>
                 )}
                 {current.lien && (
-                  <a href={current.lien} target="_blank" rel="noopener noreferrer" className="btn btn--amber" style={{ alignSelf: "flex-start", marginTop: "auto" }}>
+                  <a href={current.lien} target="_blank" rel="noopener noreferrer" className="btn btn--dark" style={{ alignSelf: "flex-start", marginTop: "auto" }}>
                     {current.lienLabel || "Voir le projet"} <ArrowUpRight />
                   </a>
                 )}
@@ -228,6 +181,6 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
           </>
         )}
       </dialog>
-    </>
+    </div>
   );
 }

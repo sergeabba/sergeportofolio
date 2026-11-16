@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getProfile } from "@/lib/content";
 
-// Public endpoint — returns only the public profile photo URL (no auth required)
+// Public endpoint — returns only the public profile photo URL (null when none is set)
 export async function GET() {
-  const { data } = await supabase
-    .from("settings")
-    .select("value")
-    .eq("key", "profile")
-    .single();
-
-  const photoUrl: string = (data?.value as { photoUrl?: string })?.photoUrl ?? "/photo.jpg";
-  return NextResponse.json({ photoUrl });
+  const profile = await getProfile();
+  return NextResponse.json({ photoUrl: profile.photoUrl });
 }

@@ -1,273 +1,210 @@
-import type { ExperienceItem, ContactLink, SkillBar as SkillBarType, Projet } from "./types";
+import type { ExperienceItem, ContactLink, Projet, SkillCategory } from "./types";
 
+export const SITE_URL = "https://sergeportfolio.vercel.app";
 export const CV_LINK = "/cv.pdf";
+export const FULL_NAME = "Mbaitadjim Abba Serge";
+export const HEADLINE = "Rédacteur web & Data analyst";
 
 export const NAV_LINKS = [
-  { id: "bio", label: "Accueil" },
-  { id: "quisuisje", label: "À propos" },
-  { id: "competences", label: "Skills" },
+  { id: "expertises", label: "Expertises" },
+  { id: "parcours", label: "Parcours" },
+  { id: "competences", label: "Compétences" },
   { id: "realisations", label: "Réalisations" },
-  { id: "experience", label: "Parcours" },
-  { id: "contact", label: "Contact" },
+  { id: "apropos", label: "À propos" },
 ] as const;
 
-export const HERO_ROLES = [
-  "Data Analyst",
-  "Prompt Engineer",
-  "Développeur Web & Mobile",
-  "Big Data Specialist",
-  "Créateur de contenu gaming",
-];
+/* ── Les deux métiers, présentés à égalité ── */
+export const PILLARS = [
+  {
+    id: "redaction",
+    kicker: "01 — Les mots",
+    title: "Rédaction web",
+    lead: "Des textes clairs, utiles et pensés pour être trouvés sur Google comme lus sur mobile.",
+    items: [
+      "Contenus pour sites, marketplaces et réseaux sociaux",
+      "Annonces et textes optimisés pour le référencement (SEO)",
+      "Supports de communication : brochures, dépliants, affiches",
+      "Animation et gestion de pages réseaux sociaux",
+    ],
+    tools: ["WordPress", "Canva", "Photoshop", "IA générative"],
+  },
+  {
+    id: "data",
+    kicker: "02 — Les chiffres",
+    title: "Analyse de données",
+    lead: "Des données nettoyées, structurées et mises en forme pour que les décisions reposent sur des faits.",
+    items: [
+      "Tableaux de bord et rapports Power BI",
+      "Nettoyage et analyse avec Python, Pandas et SQL",
+      "Suivi d'indicateurs : chiffre d'affaires, performance, coûts",
+      "Centralisation et structuration de bases de données",
+    ],
+    tools: ["Power BI", "Python", "SQL", "Excel"],
+  },
+] as const;
 
-export const SKILL_CATEGORIES: { title: string; icon: string; tags: string[]; tagIcons?: Record<string, string> }[] = [
-  {
-    title: "Analyse & Visu. Données",
-    icon: "ph-chart-bar",
-    tags: ["SQL", "Pandas", "NumPy", "SciPy", "Power BI", "Matplotlib", "Seaborn", "Geoplotlib"],
-    tagIcons: { "SQL": "ph-database", "Pandas": "ph-table", "NumPy": "ph-calculator", "Power BI": "ph-chart-polar", "Matplotlib": "ph-chart-line", "Seaborn": "ph-chart-donut" },
-  },
-  {
-    title: "IA Générative & Prompt",
-    icon: "ph-brain",
-    tags: ["Midjourney", "NanoBanana Pro", "DALL-E", "Sora", "Suno", "Riffusion"],
-    tagIcons: { "Midjourney": "ph-magic-wand", "DALL-E": "ph-image", "Sora": "ph-video", "Suno": "ph-music-note" },
-  },
-  {
-    title: "Programmation",
-    icon: "ph-code",
-    tags: ["Python", "C++", "C"],
-    tagIcons: { "Python": "ph-logo-python", "C++": "ph-file-cpp" },
-  },
-  {
-    title: "Systèmes & OS",
-    icon: "ph-desktop",
-    tags: ["Windows", "Linux Mint", "VirtualBox", "Scripting Shell", "Spark", "PySpark"],
-    tagIcons: { "Linux Mint": "ph-linux-logo", "Windows": "ph-windows-logo", "Spark": "ph-lightning", "VirtualBox": "ph-hard-drives" },
-  },
-  {
-    title: "Design & UI/UX",
-    icon: "ph-pen-nib",
-    tags: ["Photoshop", "Illustrator", "Adobe XD", "Figma", "Canva"],
-    tagIcons: { "Figma": "ph-figma-logo", "Photoshop": "ph-image", "Illustrator": "ph-pencil-simple", "Canva": "ph-palette" },
-  },
-  {
-    title: "Bureautique & Réseaux",
-    icon: "ph-file-text",
-    tags: ["Word", "Excel", "Sheets", "TikTok IA & Gaming"],
-    tagIcons: { "Excel": "ph-table", "Sheets": "ph-table", "Word": "ph-file-doc" },
-  },
-  {
-    title: "Montage Vidéo",
-    icon: "ph-video-camera",
-    tags: ["CapCut", "Transitions", "Color Grading", "Motion Graphics", "Sound Design"],
-    tagIcons: { "CapCut": "ph-film-strip", "Transitions": "ph-arrows-left-right", "Color Grading": "ph-palette", "Motion Graphics": "ph-sparkle", "Sound Design": "ph-music-note" },
-  },
-];
-
-export const TOOL_ENVIRONMENT = [
-  { name: "VS Code", icon: "ph-vscode-logo" },
-  { name: "Git", icon: "ph-git-branch" },
-  { name: "GitHub", icon: "ph-github-logo" },
-  { name: "Vercel", icon: "ph-triangle" },
-  { name: "Figma", icon: "ph-figma-logo" },
-  { name: "Supabase", icon: "ph-database" },
-  { name: "Next.js", icon: "ph-globe" },
-  { name: "React", icon: "ph-atom" },
-  { name: "Node.js", icon: "ph-nodejs-logo" },
-  { name: "Terminal", icon: "ph-terminal" },
-  { name: "Docker", icon: "ph-package" },
-  { name: "Postman", icon: "ph-send" },
-];
-
-export const SKILL_BARS = {
-  data: [
-    { label: "Power BI", level: 85 },
-    { label: "Python & Pandas", level: 75 },
-    { label: "SQL", level: 75 },
-    { label: "Excel / Google Sheets", level: 88 },
-    { label: "Big Data  Spark, PySpark", level: 65 },
-  ],
-  creative: [
-    { label: "IA Générative & Prompt Engineering", level: 92, accent: true },
-    { label: "Canva / Photoshop / Illustrator", level: 85, accent: true },
-    { label: "WordPress", level: 82, accent: true },
-    { label: "Figma / Adobe XD", level: 75, accent: true },
-    { label: "Windows / Linux (usage avancé)", level: 80, accent: true },
-  ],
-  all: [
-    { label: "Power BI", level: 85 },
-    { label: "Python & Pandas", level: 75 },
-    { label: "SQL", level: 75 },
-    { label: "Excel / Google Sheets", level: 88 },
-    { label: "Big Data Spark, PySpark", level: 65 },
-    { label: "IA Générative & Prompt Engineering", level: 92, accent: true },
-    { label: "Canva / Photoshop / Illustrator", level: 85, accent: true },
-  ] as SkillBarType[],
+export const CROSSOVER = {
+  title: "Là où les deux se rejoignent",
+  text:
+    "Un bon contenu se pilote comme un projet data : choisir ses sujets à partir de ce que les gens cherchent vraiment, suivre l'audience et l'engagement, ajuster. Et quand il faut expliquer des chiffres, je les transforme en infographies et en phrases que tout le monde comprend.",
+  points: ["Contenus guidés par la donnée", "Suivi de performance", "Infographies & data storytelling"],
 };
 
-// ✅ Données alignées avec le CV
 export const EXPERIENCES: ExperienceItem[] = [
   {
     type: "work",
-    title: "Stage Rédacteur Web & Community Manager",
+    title: "Rédacteur web & Community manager",
     org: "Marketing Sambe",
-    date: "Juin 2026 – Septembre 2026",
-    index: "01",
+    place: "Dakar",
+    date: "Oct. 2026 — aujourd'hui",
+    current: true,
+    note: "Recruté à l'issue de mon stage (juin — septembre 2026).",
     items: [
-      "Création de contenus visuels : infographies, graphiques et éléments visuels.",
-      "Développement de supports de communication : brochures, dépliants, affiches.",
-      "Gestion des pages réseaux sociaux de l'entreprise.",
-      "Mise en ligne des annonces sur le site et le marketplace.",
-      "Collaboration avec les équipes marketing et communication.",
+      "Rédaction des contenus du site, du marketplace et des réseaux sociaux.",
+      "Rédaction et mise en ligne des annonces.",
+      "Conception de supports de communication : brochures, dépliants, affiches.",
+      "Création de visuels : infographies, graphiques.",
+      "Gestion des pages réseaux sociaux de l'entreprise, en lien avec les équipes marketing et communication.",
     ],
-    tags: ["Community Management", "Création visuelle", "Réseaux sociaux", "Rédaction web", "Marketing digital"],
+    tags: ["Rédaction web", "SEO", "Réseaux sociaux", "Création visuelle"],
   },
   {
     type: "work",
-    title: "Stage Data Analyse",
+    title: "Data analyst (stage)",
     org: "Wemoov",
-    date: "Juin 2024 – Octobre 2025",
-    index: "02",
+    place: "Dakar",
+    date: "Juin 2024 — oct. 2025",
     items: [
       "Analyse des données de consommation des véhicules et optimisation des ressources.",
       "Suivi du chiffre d'affaires et évaluation des performances des chauffeurs.",
-      "Création de rapports et tableaux de bord pour faciliter la prise de décision.",
-      "Mise à jour et gestion du site web via WordPress.",
-      "Consolidation des données et structuration d'une base centralisée des opérations.",
+      "Rapports et tableaux de bord pour faciliter la prise de décision.",
+      "Consolidation des données dans une base centralisée des opérations.",
+      "Mise à jour et gestion du site web sous WordPress.",
     ],
-    tags: ["Python", "SQL", "Power BI", "WordPress", "Excel"],
+    tags: ["Power BI", "Python", "SQL", "Excel", "WordPress"],
   },
   {
     type: "education",
-    title: "Master  Big Data & Data Stratégie",
-    org: "Digital Campus",
-    date: "2021 – 2023",
-    index: "03",
-    desc: "Master en Big Data & Data Stratégie au sein de Digital Campus (Groupe ISM).",
-    tags: ["Big Data", "Data Strategy", "Spark", "Ecosysteme Hadoop"],
+    title: "Master Big Data & Data Stratégie",
+    org: "Digital Campus (Groupe ISM)",
+    place: "Dakar",
+    date: "2021 — 2023",
+    tags: ["Big Data", "Spark", "Hadoop", "Data Strategy"],
   },
   {
     type: "education",
-    title: "Licence  LIAGE",
+    title: "Licence Informatique Appliquée à la Gestion d'Entreprise",
     org: "École d'Ingénieurs ISM",
-    date: "2018 – 2021",
-    index: "04",
-    desc: "Licence en Informatique Appliquée à la Gestion d'Entreprise.",
-    tags: ["Informatique", "Gestion", "Développement"],
+    place: "Dakar",
+    date: "2018 — 2021",
   },
   {
     type: "education",
-    title: "Baccalauréat Littéraire",
-    org: "Lycée Saint Etienne (Ndjamena, Tchad)",
-    date: "2017 – 2018",
-    index: "05",
-    desc: "Obtention du baccalauréat Littéraire.",
-    tags: ["Littéraire", "Général"],
+    title: "Baccalauréat littéraire",
+    org: "Lycée Saint-Étienne",
+    place: "N'Djamena, Tchad",
+    date: "2018",
   },
 ];
+
+/**
+ * Compétences par défaut. L'admin peut les remplacer (clé "skills" en base).
+ * `icon` reste utilisé par l'admin ; le site public ne l'affiche pas.
+ */
+export const DEFAULT_SKILLS: SkillCategory[] = [
+  {
+    id: "redaction",
+    title: "Rédaction & contenu",
+    icon: "Pen",
+    tags: ["Rédaction web", "SEO", "Copywriting", "Annonces", "Community management", "WordPress", "Calendrier éditorial"].map((label) => ({ label })),
+  },
+  {
+    id: "data",
+    title: "Data & analyse",
+    icon: "BarChart3",
+    tags: ["Power BI", "SQL", "Python", "Pandas", "NumPy", "Excel", "Google Sheets", "Matplotlib", "Seaborn"].map((label) => ({ label })),
+  },
+  {
+    id: "bigdata",
+    title: "Big Data",
+    icon: "Database",
+    tags: ["Spark", "PySpark", "Écosystème Hadoop", "Linux", "Shell"].map((label) => ({ label })),
+  },
+  {
+    id: "creation",
+    title: "Création visuelle & IA",
+    icon: "Palette",
+    tags: ["Canva", "Photoshop", "Illustrator", "Figma", "Midjourney", "Prompt engineering", "CapCut"].map((label) => ({ label })),
+  },
+];
+
+export const LANGUAGES = [
+  { label: "Français", level: "Langue maternelle" },
+  { label: "Anglais", level: "B2" },
+];
+
+export const CONTACT_EMAIL = "abbaserge2@gmail.com";
 
 export const CONTACT_LINKS: ContactLink[] = [
-  {
-    label: "Email",
-    value: "abbaserge2@gmail.com",
-    href: "mailto:abbaserge2@gmail.com",
-    icon: "Email",
-  },
-  {
-    label: "Téléphone",
-    value: "78 546 08 74",
-    href: "tel:+221785460874",
-    icon: "Tel",
-  },
-  {
-    label: "LinkedIn",
-    value: "linkedin.com/in/sergeabba",
-    href: "https://linkedin.com/in/sergeabba",
-    icon: "in",
-  },
-  {
-    label: "GitHub",
-    value: "github.com/sergeabba",
-    href: "https://github.com/sergeabba",
-    icon: "gh",
-  },
-  {
-    label: "YouTube Gaming",
-    value: "@thelegendofdon4125",
-    href: "https://www.youtube.com/@thelegendofdon4125",
-    icon: "YT",
-  },
-  {
-    label: "Facebook Gaming",
-    value: "The Legend of Don",
-    href: "https://www.facebook.com/thelegendofdon/followers",
-    icon: "f",
-  },
+  { label: "Email", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  { label: "Téléphone", value: "+221 78 546 08 74", href: "tel:+221785460874" },
+  { label: "LinkedIn", value: "in/sergeabba", href: "https://linkedin.com/in/sergeabba" },
+  { label: "GitHub", value: "sergeabba", href: "https://github.com/sergeabba" },
 ];
 
-export const FILTER_CATEGORIES = ["Tous", "Gaming", "IA Générative", "Canva", "Data", "Montage Vidéo"];
-
-export const ABOUT_FACTS = [
-  { key: "Formation", val: "Master Big Data & Data Stratégie" },
-  { key: "École", val: "Digital Campus" },
-  { key: "Stack", val: "Python · SQL · Power BI · IA Gen" },
-  { key: "Passion", val: "Gaming · IA · Création de contenu" },
-  { key: "Langues", val: "Français (natif) · Anglais (B2)" },
+export const SOCIAL_GAMING: ContactLink[] = [
+  { label: "YouTube", value: "@thelegendofdon4125", href: "https://www.youtube.com/@thelegendofdon4125" },
+  { label: "Facebook", value: "The Legend of Don", href: "https://www.facebook.com/thelegendofdon" },
 ];
 
-
-export const MARQUEE_SKILLS = [
-  "Power BI", "Python", "SQL", "Pandas", "Spark",
-  "IA Générative", "Prompt Engineering", "Figma", "Photoshop",
-  "Windows", "Linux Mint", "VirtualBox", "Big Data", "CapCut",
-];
-
-export const MARQUEE_ICONS: Record<string, string> = {
-  "Power BI": "ph-chart-polar",
-  "Python": "ph-code",
-  "SQL": "ph-database",
-  "Pandas": "ph-table",
-  "Spark": "ph-lightning",
-  "IA Générative": "ph-brain",
-  "Prompt Engineering": "ph-sparkle",
-  "Figma": "ph-pen-nib",
-  "Photoshop": "ph-image",
-  "Data Visualization": "ph-chart-bar",
-  "WordPress": "ph-globe",
-  "Windows": "ph-windows-logo",
-  "Linux Mint": "ph-linux-logo",
-  "VirtualBox": "ph-hard-drives",
-  "Big Data": "ph-stack",
-  "CapCut": "ph-film-strip",
-};
-
-// Nouveaux projets DATA pour équilibrer portfolio
-export const PROJETS_DATA: Projet[] = [
+/** Projets affichés si la base est vide ou indisponible (images présentes dans /public). */
+export const FALLBACK_PROJECTS: Projet[] = [
   {
-    "src": "/projets/data/wemoov-dashboard.jpg",
-    "titre": "Dashboard Power BI Wemoov",
-    "desc": "Tableau de bord interactif pour analyse performances chauffeurs et CA véhicules (stage Wemoov).",
-    "cat": "Data",
-    "tags": ["Power BI", "Data Viz", "Analyse", "Business Intel"],
-    "lien": "https://github.com/sergeabba/wemoov-dashboard",
-    "lienLabel": "Voir GitHub"
+    src: "/projets/gaming/persona.png",
+    titre: "La série Persona",
+    desc: "Miniature YouTube — le J-RPG qui fait parler ton double intérieur.",
+    cat: "Gaming",
+    tags: ["YouTube", "Miniature", "Design"],
+    lien: "https://www.youtube.com/@thelegendofdon4125",
+    lienLabel: "Voir la chaîne",
   },
   {
-    "src": "/projets/data/pandas-analysis.jpg",
-    "titre": "Analyse Pandas Véhicules",
-    "desc": "Script Python Pandas pour nettoyage/analyse données consommation carburant (100k+ lignes).",
-    "cat": "Data",
-    "tags": ["Python", "Pandas", "Data Cleaning", "EDA"],
-    "lien": "https://github.com/sergeabba/vehicle-analysis",
-    "lienLabel": "Code source"
+    src: "/projets/gaming/sonic.jpg",
+    titre: "Sonic the Hedgehog",
+    desc: "Miniature YouTube — l'histoire d'un hérisson plus rapide que le temps.",
+    cat: "Gaming",
+    tags: ["YouTube", "Miniature", "Design"],
+    lien: "https://www.youtube.com/@thelegendofdon4125",
+    lienLabel: "Voir la chaîne",
   },
   {
-    "src": "/projets/data/spark-bigdata.jpg",
-    "titre": "Spark Streaming Log Analysis",
-    "desc": "Pipeline PySpark pour traitement temps réel logs applicatifs (projet Master Big Data).",
-    "cat": "Data",
-    "tags": ["PySpark", "Big Data", "Linux", "Streaming"],
-    "lien": "https://github.com/sergeabba/spark-logs",
-    "lienLabel": "Dépôt GitHub"
-  }
+    src: "/projets/gaming/gaming-2.jpg",
+    titre: "Trombinoscope Guilde Otaku",
+    desc: "Trombinoscope interactif pour une guilde communautaire de passionnés de culture otaku.",
+    cat: "Gaming",
+    tags: ["Web", "Communauté", "Design"],
+    lien: "https://guilde-otaku.vercel.app/",
+    lienLabel: "Visiter le site",
+  },
+  {
+    src: "/projets/ia/ia-1.jpg",
+    titre: "Création IA générative",
+    desc: "Visuel généré avec Midjourney à partir d'un travail de prompt engineering.",
+    cat: "IA Générative",
+    tags: ["Midjourney", "Prompt", "IA"],
+  },
+  {
+    src: "/projets/canva/aizen.jpg",
+    titre: "Affiche Aizen",
+    desc: "Création graphique réalisée sur Canva.",
+    cat: "Canva",
+    tags: ["Canva", "Affiche", "Graphisme"],
+  },
+  {
+    src: "/projets/canva/arion.jpg",
+    titre: "Affiche Arion",
+    desc: "Création graphique réalisée sur Canva.",
+    cat: "Canva",
+    tags: ["Canva", "Affiche", "Graphisme"],
+  },
 ];

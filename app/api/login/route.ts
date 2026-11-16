@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { rateLimit } from '@/lib/rate-limit'
-import { generateToken, ADMIN_COOKIE_MAX_AGE } from '@/lib/auth'
+import { generateToken, getClientIp, ADMIN_COOKIE_MAX_AGE } from '@/lib/auth'
 
-const loginLimiter = rateLimit({ windowMs: 60_000, maxRequests: 5 })
+const loginLimiter = rateLimit({ name: 'login', windowMs: 15 * 60_000, maxRequests: 5 })
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const { allowed, retryAfterMs } = loginLimiter(ip);
+    const { allowed, retryAfterMs } = await loginLimiter(getClientIp(request));
     if (!allowed) {
       return NextResponse.json(
         { success: false, error: 'Trop de tentatives. Réessayez dans quelques instants.' },

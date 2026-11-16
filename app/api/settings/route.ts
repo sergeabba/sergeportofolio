@@ -1,31 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
-
-async function isAdmin(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("admin_token")?.value;
-  if (!token) return false;
-  return verifyToken(token, process.env.ADMIN_PASSWORD ?? "");
-}
+import { revalidatePath } from "next/cache";
+import { isAdminRequest } from "@/lib/auth";
+import { getSupabase } from "@/lib/supabase-server";
 
 export async function GET() {
-  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { data } = await supabase.from("settings").select("value").eq("key", "profile").single();
+  if (!(await isAdminRequest())) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({});
+  const { data } = await supabase.from("settings").select("value").eq("key", "profile").maybeSingle();
   return NextResponse.json(data?.value ?? {});
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await isAdminRequest())) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  const supabase = getSupabase();
+  if (!supabase) return NextResponse.json({ error: "Base de données non configurée" }, { status: 500 });
   try {
     const body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
+    }
     const { error } = await supabase
       .from("settings")
       .upsert({ key: "profile", value: body }, { onConflict: "key" });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    revalidatePath("/");
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Unknown error" }, { status: 500 });
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Requête invalide" }, { status: 400 });
   }
 }

@@ -9,7 +9,7 @@ import { MetadataRoute } from 'next';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sergeportfolio.vercel.app';
-  const lastModified = new Date('2026-04-20');
+  const lastModified = new Date('2026-11-16');
 
   return [
     {

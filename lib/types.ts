@@ -5,19 +5,21 @@ export interface Projet {
   desc: string;
   cat: string;
   tags: string[];
-  lien?: string;
-  lienLabel?: string;
-  liveUrl?: string;
-  gallery?: string[];
-  position?: number;
+  lien?: string | null;
+  lienLabel?: string | null;
+  liveUrl?: string | null;
+  gallery?: string[] | null;
+  position?: number | null;
 }
 
 export interface ExperienceItem {
   type: "work" | "education";
   title: string;
   org: string;
+  place?: string;
   date: string;
-  index: string;
+  current?: boolean;
+  note?: string;
   items?: string[];
   desc?: string;
   tags?: string[];
@@ -27,13 +29,6 @@ export interface ContactLink {
   label: string;
   value: string;
   href: string;
-  icon?: string;
-}
-
-export interface SkillBar {
-  label: string;
-  level: number;
-  accent?: boolean;
 }
 
 export interface SkillTag {
@@ -47,4 +42,8 @@ export interface SkillCategory {
   icon: string;
   tags: SkillTag[];
   position?: number;
+}
+
+export interface PublicProfile {
+  photoUrl: string | null;
 }

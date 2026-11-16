@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
 import type { Projet } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import {
@@ -131,12 +130,12 @@ interface ProfileData {
 const DEFAULT_PROFILE: ProfileData = {
   name: "ABBA SERGE",
   lastName: "MBAITADJIM",
-  role: "Data Analyst Junior & IT Support",
+  role: "Rédacteur web & Data analyst",
   location: "Dakar, Sénégal",
-  statusLabel: "Disponible",
-  photoUrl: "/photo.jpg",
-  pills: "Master Big Data, Data Stratégie, ISM Dakar",
-  bio: "Avec une première expérience professionnelle dans le domaine",
+  statusLabel: "Rédacteur web chez Marketing Sambe",
+  photoUrl: "",
+  pills: "Rédaction web, Data analyse, Master Big Data",
+  bio: "Rédacteur web chez Marketing Sambe et data analyst.",
 };
 
 export default function AdminDashboard() {
@@ -170,7 +169,7 @@ export default function AdminDashboard() {
   // ── Skills state ──
   const [skills, setSkills] = useState<SkillCategory[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(true);
-  const [savingSkills, setSavingSkills] = useState(false);
+  const [, setSavingSkills] = useState(false);
   const [editingSkillIdx, setEditingSkillIdx] = useState<number | null>(-1);
   const [skillForm, setSkillForm] = useState({ title: "", icon: "BarChart3", tags: "" });
 
@@ -211,6 +210,7 @@ export default function AdminDashboard() {
       if (Array.isArray(data) && data.length > 0) setSkills(data);
       else {
         setSkills([
+          { id: "0", title: "Rédaction & contenu", icon: "Pen", tags: [{ label: "Rédaction web", icon: "FileText" }, { label: "SEO", icon: "Globe" }, { label: "Copywriting", icon: "Pen" }, { label: "Annonces", icon: "FileText" }, { label: "Community management", icon: "Send" }, { label: "WordPress", icon: "Globe" }] },
           { id: "1", title: "Analyse & Visu. Données", icon: "BarChart3", tags: [{ label: "SQL", icon: "Database" }, { label: "Pandas", icon: "Table2" }, { label: "NumPy", icon: "Calculator" }, { label: "Power BI", icon: "PieChart" }] },
           { id: "2", title: "IA Générative & Prompt", icon: "Brain", tags: [{ label: "Midjourney", icon: "Sparkles" }, { label: "DALL-E", icon: "Image" }, { label: "Sora", icon: "Video" }, { label: "Suno", icon: "Music" }] },
           { id: "3", title: "Programmation", icon: "Code2", tags: [{ label: "Python", icon: "Terminal" }, { label: "C++", icon: "Cpu" }, { label: "C", icon: "Cpu" }] },
@@ -253,11 +253,17 @@ export default function AdminDashboard() {
   const uploadFile = async (f: File): Promise<string | null> => {
     const err = validateFile(f);
     if (err) { showToast(err, "error"); return null; }
-    const ext = f.type.split("/")[1] ?? "jpg";
-    const path = `uploads/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("portfolio").upload(path, f);
-    if (error) { showToast("Erreur upload : " + error.message, "error"); return null; }
-    return supabase.storage.from("portfolio").getPublicUrl(path).data.publicUrl;
+    const body = new FormData();
+    body.append("file", f);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.url) { showToast("Erreur upload : " + (json.error ?? res.status), "error"); return null; }
+      return json.url as string;
+    } catch {
+      showToast("Erreur upload : réseau", "error");
+      return null;
+    }
   };
 
   // ── Photo preview ──
@@ -448,7 +454,7 @@ export default function AdminDashboard() {
                 <div style={{ textAlign: "center", padding: "5rem 2rem", color: "var(--text-tertiary)", background: "var(--bg-elevated)", borderRadius: "var(--r-card)", border: "1px dashed var(--border-strong)" }}>
                   <FolderOpen size={40} style={{ marginBottom: "1rem", opacity: 0.4 }} />
                   <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>Aucun projet</p>
-                  <p style={{ fontSize: "0.82rem" }}>Cliquez sur "Ajouter" pour créer votre premier projet.</p>
+                  <p style={{ fontSize: "0.82rem" }}>Cliquez sur « Ajouter » pour créer votre premier projet.</p>
                 </div>
               ) : filterCat === "Tous" ? (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -569,7 +575,7 @@ export default function AdminDashboard() {
             <>
               <div style={{ marginBottom: "2rem" }}>
                 <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "1.6rem", letterSpacing: "-0.03em", marginBottom: "0.25rem" }}>Profil & Hero</h1>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Modifiez les informations affichées sur la page d'accueil.</p>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Modifiez les informations affichées sur la page d&apos;accueil.</p>
               </div>
 
               {loadingProfile ? (
@@ -584,9 +590,10 @@ export default function AdminDashboard() {
                       {/* Preview */}
                       <div style={{ position: "relative", width: 110, height: 110, borderRadius: "50%", overflow: "hidden", border: "3px solid var(--revo-blue)", flexShrink: 0 }}>
                         <Image
-                          src={photoPreview ?? profile.photoUrl}
+                          src={photoPreview ?? (profile.photoUrl && profile.photoUrl !== "/photo.jpg" ? profile.photoUrl : "/logo-light.jpg")}
                           alt="Photo profil"
                           fill
+                          unoptimized={Boolean(photoPreview)}
                           className="object-cover object-top"
                           sizes="110px"
                         />
@@ -750,7 +757,7 @@ export default function AdminDashboard() {
                   )}
                   {formData.gallery.length > 0 && (
                     <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                      {formData.gallery.map((url, i) => (
+                      {formData.gallery.map((url) => (
                         <div key={url} style={{ position: "relative", width: 56, height: 56, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" }}>
                           <Image src={url} alt="" fill className="object-cover" sizes="56px" />
                           <button type="button" onClick={() => setFormData(f => ({ ...f, gallery: f.gallery.filter(u => u !== url) }))} style={{ position: "absolute", top: 0, right: 0, background: "rgba(226,59,74,0.85)", border: "none", color: "#fff", cursor: "pointer", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0 0 0 6px" }}><X size={10} /></button>

@@ -1,83 +1,103 @@
-import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import ThemeProvider from "@/lib/theme";
+import { FULL_NAME, HEADLINE, SITE_URL, CONTACT_EMAIL } from "@/lib/data";
 
-const jakarta = Plus_Jakarta_Sans({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--font-display",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-body",
+  variable: "--font-inter",
   display: "swap",
 });
 
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
+const DESCRIPTION =
+  "Rédacteur web chez Marketing Sambe et data analyst (Master Big Data & Data Stratégie). Des contenus clairs et optimisés SEO, des données qui éclairent les décisions — Dakar, Sénégal.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sergeportfolio.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Mbaitadjim Abba Serge — Data Analyst · Portfolio",
-    template: "%s | Mbaitadjim Abba Serge",
+    default: `${FULL_NAME} — ${HEADLINE}`,
+    template: `%s | ${FULL_NAME}`,
   },
-  description:
-    "Data Analyst junior, avec une première expérience professionnelle en Big Data et IA. Portfolio professionnel de Mbaitadjim Abba Serge — Dakar, Sénégal.",
+  description: DESCRIPTION,
   keywords: [
-    "Data Analyst", "Big Data", "IA Générative", "Prompt Engineering",
-    "Power BI", "Python", "SQL", "Pandas", "Data Visualization",
-    "Dakar", "Sénégal", "Portfolio", "Mbaitadjim Abba Serge",
+    "Rédacteur web", "Rédaction web", "SEO", "Community manager", "Copywriting",
+    "Data Analyst", "Power BI", "Python", "SQL", "Big Data",
+    "Dakar", "Sénégal", "Portfolio", FULL_NAME,
   ],
-  authors: [{ name: "Mbaitadjim Abba Serge", url: "https://sergeportfolio.vercel.app" }],
-  creator: "Mbaitadjim Abba Serge",
-  publisher: "Mbaitadjim Abba Serge",
+  authors: [{ name: FULL_NAME, url: SITE_URL }],
+  creator: FULL_NAME,
+  alternates: { canonical: "/" },
   formatDetection: { email: false, address: false, telephone: false },
   openGraph: {
-    type: "website",
+    type: "profile",
     locale: "fr_FR",
-    url: "https://sergeportfolio.vercel.app",
-    siteName: "Portfolio — Mbaitadjim Abba Serge",
-    title: "Mbaitadjim Abba Serge — Data Analyst junior",
-    description: "Data Analyst junior, avec une première expérience professionnelle en Big Data — Dakar, Sénégal",
-    countryName: "Sénégal",
-    images: [{ url: "/logo-light.jpg", width: 1024, height: 1024, alt: "LD — Mbaitadjim Abba Serge Portfolio", type: "image/jpeg" }],
+    url: SITE_URL,
+    siteName: FULL_NAME,
+    title: `${FULL_NAME} — ${HEADLINE}`,
+    description: DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mbaitadjim Abba Serge  Data Analyst junior",
-    description: "Data Analyst junior, avec une première expérience professionnelle en Big Data  Dakar, Sénégal",
-    images: ["/logo-light.jpg"],
-    creator: "@sergeabba",
+    title: `${FULL_NAME} — ${HEADLINE}`,
+    description: DESCRIPTION,
   },
-  robots: {
-    index: true, follow: true,
-    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
-  },
-  // verification: { google: "xxx", yandex: "xxx" }, // Add real codes from Search Console
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#111113" },
+  ],
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Mbaitadjim Abba Serge",
-  jobTitle: "Data Analyst",
-  url: "https://sergeportfolio.vercel.app",
+  name: FULL_NAME,
+  jobTitle: ["Rédacteur web", "Data analyst"],
+  worksFor: { "@type": "Organization", name: "Marketing Sambe" },
+  url: SITE_URL,
+  email: `mailto:${CONTACT_EMAIL}`,
   address: { "@type": "PostalAddress", addressLocality: "Dakar", addressCountry: "SN" },
-  alumniOf: { "@type": "EducationalOrganization", name: "ISM Digital Campus" },
-  knowsAbout: ["Big Data", "Data Analysis", "Artificial Intelligence", "Prompt Engineering"],
+  alumniOf: [
+    { "@type": "EducationalOrganization", name: "Digital Campus (Groupe ISM)" },
+    { "@type": "EducationalOrganization", name: "École d'Ingénieurs ISM" },
+  ],
+  knowsAbout: ["Rédaction web", "SEO", "Community management", "Analyse de données", "Power BI", "Python", "SQL", "Big Data"],
+  sameAs: ["https://linkedin.com/in/sergeabba", "https://github.com/sergeabba"],
 };
+
+// Applique le thème avant le premier rendu pour éviter le flash.
+const themeScript = `(function(){var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('reveal-ready'))d.classList.add('reveal-off')},2500);try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.dataset.theme=t}catch(e){d.dataset.theme='light'}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${jakarta.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html
+      lang="fr"
+      className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body style={{ fontFamily: "var(--font-body, sans-serif)", fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"' }}>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

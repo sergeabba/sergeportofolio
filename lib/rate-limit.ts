@@ -1,48 +1,54 @@
+import { getSupabase, hasServiceRole } from "./supabase-server";
+
 type RateLimitEntry = { count: number; resetAt: number };
+type Result = { allowed: boolean; retryAfterMs: number };
 
 const store = new Map<string, RateLimitEntry>();
 const MAX_STORE_SIZE = 10_000;
 
-function cleanup() {
+function memoryLimit(key: string, windowMs: number, maxRequests: number): Result {
   const now = Date.now();
-  for (const [key, entry] of store) {
-    if (now > entry.resetAt) store.delete(key);
+  for (const [k, entry] of store) if (now > entry.resetAt) store.delete(k);
+  if (store.size > MAX_STORE_SIZE) store.clear();
+
+  const entry = store.get(key);
+  if (!entry || now > entry.resetAt) {
+    store.set(key, { count: 1, resetAt: now + windowMs });
+    return { allowed: true, retryAfterMs: 0 };
   }
-  // Hard cap: evict oldest entries if store is still too large
-  if (store.size > MAX_STORE_SIZE) {
-    const excess = store.size - MAX_STORE_SIZE;
-    let i = 0;
-    for (const key of store.keys()) {
-      if (i++ >= excess) break;
-      store.delete(key);
-    }
-  }
+  entry.count++;
+  return entry.count > maxRequests
+    ? { allowed: false, retryAfterMs: entry.resetAt - now }
+    : { allowed: true, retryAfterMs: 0 };
 }
 
-export function rateLimit(options: {
-  windowMs: number;
-  maxRequests: number;
-}): (ip: string) => { allowed: boolean; retryAfterMs: number } {
-  const { windowMs, maxRequests } = options;
+/**
+ * Rate limiter shared across serverless instances.
+ *
+ * Uses the `check_rate_limit` Postgres function (supabase/schema.sql) when the
+ * service-role key is configured, so the limit holds on Vercel where each
+ * instance has its own memory. Falls back to an in-memory limiter otherwise.
+ */
+export function rateLimit(options: { name: string; windowMs: number; maxRequests: number }) {
+  const { name, windowMs, maxRequests } = options;
 
-  return (ip: string) => {
-    cleanup();
-    const now = Date.now();
+  return async (ip: string): Promise<Result> => {
+    const key = `${name}:${ip === "::1" ? "127.0.0.1" : ip}`;
+    const supabase = hasServiceRole() ? getSupabase() : null;
 
-    // Normalise IPv6 loopback to a consistent key
-    const key = ip === "::1" ? "127.0.0.1" : ip;
-    const entry = store.get(key);
-
-    if (!entry || now > entry.resetAt) {
-      store.set(key, { count: 1, resetAt: now + windowMs });
-      return { allowed: true, retryAfterMs: 0 };
+    if (supabase) {
+      const { data, error } = await supabase.rpc("check_rate_limit", {
+        p_key: key,
+        p_window_seconds: Math.ceil(windowMs / 1000),
+        p_max: maxRequests,
+      });
+      if (!error && data && typeof data === "object") {
+        const row = (Array.isArray(data) ? data[0] : data) as { allowed: boolean; retry_after_ms: number };
+        if (row && typeof row.allowed === "boolean") {
+          return { allowed: row.allowed, retryAfterMs: Number(row.retry_after_ms) || 0 };
+        }
+      }
     }
-
-    entry.count++;
-    if (entry.count > maxRequests) {
-      return { allowed: false, retryAfterMs: entry.resetAt - now };
-    }
-
-    return { allowed: true, retryAfterMs: 0 };
+    return memoryLimit(key, windowMs, maxRequests);
   };
 }

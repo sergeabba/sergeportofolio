@@ -56,3 +56,20 @@ export async function verifyToken(token: string, secret: string): Promise<boolea
     return false;
   }
 }
+
+/** Checks the admin cookie of the current request (Route Handlers / Server Components). */
+export async function isAdminRequest(): Promise<boolean> {
+  const { cookies } = await import("next/headers");
+  const token = (await cookies()).get("admin_token")?.value;
+  const secret = process.env.ADMIN_PASSWORD;
+  if (!token || !secret) return false;
+  return verifyToken(token, secret);
+}
+
+export function getClientIp(request: Request): string {
+  return (
+    request.headers.get("x-real-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "unknown"
+  );
+}

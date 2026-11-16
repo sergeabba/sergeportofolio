@@ -143,3 +143,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 data/settings.json
+
+# Fichiers locaux d'outils
+.claude/settings.local.json
+.omx/
+.aidesigner/

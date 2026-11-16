@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { rateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/auth";
 
-const contactLimiter = rateLimit({ windowMs: 300_000, maxRequests: 3 });
+const contactLimiter = rateLimit({ name: "contact", windowMs: 300_000, maxRequests: 3 });
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,8 +31,7 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "Portfolio <onboarding@resen
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const { allowed, retryAfterMs } = contactLimiter(ip);
+    const { allowed, retryAfterMs } = await contactLimiter(getClientIp(req));
     if (!allowed) {
       return NextResponse.json(
         { error: 'Trop de messages envoyés. Réessayez dans quelques instants.' },
@@ -66,13 +66,18 @@ export async function POST(req: NextRequest) {
     const TO_EMAIL = process.env.CONTACT_EMAIL ?? "abbaserge2@gmail.com";
 
     if (!RESEND_API_KEY) {
-      return NextResponse.json({ success: true }, { status: 200 });
+      // Ne jamais faire croire à un envoi réussi : le message serait perdu.
+      console.error("[contact] RESEND_API_KEY manquante");
+      return NextResponse.json(
+        { error: "Le formulaire est momentanément indisponible. Écrivez-moi directement par email." },
+        { status: 503 },
+      );
     }
 
     // ── Production: envoi réel via Resend ──
 
     const resend = new Resend(RESEND_API_KEY);
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
       replyTo: email,

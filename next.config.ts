@@ -1,35 +1,34 @@
 import type { NextConfig } from "next";
 
-const SUPABASE_HOST = "hepnjfiqtikumzxslfaf.supabase.co";
+const isDev = process.env.NODE_ENV !== "production";
 
 const CSP = [
   "default-src 'self'",
-  // Scripts: Next.js inline scripts + no third-party
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-  // Styles: Tailwind inline + Next.js inline
+  // Next.js injecte des scripts inline ; 'unsafe-eval' uniquement en développement
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  // Images: self, Supabase CDN, GitHub chart, data URIs
-  `img-src 'self' data: https://${SUPABASE_HOST} https://ghchart.rshah.org https://avatars.githubusercontent.com`,
-  // Fonts: self only (Plus Jakarta Sans & Inter served locally)
+  // Images : site + Supabase Storage (projets, photo de profil)
+  "img-src 'self' data: blob: https://*.supabase.co",
   "font-src 'self'",
-  // API calls: self + Supabase REST/realtime + Resend (server-side only, but kept for safety)
-  `connect-src 'self' https://${SUPABASE_HOST} https://api.resend.com https://api.github.com`,
-  // No frames, objects, base-uri, form-action locked to self
-  "frame-src https:",
+  // Le navigateur ne parle qu'au site : Supabase et Resend sont appelés côté serveur
+  `connect-src 'self'${isDev ? " ws:" : ""}`,
+  "frame-src 'none'",
+  "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "upgrade-insecure-requests",
 ].join("; ");
 
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/webp", "image/avif"],
     qualities: [75, 85],
+    minimumCacheTTL: 2678400,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: SUPABASE_HOST,
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
       },
     ],
   },

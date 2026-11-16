@@ -43,3 +43,12 @@ npm run dev
 
 ---
 Propulsé par l'innovation et la donnée. Créé par **Mbaitadjim Abba Serge**.
+
+## Configuration (sécurité Supabase)
+
+1. Copier `.env.example` en `.env.local` et renseigner les variables, **dont `SUPABASE_SERVICE_ROLE_KEY`**
+   (Supabase > Project Settings > API). Ajouter la même variable sur Vercel.
+2. Exécuter `supabase/schema.sql` dans Supabase > SQL Editor : la clé publique (anon) devient lecture seule,
+   les envois de fichiers passent par `/api/upload`, et la limitation de débit est partagée entre instances.
+3. La page d'accueil est rendue côté serveur et régénérée toutes les 10 minutes, ou immédiatement après
+   une modification dans `/admin`.

@@ -60,65 +60,66 @@ export default function Nav() {
   }, [open]);
 
   return (
-    <header className={`nav${scrolled || open ? " is-scrolled" : ""}`}>
-      <div className="container">
-        <div className="nav__inner">
-          <a href="#top" className="nav__brand" aria-label="Retour en haut — Mbaitadjim Abba Serge">
-            <Image src="/logo-light-transparent.png" alt="" width={34} height={23} className="nav__logo nav__logo--light" priority />
-            <Image src="/logo-dark-transparent.png" alt="" width={34} height={23} className="nav__logo nav__logo--dark" priority />
-            <span>Abba Serge</span>
+    <header className={`nav${scrolled ? " is-scrolled" : ""}`}>
+      <div className="nav__bar">
+        <a href="#top" className="nav__brand" aria-label="Retour en haut — Mbaitadjim Abba Serge">
+          <span className="nav__mark">
+            <Image src="/logo-dark-transparent.png" alt="" width={24} height={16} priority />
+          </span>
+          <span>
+            Abba <b>Serge</b>
+          </span>
+        </a>
+
+        <nav aria-label="Navigation principale">
+          <ul className="nav__links">
+            {NAV_LINKS.map((l) => (
+              <li key={l.id}>
+                <a href={`#${l.id}`} aria-current={active === l.id ? "true" : undefined}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="nav__actions">
+          <a href={CV_LINK} className="btn btn--dark btn--sm nav__cta" download>
+            Télécharger CV
           </a>
-
-          <nav aria-label="Navigation principale">
-            <ul className="nav__links">
-              {NAV_LINKS.map((l) => (
-                <li key={l.id}>
-                  <a href={`#${l.id}`} aria-current={active === l.id ? "true" : undefined}>
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="nav__actions">
-            <button type="button" className="icon-btn" onClick={toggleTheme} aria-label="Basculer entre thème clair et sombre">
-              <Sun className="theme-icon--sun" />
-              <Moon className="theme-icon--moon" />
-            </button>
-            <a href="#contact" className="btn btn--ink btn--sm nav__cta">
-              Me contacter
-            </a>
-            <button
-              type="button"
-              className="icon-btn nav__menu-btn"
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-              onClick={() => setOpen((o) => !o)}
-            >
-              {open ? <Close /> : <Menu />}
-            </button>
-          </div>
+          <button type="button" className="icon-btn" onClick={toggleTheme} aria-label="Basculer entre thème clair et sombre">
+            <Sun className="theme-icon--sun" />
+            <Moon className="theme-icon--moon" />
+          </button>
+          <button
+            type="button"
+            className="icon-btn nav__menu-btn"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <Close /> : <Menu />}
+          </button>
         </div>
-
-        {open && (
-          <div id="mobile-menu" className="nav__mobile">
-            <ul>
-              {[...NAV_LINKS, { id: "contact", label: "Contact" }].map((l) => (
-                <li key={l.id}>
-                  <a href={`#${l.id}`} onClick={() => setOpen(false)}>
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <a href={CV_LINK} className="btn btn--ghost" download>
-              <Download /> Télécharger mon CV
-            </a>
-          </div>
-        )}
       </div>
+
+      {open && (
+        <div id="mobile-menu" className="nav__mobile">
+          <ul>
+            {NAV_LINKS.map((l) => (
+              <li key={l.id}>
+                <a href={`#${l.id}`} onClick={() => setOpen(false)}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href={CV_LINK} className="btn btn--amber" download>
+            <Download /> Télécharger mon CV
+          </a>
+        </div>
+      )}
     </header>
   );
 }

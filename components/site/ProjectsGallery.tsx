@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { Projet } from "@/lib/types";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Close } from "./Icons";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Close } from "./Icons";
 
 const ALL = "Tous";
 
@@ -86,21 +86,21 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
         {visible.map((p, i) => (
           <li key={p.id ?? p.titre}>
             <button type="button" className="work" onClick={() => open(i)} aria-haspopup="dialog">
-              <div className="work__media">
-                <Image
-                  src={p.src}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1100px) 360px, (min-width: 700px) 45vw, 100vw"
-                  unoptimized={!canOptimize(p.src)}
-                />
+              <Image
+                src={p.src}
+                alt=""
+                fill
+                sizes="(min-width: 1100px) 50vw, (min-width: 700px) 50vw, 100vw"
+                unoptimized={!canOptimize(p.src)}
+              />
+              <span className="work__arrow" aria-hidden="true">
+                <ArrowUpRight />
+              </span>
+              <span className="work__body">
                 <span className="work__cat">{p.cat}</span>
-              </div>
-              <div className="work__body">
                 <h3 className="work__title">{p.titre}</h3>
-                <ArrowRight className="work__arrow" width={20} height={20} />
-              </div>
-              <p className="work__desc">{p.desc}</p>
+                <span className="work__desc">{p.desc}</span>
+              </span>
             </button>
           </li>
         ))}
@@ -141,9 +141,9 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
                 )}
               </div>
               <div className="modal__info">
-                <span className="kicker">{current.cat}</span>
-                <h2 id="modal-title" className="h-card">{current.titre}</h2>
-                <p style={{ margin: 0, color: "var(--ink-2)" }}>{current.desc}</p>
+                <span className="modal__cat">{current.cat}</span>
+                <h2 id="modal-title" className="modal__title">{current.titre}</h2>
+                <p style={{ margin: 0, color: "var(--on-night-2)" }}>{current.desc}</p>
                 {(current.tags ?? []).length > 0 && (
                   <ul className="chips">
                     {current.tags.map((t) => (
@@ -168,7 +168,7 @@ export default function ProjectsGallery({ projects }: { projects: Projet[] }) {
                   </div>
                 )}
                 {current.lien && (
-                  <a href={current.lien} target="_blank" rel="noopener noreferrer" className="btn btn--ink" style={{ alignSelf: "flex-start", marginTop: "auto" }}>
+                  <a href={current.lien} target="_blank" rel="noopener noreferrer" className="btn btn--amber" style={{ alignSelf: "flex-start", marginTop: "auto" }}>
                     {current.lienLabel || "Voir le projet"} <ArrowUpRight />
                   </a>
                 )}

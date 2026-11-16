@@ -1,19 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { FULL_NAME, HEADLINE, SITE_URL, CONTACT_EMAIL } from "@/lib/data";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
+  axes: ["opsz", "SOFT"],
   variable: "--font-fraunces",
   display: "swap",
 });
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -61,8 +60,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#111113" },
+    { media: "(prefers-color-scheme: light)", color: "#0e1126" },
+    { media: "(prefers-color-scheme: dark)", color: "#090b1a" },
   ],
 };
 
@@ -90,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="fr"
-      className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={`${fraunces.variable} ${jakarta.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -3,7 +3,8 @@ import Nav from "@/components/site/Nav";
 import Reveal from "@/components/site/Reveal";
 import ProjectsGallery from "@/components/site/ProjectsGallery";
 import ContactForm from "@/components/ContactForm";
-import { ArrowRight, ArrowUpRight, Bars, Download } from "@/components/site/Icons";
+import { DataArt, WritingArt } from "@/components/site/Art";
+import { ArrowUpRight, Download } from "@/components/site/Icons";
 import { getProfile, getProjects, getSkills } from "@/lib/content";
 import {
   CONTACT_LINKS, CROSSOVER, CV_LINK, EXPERIENCES, FULL_NAME, LANGUAGES,
@@ -14,15 +15,19 @@ import {
 // (et immédiatement après chaque modification dans l'admin).
 export const revalidate = 600;
 
-const KEYWORDS = [
-  "Rédaction web", "Power BI", "SEO", "Python", "Réseaux sociaux", "SQL",
-  "Storytelling", "Tableaux de bord", "Annonces", "Big Data", "Infographies", "Excel",
-];
+function canOptimize(src: string) {
+  if (src.startsWith("/")) return true;
+  try {
+    return new URL(src).hostname.endsWith(".supabase.co");
+  } catch {
+    return false;
+  }
+}
 
 export default async function Home() {
   const [profile, projects, skills] = await Promise.all([getProfile(), getProjects(), getSkills()]);
-  const work = EXPERIENCES.filter((e) => e.type === "work");
-  const education = EXPERIENCES.filter((e) => e.type === "education");
+  const wallImages = projects.map((p) => p.src).filter(Boolean).slice(0, 6);
+  const [writing, data] = PILLARS;
 
   return (
     <>
@@ -31,346 +36,275 @@ export default async function Home() {
       <Reveal />
 
       <main id="main">
-        {/* ── HERO ── */}
+        {/* ── HERO : mur de réalisations ── */}
         <section id="top" className="hero" aria-labelledby="hero-title">
-          <div className="container hero__grid">
-            <div>
-              <p className="status">
-                <span className="status__dot" aria-hidden="true" />
-                Rédacteur web chez Marketing Sambe · Dakar
-              </p>
-              <h1 id="hero-title" className="h-display">
-                Des <em className="t-word">mots</em> qui se lisent,
-                <br /> des <em className="t-data">chiffres</em> qui prouvent.
-              </h1>
-              <p className="lead">
-                Je suis {FULL_NAME}, rédacteur web et data analyst. J&apos;écris des contenus clairs,
-                pensés pour le référencement, et j&apos;analyse les données pour savoir ce qui fonctionne
-                vraiment.
-              </p>
-              <div className="hero__ctas">
-                <a href="#contact" className="btn btn--ink">
-                  Travaillons ensemble <ArrowRight />
-                </a>
-                <a href={CV_LINK} className="btn btn--ghost" download>
-                  <Download /> Télécharger mon CV
-                </a>
+          <div className="hero__wall" aria-hidden="true">
+            {wallImages[0] && (
+              <div className="hero__tile" style={{ ["--i" as string]: 0 }}>
+                <Image src={wallImages[0]} alt="" fill sizes="(min-width: 760px) 25vw, 50vw" priority unoptimized={!canOptimize(wallImages[0])} />
               </div>
-              <dl className="hero__facts">
-                <div>
-                  <dt>Aujourd&apos;hui</dt>
-                  <dd>Rédaction web &amp; community management</dd>
-                </div>
-                <div>
-                  <dt>Formation</dt>
-                  <dd>Master Big Data &amp; Data Stratégie</dd>
-                </div>
-                <div>
-                  <dt>Basé à</dt>
-                  <dd>Dakar, Sénégal</dd>
-                </div>
-              </dl>
+            )}
+            <div className="hero__tile hero__tile--chart" style={{ ["--i" as string]: 1 }}>
+              <svg viewBox="0 0 200 120" preserveAspectRatio="none">
+                {[38, 62, 48, 90, 74, 108].map((h, k) => (
+                  <rect key={k} x={6 + k * 33} y={120 - h} width={22} height={h} rx={4} fill={k === 5 ? "#ffb547" : "rgba(243,244,251,.75)"} />
+                ))}
+              </svg>
             </div>
-
-            <figure className="portrait" style={{ margin: 0 }}>
-              <div className="portrait__frame">
-                {profile.photoUrl ? (
-                  <Image
-                    src={profile.photoUrl}
-                    alt={`Portrait de ${FULL_NAME}`}
-                    fill
-                    priority
-                    sizes="(min-width: 960px) 440px, 90vw"
-                  />
-                ) : (
-                  <span className="portrait__monogram" aria-hidden="true">AS</span>
-                )}
+            {wallImages[1] && (
+              <div className="hero__tile" style={{ ["--i" as string]: 2 }}>
+                <Image src={wallImages[1]} alt="" fill sizes="(min-width: 760px) 25vw, 50vw" priority unoptimized={!canOptimize(wallImages[1])} />
               </div>
-              <div className="portrait__note portrait__note--word" aria-hidden="true">
-                <span className="portrait__glyph">¶</span>
-                <span>Rédaction<small>contenus · SEO</small></span>
+            )}
+            <div className="hero__tile hero__tile--text" style={{ ["--i" as string]: 3 }}>
+              <p>Écrire pour être lu, compris et trouvé.</p>
+              <span />
+              <span />
+              <span />
+            </div>
+            {wallImages.slice(2, 6).map((src, i) => (
+              <div key={src} className="hero__tile hero__tile--extra" style={{ ["--i" as string]: i + 4 }}>
+                <Image src={src} alt="" fill sizes="25vw" unoptimized={!canOptimize(src)} />
               </div>
-              <div className="portrait__note portrait__note--data" aria-hidden="true">
-                <span className="portrait__glyph"><Bars width={18} height={18} /></span>
-                <span>Data<small>analyse · reporting</small></span>
-              </div>
-            </figure>
-          </div>
-        </section>
-
-        <div className="strip" aria-hidden="true">
-          <div className="strip__track">
-            {[0, 1].map((k) => (
-              <ul key={k}>
-                {KEYWORDS.map((w) => <li key={w}>{w}</li>)}
-              </ul>
             ))}
           </div>
-        </div>
+          <div className="hero__shade" aria-hidden="true" />
+
+          <div className="container hero__content">
+            <p className="hero__first">Mbaitadjim</p>
+            <h1 id="hero-title" className="display hero__name">
+              <span className="sr-only">Mbaitadjim </span>Abba Serge
+            </h1>
+            <div className="hero__bottom">
+              <div>
+                <p className="hero__role">
+                  <span className="w">Rédacteur web</span> &amp; <span className="d">Data analyst</span>
+                </p>
+                <p className="hero__status">En poste chez Marketing Sambe, à Dakar</p>
+              </div>
+              <div className="hero__ctas">
+                <a href="#realisations" className="btn btn--amber">Voir mes réalisations</a>
+                <a href="#contact" className="btn btn--outline-light">Me contacter</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── À PROPOS ── */}
+        <section id="apropos" className="section" aria-labelledby="apropos-title">
+          <div className="container about">
+            <div className="about__photo" data-reveal>
+              {profile.photoUrl ? (
+                <Image
+                  src={profile.photoUrl}
+                  alt={`Portrait de ${FULL_NAME}`}
+                  fill
+                  sizes="(min-width: 960px) 520px, 100vw"
+                  unoptimized={!canOptimize(profile.photoUrl)}
+                />
+              ) : (
+                <div className="about__monogram">
+                  <Image src="/logo-dark-transparent.png" alt="" width={220} height={150} />
+                </div>
+              )}
+            </div>
+            <div data-reveal>
+              <p className="tag">À propos</p>
+              <h2 id="apropos-title" className="display h-section">Qui suis-je ?</h2>
+              <p className="about__lead">
+                Rédacteur web chez Marketing Sambe et diplômé d&apos;un Master Big Data, j&apos;écris des
+                contenus qui se lisent et j&apos;analyse les chiffres qui disent s&apos;ils fonctionnent.
+              </p>
+              <div className="about__text">
+                <p>
+                  Après un bac littéraire à N&apos;Djamena, j&apos;ai étudié l&apos;informatique de gestion à
+                  l&apos;ISM de Dakar, puis le Big Data et la stratégie data à Digital Campus.
+                </p>
+                <p>
+                  Chez Wemoov, j&apos;ai construit des tableaux de bord sur la consommation des véhicules, le
+                  chiffre d&apos;affaires et la performance des chauffeurs. Chez Marketing Sambe, entré en stage
+                  puis recruté, j&apos;écris pour le site, le marketplace et les réseaux sociaux.
+                </p>
+              </div>
+              <dl className="stats">
+                <div><dt>métiers complémentaires</dt><dd>2</dd></div>
+                <div><dt>Master Big Data &amp; Data Stratégie</dt><dd>Bac+5</dd></div>
+                <div><dt>de stage en analyse de données</dt><dd>16 mois</dd></div>
+                <div><dt>recruté comme rédacteur web</dt><dd>2026</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
 
         {/* ── EXPERTISES ── */}
-        <section id="expertises" className="section" aria-labelledby="expertises-title">
-          <div className="container">
-            <header className="section-head section-head--split" data-reveal>
-              <div>
-                <span className="kicker">Expertises</span>
-                <h2 id="expertises-title" className="h-section" style={{ marginTop: 16 }}>
-                  Deux métiers, une même exigence : <em>être clair</em>.
-                </h2>
-              </div>
-              <p className="lead">
-                Un bac littéraire, puis l&apos;informatique, puis la data : j&apos;ai toujours eu un pied
-                dans les mots et l&apos;autre dans les chiffres. Aujourd&apos;hui, je mets les deux au service
-                des mêmes objectifs.
-              </p>
-            </header>
-
-            <div className="pillars">
-              {PILLARS.map((p, i) => (
-                <article
-                  key={p.id}
-                  className={`pillar pillar--${p.id === "redaction" ? "word" : "data"}`}
-                  data-reveal
-                  style={{ ["--delay" as string]: `${i * 120}ms` }}
-                >
-                  <span className="pillar__kicker">{p.kicker}</span>
-                  <h3 className="h-card">{p.title}</h3>
-                  <p className="pillar__lead">{p.lead}</p>
-                  <ul className="pillar__list">
-                    {p.items.map((it) => <li key={it}>{it}</li>)}
-                  </ul>
-                  <ul className="chips pillar__tools" aria-label="Outils">
-                    {p.tools.map((t) => <li key={t} className="chip">{t}</li>)}
-                  </ul>
-                </article>
-              ))}
-            </div>
-
-            <div className="crossover" data-reveal>
-              <div>
-                <span className="crossover__mark">01 + 02</span>
-                <h3 className="h-card">{CROSSOVER.title}</h3>
-              </div>
-              <div>
-                <p>{CROSSOVER.text}</p>
-                <ul className="chips">
-                  {CROSSOVER.points.map((pt) => <li key={pt} className="chip">{pt}</li>)}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── PARCOURS ── */}
-        <section id="parcours" className="section" aria-labelledby="parcours-title">
-          <div className="container">
-            <header className="section-head" data-reveal>
-              <span className="kicker">Parcours</span>
-              <h2 id="parcours-title" className="h-section">Du tableau de bord à la page web.</h2>
-            </header>
-
-            <div className="timeline-group">
-              <h3 className="timeline-group__title">Expérience</h3>
-              <ol className="timeline">
-                {work.map((e) => (
-                  <li key={e.title + e.org} className="entry" data-reveal>
-                    <div className="entry__date">
-                      {e.date}
-                      {e.current && (
-                        <>
-                          <br />
-                          <span className="entry__badge">En poste</span>
-                        </>
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="entry__title">{e.title}</h4>
-                      <p className="entry__org">
-                        <strong>{e.org}</strong>
-                        {e.place && ` · ${e.place}`}
-                      </p>
-                      {e.note && <p className="entry__note">{e.note}</p>}
-                      {e.items && (
-                        <ul className="entry__items">
-                          {e.items.map((it) => <li key={it}>{it}</li>)}
-                        </ul>
-                      )}
-                      {e.tags && (
-                        <ul className="chips">
-                          {e.tags.map((t) => <li key={t} className="chip">{t}</li>)}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="timeline-group">
-              <h3 className="timeline-group__title">Formation</h3>
-              <ol className="timeline">
-                {education.map((e) => (
-                  <li key={e.title} className="entry" data-reveal>
-                    <div className="entry__date">{e.date}</div>
-                    <div>
-                      <h4 className="entry__title">{e.title}</h4>
-                      <p className="entry__org">
-                        <strong>{e.org}</strong>
-                        {e.place && ` · ${e.place}`}
-                      </p>
-                      {e.tags && (
-                        <ul className="chips">
-                          {e.tags.map((t) => <li key={t} className="chip">{t}</li>)}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        </section>
-
-        {/* ── COMPÉTENCES ── */}
-        <section id="competences" className="section" aria-labelledby="competences-title">
-          <div className="container">
-            <header className="section-head section-head--split" data-reveal>
-              <div>
-                <span className="kicker">Compétences</span>
-                <h2 id="competences-title" className="h-section" style={{ marginTop: 16 }}>
-                  La boîte à outils.
-                </h2>
-              </div>
-              <p className="lead">
-                Ce que j&apos;utilise au quotidien pour écrire, analyser, mettre en forme et publier.
-              </p>
-            </header>
-            <div className="skills" data-reveal>
-              {skills.map((cat, i) => (
-                <div key={cat.id ?? cat.title} className="skill">
-                  <span className="skill__num">{String(i + 1).padStart(2, "0")}</span>
-                  <h3>{cat.title}</h3>
-                  <ul className="chips">
-                    {cat.tags.map((t) => <li key={t.label} className="chip">{t.label}</li>)}
-                  </ul>
-                </div>
-              ))}
-            </div>
-            <p className="languages">
-              {LANGUAGES.map((l) => (
-                <span key={l.label}>
-                  <strong>{l.label}</strong>
-                  {l.level}
-                </span>
-              ))}
+        <section id="expertises" aria-labelledby="expertises-title">
+          <div className="container section-head" data-reveal>
+            <p className="tag">Expertises</p>
+            <h2 id="expertises-title" className="display h-section">Ce que je fais</h2>
+            <p className="intro">
+              Deux métiers que je pratique au quotidien, et qui se renforcent l&apos;un l&apos;autre.
             </p>
+          </div>
+
+          <div className="panels">
+            <article className="panel panel--amber on-night" data-reveal>
+              <div className="panel__inner">
+                <div>
+                  <h3 className="display h-panel">{writing.title}</h3>
+                  <p className="panel__lead">{writing.lead}</p>
+                  <ul className="panel__list">
+                    {writing.items.map((it) => <li key={it}>{it}</li>)}
+                  </ul>
+                  <ul className="chips">{writing.tools.map((t) => <li key={t} className="chip">{t}</li>)}</ul>
+                </div>
+                <div className="panel__art"><WritingArt layers={writing.layers} /></div>
+              </div>
+            </article>
+
+            <article className="panel panel--sky on-night" data-reveal>
+              <div className="panel__inner">
+                <div>
+                  <h3 className="display h-panel">{data.title}</h3>
+                  <p className="panel__lead">{data.lead}</p>
+                  <ul className="panel__list">
+                    {data.items.map((it) => <li key={it}>{it}</li>)}
+                  </ul>
+                  <ul className="chips">{data.tools.map((t) => <li key={t} className="chip">{t}</li>)}</ul>
+                </div>
+                <div className="panel__art"><DataArt layers={data.layers} /></div>
+              </div>
+            </article>
+
+            <article className="panel panel--cross on-night" data-reveal>
+              <div className="panel__inner">
+                <h3 className="display h-panel">{CROSSOVER.title}</h3>
+                <p className="panel__lead" style={{ margin: 0 }}>{CROSSOVER.text}</p>
+              </div>
+              <div className="panel__inner" style={{ paddingTop: 0 }}>
+                <div className="cross-points" style={{ gridColumn: "1 / -1", marginTop: 0 }}>
+                  {CROSSOVER.points.map((pt) => (
+                    <div key={pt.title}>
+                      <strong>{pt.title}</strong>
+                      <span>{pt.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </article>
           </div>
         </section>
 
         {/* ── RÉALISATIONS ── */}
         <section id="realisations" className="section" aria-labelledby="realisations-title">
           <div className="container">
-            <header className="section-head section-head--split" data-reveal>
-              <div>
-                <span className="kicker">Réalisations</span>
-                <h2 id="realisations-title" className="h-section" style={{ marginTop: 16 }}>
-                  Quelques créations.
-                </h2>
-              </div>
-              <p className="lead">
-                Visuels, miniatures, sites communautaires et expériences en IA générative. Cliquez sur
-                une réalisation pour la voir en détail.
+            <div className="section-head" data-reveal>
+              <p className="tag">Réalisations</p>
+              <h2 id="realisations-title" className="display h-section">Mes réalisations</h2>
+              <p className="intro">
+                Miniatures, affiches, sites communautaires et créations en IA générative.
               </p>
-            </header>
+            </div>
             <ProjectsGallery projects={projects} />
           </div>
         </section>
 
-        {/* ── À PROPOS ── */}
-        <section id="apropos" className="section" aria-labelledby="apropos-title">
+        {/* ── PARCOURS ── */}
+        <section id="parcours" className="section" style={{ paddingTop: 0 }} aria-labelledby="parcours-title">
           <div className="container">
-            <header className="section-head" data-reveal>
-              <span className="kicker">À propos</span>
-              <h2 id="apropos-title" className="h-section">Un parcours entre lettres et données.</h2>
-            </header>
-            <div className="about">
-              <div className="about__text" data-reveal>
-                <p>
-                  Après un bac littéraire à N&apos;Djamena, je suis parti à Dakar étudier
-                  l&apos;informatique de gestion à l&apos;ISM, puis le Big Data et la stratégie data à
-                  Digital Campus.
-                </p>
-                <p>
-                  Chez Wemoov, j&apos;ai appris à faire parler les données : consommation des véhicules,
-                  chiffre d&apos;affaires, performance des chauffeurs, le tout réuni dans des tableaux de
-                  bord utiles aux décisions.
-                </p>
-                <p>
-                  Chez Marketing Sambe, entré en stage puis recruté, j&apos;ai retrouvé mon premier amour :
-                  écrire. Pour être lu, compris et trouvé. Mon atout, c&apos;est de pouvoir mesurer ce que
-                  j&apos;écris et d&apos;expliquer simplement ce que je mesure.
-                </p>
-              </div>
-              <div data-reveal style={{ ["--delay" as string]: "120ms" }}>
-                <dl className="facts">
-                  <div><dt>Poste</dt><dd>Rédacteur web &amp; community manager</dd></div>
-                  <div><dt>Diplôme</dt><dd>Master Big Data &amp; Data Stratégie</dd></div>
-                  <div><dt>Ville</dt><dd>Dakar, Sénégal</dd></div>
+            <div className="section-head" data-reveal>
+              <p className="tag">Parcours</p>
+              <h2 id="parcours-title" className="display h-section">Formation &amp; expérience</h2>
+            </div>
+            <ol className="timeline">
+              {EXPERIENCES.map((e) => (
+                <li key={e.title + e.org} className="entry" data-reveal>
+                  <div className="entry__when">
+                    {e.date}
+                    <span className="entry__kind">{e.type === "work" ? "Expérience" : "Formation"}</span>
+                    {e.current && <span className="entry__now">En poste</span>}
+                  </div>
                   <div>
-                    <dt>Langues</dt>
-                    <dd>{LANGUAGES.map((l) => `${l.label} (${l.level.toLowerCase()})`).join(" · ")}</dd>
+                    <h3 className="entry__title">{e.title}</h3>
+                    <p className="entry__org">
+                      {e.org}
+                      {e.place && `, ${e.place}`}
+                    </p>
+                    {e.note && <p className="entry__note">{e.note}</p>}
+                    {e.items && (
+                      <ul className="entry__items">
+                        {e.items.map((it) => <li key={it}>{it}</li>)}
+                      </ul>
+                    )}
+                    {e.tags && (
+                      <ul className="chips">
+                        {e.tags.map((t) => <li key={t} className="chip">{t}</li>)}
+                      </ul>
+                    )}
                   </div>
-                </dl>
-                <div className="side-card">
-                  <span className="kicker">À côté</span>
-                  <h3>The Legend of Don</h3>
-                  <p>
-                    Ma chaîne gaming : vidéos, miniatures et visuels, et un terrain d&apos;essai pour les
-                    outils d&apos;IA générative.
-                  </p>
-                  <div className="link-list">
-                    {SOCIAL_GAMING.map((s) => (
-                      <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="btn btn--ghost btn--sm">
-                        {s.label} <ArrowUpRight />
-                      </a>
-                    ))}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ── COMPÉTENCES ── */}
+        <section id="competences" className="panels" aria-labelledby="competences-title">
+          <div className="panel on-night" data-reveal>
+            <div className="panel__inner" style={{ display: "block" }}>
+              <h2 id="competences-title" className="display h-panel">Stack &amp; outils</h2>
+              <p className="panel__lead" style={{ marginBottom: 0 }}>
+                Ce que j&apos;utilise pour écrire, analyser, mettre en forme et publier.
+              </p>
+              <div className="skills">
+                {skills.map((cat) => (
+                  <div key={cat.id ?? cat.title} className="skill">
+                    <h3>{cat.title}</h3>
+                    <ul className="chips">
+                      {cat.tags.map((t) => <li key={t.label} className="chip">{t.label}</li>)}
+                    </ul>
                   </div>
-                </div>
+                ))}
               </div>
+              <p className="languages">
+                {LANGUAGES.map((l) => (
+                  <span key={l.label}><strong>{l.label}</strong>{l.level}</span>
+                ))}
+              </p>
             </div>
           </div>
         </section>
 
         {/* ── CONTACT ── */}
-        <section id="contact" className="section contact" aria-labelledby="contact-title">
-          <div className="container contact__grid">
-            <div data-reveal>
-              <span className="kicker">Contact</span>
-              <h2 id="contact-title" className="h-section" style={{ marginTop: 16 }}>
-                Un texte à écrire, des chiffres à faire parler ?
-              </h2>
-              <p className="lead" style={{ marginTop: 24 }}>
-                Mission de rédaction, besoin d&apos;analyse ou opportunité de poste : écrivez-moi, je
-                réponds rapidement.
-              </p>
-              <ul className="contact__links">
-                {CONTACT_LINKS.map((c) => {
-                  const external = c.href.startsWith("http");
-                  return (
-                    <li key={c.label}>
-                      <a href={c.href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-                        <span>{c.label}</span>
-                        <span>{c.value}</span>
-                        <ArrowUpRight width={18} height={18} />
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <div className="form-card" data-reveal style={{ ["--delay" as string]: "120ms" }}>
-              <h3>Envoyer un message</h3>
-              <ContactForm />
+        <section id="contact" className="panels" style={{ marginTop: 18 }} aria-labelledby="contact-title">
+          <div className="panel panel--amber on-night">
+            <div className="panel__inner contact__grid" style={{ alignItems: "start" }}>
+              <div data-reveal>
+                <h2 id="contact-title" className="display h-section">Travaillons ensemble</h2>
+                <p className="panel__lead">
+                  Un texte à écrire, des chiffres à faire parler, ou un poste à pourvoir : écrivez-moi, je
+                  réponds rapidement.
+                </p>
+                <ul className="contact__links">
+                  {[...CONTACT_LINKS, SOCIAL_GAMING[0]].map((c) => {
+                    const external = c.href.startsWith("http");
+                    return (
+                      <li key={c.label}>
+                        <a href={c.href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                          <span>
+                            <small>{c.label === "YouTube" ? "YouTube gaming" : c.label}</small>
+                            <strong>{c.value}</strong>
+                          </span>
+                          <ArrowUpRight />
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+              <div className="form-card" data-reveal>
+                <h3>Envoyer un message</h3>
+                <ContactForm />
+              </div>
             </div>
           </div>
         </section>
@@ -380,10 +314,8 @@ export default async function Home() {
         <div className="container footer__inner">
           <span>© {new Date().getFullYear()} {FULL_NAME}</span>
           <nav aria-label="Liens de pied de page">
-            {NAV_LINKS.map((l) => (
-              <a key={l.id} href={`#${l.id}`}>{l.label}</a>
-            ))}
-            <a href={CV_LINK} download>CV</a>
+            {NAV_LINKS.map((l) => <a key={l.id} href={`#${l.id}`}>{l.label}</a>)}
+            <a href={CV_LINK} download><Download width={14} height={14} style={{ display: "inline", verticalAlign: "-2px" }} /> CV</a>
           </nav>
         </div>
       </footer>

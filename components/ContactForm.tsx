@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { ArrowRight } from "./site/Icons";
 import { CONTACT_EMAIL } from "@/lib/data";
 
 type Status = { kind: "idle" | "sending" | "ok" | "error"; message?: string };
@@ -114,9 +113,8 @@ export default function ContactForm() {
         )}
       </div>
 
-      <button type="submit" className="btn btn--ink" disabled={status.kind === "sending"}>
+      <button type="submit" className="btn" disabled={status.kind === "sending"}>
         {status.kind === "sending" ? "Envoi en cours…" : "Envoyer le message"}
-        <ArrowRight />
       </button>
     </form>
   );

@@ -6,48 +6,61 @@ export const FULL_NAME = "Mbaitadjim Abba Serge";
 export const HEADLINE = "Rédacteur web & Data analyst";
 
 export const NAV_LINKS = [
+  { id: "apropos", label: "À propos" },
   { id: "expertises", label: "Expertises" },
+  { id: "realisations", label: "Réalisations" },
   { id: "parcours", label: "Parcours" },
   { id: "competences", label: "Compétences" },
-  { id: "realisations", label: "Réalisations" },
-  { id: "apropos", label: "À propos" },
+  { id: "contact", label: "Contact" },
 ] as const;
 
 /* ── Les deux métiers, présentés à égalité ── */
 export const PILLARS = [
   {
     id: "redaction",
-    kicker: "01 — Les mots",
     title: "Rédaction web",
     lead: "Des textes clairs, utiles et pensés pour être trouvés sur Google comme lus sur mobile.",
     items: [
       "Contenus pour sites, marketplaces et réseaux sociaux",
-      "Annonces et textes optimisés pour le référencement (SEO)",
-      "Supports de communication : brochures, dépliants, affiches",
-      "Animation et gestion de pages réseaux sociaux",
+      "Annonces et pages optimisées pour le référencement",
+      "Brochures, dépliants et affiches",
+      "Animation des pages de l'entreprise sur les réseaux",
     ],
-    tools: ["WordPress", "Canva", "Photoshop", "IA générative"],
+    tools: ["WordPress", "SEO", "Canva", "Photoshop"],
+    layers: [
+      { label: "Articles & pages", sub: "SEO · WordPress" },
+      { label: "Annonces", sub: "site · marketplace" },
+      { label: "Réseaux sociaux", sub: "publications · visuels" },
+    ],
   },
   {
     id: "data",
-    kicker: "02 — Les chiffres",
     title: "Analyse de données",
     lead: "Des données nettoyées, structurées et mises en forme pour que les décisions reposent sur des faits.",
     items: [
       "Tableaux de bord et rapports Power BI",
       "Nettoyage et analyse avec Python, Pandas et SQL",
-      "Suivi d'indicateurs : chiffre d'affaires, performance, coûts",
-      "Centralisation et structuration de bases de données",
+      "Suivi du chiffre d'affaires, des coûts et des performances",
+      "Bases de données centralisées et fiables",
     ],
     tools: ["Power BI", "Python", "SQL", "Excel"],
+    layers: [
+      { label: "Restitution", sub: "Power BI · rapports" },
+      { label: "Analyse", sub: "Python · Pandas" },
+      { label: "Collecte", sub: "SQL · Excel" },
+    ],
   },
 ] as const;
 
 export const CROSSOVER = {
-  title: "Là où les deux se rejoignent",
+  title: "Quand les deux se rencontrent",
   text:
-    "Un bon contenu se pilote comme un projet data : choisir ses sujets à partir de ce que les gens cherchent vraiment, suivre l'audience et l'engagement, ajuster. Et quand il faut expliquer des chiffres, je les transforme en infographies et en phrases que tout le monde comprend.",
-  points: ["Contenus guidés par la donnée", "Suivi de performance", "Infographies & data storytelling"],
+    "Je choisis les sujets à partir de ce que les gens cherchent vraiment, je mesure ce que mes contenus produisent, et je sais transformer un tableau de chiffres en une page que tout le monde comprend.",
+  points: [
+    { title: "Contenus guidés par la donnée", text: "Sujets et mots-clés choisis à partir des recherches réelles." },
+    { title: "Suivi de performance", text: "Audience et engagement mesurés pour ajuster ce qui est publié." },
+    { title: "Data storytelling", text: "Infographies et textes qui rendent les chiffres lisibles." },
+  ],
 };
 
 export const EXPERIENCES: ExperienceItem[] = [

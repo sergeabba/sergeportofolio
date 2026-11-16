@@ -1,13 +1,13 @@
-# Design system — « Nuit & signal »
+# Design system — « Clair »
 
-Portfolio immersif d'un profil double : rédacteur web **et** data analyst.
+Portfolio clair et épuré d'un profil double : rédacteur web **et** data analyst.
 
-- **Couleurs** : bleu nuit `#0e1126` pour le hero et les panneaux, surface claire `#eceef6`.
-  Deux signaux : ambre `#ffb547` (rédaction) et ciel `#74c3ff` (data).
-- **Typographie** : Fraunces très gras pour les titres, Plus Jakarta Sans pour le texte,
-  JetBrains Mono pour les étiquettes techniques (outils, dates).
-- **Structure** : navigation en pilule flottante ; hero en mosaïque de réalisations avec le nom en
-  très grand ; grands panneaux sombres aux coins arrondis, illustrations isométriques (`components/site/Art.tsx`).
-- **Mouvement** : une seule séquence au chargement (tuiles puis nom), apparition douce des sections,
-  tout désactivé avec `prefers-reduced-motion`.
-- Les jetons sont dans `app/globals.css` ; les alias `--bg`, `--text`, `--revo-blue`… servent à l'admin.
+- **Couleurs** : blanc, noir `#0a0a0a`, gris neutres ; un seul accent, le dégradé bleu `#2563eb` → violet `#7c3aed`.
+- **Typographie** : une seule police, Inter Tight (sans-serif), titres très serrés et très grands.
+- **Formes** : cartes aux grands arrondis (36 px), boutons en pilule.
+- **Animations pilotées par le défilement** (`components/site/Motion.tsx`, sans bibliothèque) :
+  le cadre d'images du haut de page grandit jusqu'au plein écran, le texte « à propos » s'allume mot
+  par mot, les cartes d'expertise s'empilent, les réalisations défilent à l'horizontale, la ligne du
+  parcours se dessine, le bloc contact s'agrandit.
+- Avec `prefers-reduced-motion` ou sans JavaScript, tout s'affiche normalement, sans animation.
+- Les jetons sont dans `app/globals.css` ; les alias `--text`, `--border`, `--revo-blue`… servent à l'admin.

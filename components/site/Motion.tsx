@@ -1,43 +1,39 @@
 "use client";
 
 import { useEffect } from "react";
-import Lenis from "lenis";
-
-declare global {
-  interface Window {
-    __lenis?: Lenis;
-  }
-}
 
 const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /**
- * Moteur d'animation du site :
- * défilement fluide (Lenis), apparitions au scroll, parallaxe du hero,
- * panneaux qui s'ouvrent, compteurs, barre de progression, nav qui se masque.
- * Tout est désactivé si l'utilisateur préfère réduire les animations.
+ * Moteur d'animation piloté par le défilement (sans bibliothèque) :
+ * - [data-reveal]  : apparition à l'entrée dans l'écran
+ * - [data-count]   : compteur animé
+ * - [data-stage]   : cadre d'images qui grandit jusqu'au plein écran
+ * - [data-words]   : texte qui s'allume mot par mot
+ * - .scard         : cartes qui s'empilent
+ * - [data-hscroll] : défilement horizontal épinglé
+ * - [data-line], [data-grow] : progression simple
  */
 export default function Motion() {
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("reveal-ready");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const wide = window.matchMedia("(min-width: 900px)");
+    const $ = <T extends HTMLElement>(sel: string) => Array.from(document.querySelectorAll<T>(sel));
 
-    /* ── Apparitions ── */
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal], [data-split]"));
-    const countEls = Array.from(document.querySelectorAll<HTMLElement>("[data-count]"));
-
+    /* ── Apparitions et compteurs ── */
     const runCount = (el: HTMLElement) => {
-      const raw = el.dataset.count ?? el.textContent ?? "";
+      const raw = el.dataset.count ?? "";
       const m = raw.match(/\d+/);
       if (!m || reduce) return;
       const target = Number(m[0]);
       const from = target > 1000 ? target - 24 : 0;
       const start = performance.now();
-      const dur = 1400;
       const tick = (now: number) => {
-        const t = clamp((now - start) / dur);
+        const t = clamp((now - start) / 1400);
         el.textContent = raw.replace(m[0], String(Math.round(from + (target - from) * easeOut(t))));
         if (t < 1) requestAnimationFrame(tick);
       };
@@ -54,70 +50,110 @@ export default function Motion() {
           io.unobserve(el);
         }
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.08 }
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
     );
-    [...revealEls, ...countEls].forEach((el) => io.observe(el));
+    $("[data-reveal], [data-count]").forEach((el) => io.observe(el));
 
-    if (reduce) {
-      revealEls.forEach((el) => el.classList.add("is-visible"));
-      return () => io.disconnect();
-    }
+    if (reduce) return () => io.disconnect();
 
-    /* ── Défilement fluide ── */
-    const lenis = new Lenis({
-      lerp: 0.085,
-      wheelMultiplier: 0.95,
-      anchors: { offset: -96 },
-      autoRaf: true,
-      prevent: (node) => node.closest?.("dialog") !== null,
-    });
-    window.__lenis = lenis;
+    /* ── Scènes pilotées par le défilement ── */
+    const stage = document.querySelector<HTMLElement>("[data-stage]");
+    const stageBox = stage?.querySelector<HTMLElement>(".stage");
+    const veil = stage?.querySelector<HTMLElement>(".stage__veil");
+    const words = $("[data-words]");
+    const cards = $(".scard");
+    const lines = $("[data-line]");
+    const grows = $("[data-grow]");
+    const hs = document.querySelector<HTMLElement>("[data-hscroll]");
+    const track = hs?.querySelector<HTMLElement>(".hs__track");
+    const bar = hs?.querySelector<HTMLElement>(".hs__bar");
+    let hsDistance = 0;
 
-    /* ── Effets liés au scroll ── */
-    const hero = document.querySelector<HTMLElement>(".hero");
-    const scalers = Array.from(document.querySelectorAll<HTMLElement>("[data-scale]"));
-    let lastY = window.scrollY;
+    const measure = () => {
+      if (!hs || !track) return;
+      if (!wide.matches) {
+        hs.style.removeProperty("--hs-h");
+        hsDistance = 0;
+        return;
+      }
+      hsDistance = Math.max(0, track.scrollWidth - window.innerWidth);
+      hs.style.setProperty("--hs-h", `${window.innerHeight + hsDistance}px`);
+    };
 
-    const onScroll = () => {
-      const y = window.scrollY;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
       const vh = window.innerHeight;
-      const max = document.documentElement.scrollHeight - vh;
-      root.style.setProperty("--progress", String(max > 0 ? y / max : 0));
 
-      // Nav : masquée en descendant, visible en remontant
-      if (Math.abs(y - lastY) > 6) {
-        root.classList.toggle("nav-hidden", y > lastY && y > vh * 0.6);
-        lastY = y;
+      if (stage && stageBox) {
+        const r = stage.getBoundingClientRect();
+        const p = clamp(-r.top / (r.height - vh));
+        stageBox.style.setProperty("--p", easeInOut(clamp(p / 0.55)).toFixed(4));
+        const v = clamp((p - 0.6) / 0.25);
+        veil?.style.setProperty("--v", v.toFixed(3));
+        veil?.classList.toggle("is-on", v > 0.9);
       }
 
-      if (hero && y < vh * 1.2) hero.style.setProperty("--hy", String(y));
-
-      for (const el of scalers) {
+      for (const el of words) {
         const r = el.getBoundingClientRect();
         if (r.top > vh || r.bottom < 0) continue;
-        el.style.setProperty("--p", clamp((vh - r.top) / (vh * 0.75)).toFixed(3));
+        el.style.setProperty("--p", clamp((vh * 0.82 - r.top) / (vh * 0.5 + r.height * 0.5)).toFixed(3));
+      }
+
+      cards.forEach((card, i) => {
+        const next = cards[i + 1];
+        if (!next) return;
+        const top = card.getBoundingClientRect().top;
+        const q = clamp((vh - next.getBoundingClientRect().top) / (vh - top));
+        card.style.setProperty("--q", q.toFixed(3));
+      });
+
+      for (const el of lines) {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--p", clamp((vh * 0.7 - r.top) / r.height).toFixed(3));
+      }
+
+      for (const el of grows) {
+        const r = el.getBoundingClientRect();
+        if (r.top > vh) continue;
+        el.style.setProperty("--p", clamp((vh - r.top) / (vh * 0.7)).toFixed(3));
+      }
+
+      if (hs && track) {
+        if (hsDistance > 0) {
+          const r = hs.getBoundingClientRect();
+          const p = clamp(-r.top / (r.height - vh));
+          track.style.setProperty("--hs-x", (p * hsDistance).toFixed(1));
+          bar?.style.setProperty("--p", p.toFixed(3));
+        } else {
+          track.style.setProperty("--hs-x", "0");
+        }
       }
     };
-    lenis.on("scroll", onScroll);
-    window.addEventListener("resize", onScroll);
-    onScroll();
 
-    /* ── Parallaxe du hero à la souris ── */
-    const onMove = (e: PointerEvent) => {
-      if (!hero || e.pointerType !== "mouse") return;
-      hero.style.setProperty("--mx", ((e.clientX / window.innerWidth - 0.5) * 2).toFixed(3));
-      hero.style.setProperty("--my", ((e.clientY / window.innerHeight - 0.5) * 2).toFixed(3));
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
     };
-    hero?.addEventListener("pointermove", onMove);
+    const onResize = () => {
+      measure();
+      update();
+    };
+
+    const ro = track ? new ResizeObserver(onResize) : null;
+    if (track) ro?.observe(track);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    onResize();
 
     return () => {
       io.disconnect();
-      lenis.destroy();
-      delete window.__lenis;
-      window.removeEventListener("resize", onScroll);
-      hero?.removeEventListener("pointermove", onMove);
+      ro?.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
-  return <div className="progress" aria-hidden="true" />;
+  return null;
 }

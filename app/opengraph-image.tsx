@@ -15,20 +15,16 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "72px 80px",
-          background: "#f7f4ee",
-          color: "#17161a",
+          background: "#ffffff",
+          color: "#0a0a0a",
         }}
       >
         <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, color: "rgba(23,22,26,0.55)" }}>
           PORTFOLIO · DAKAR, SÉNÉGAL
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 92, lineHeight: 1.05, letterSpacing: -2 }}>
-            Des&nbsp;<span style={{ color: "#b93d0b" }}>mots</span>&nbsp;qui se lisent,
-          </div>
-          <div style={{ display: "flex", fontSize: 92, lineHeight: 1.05, letterSpacing: -2 }}>
-            des&nbsp;<span style={{ color: "#1f4fd1" }}>chiffres</span>&nbsp;qui prouvent.
-          </div>
+        <div style={{ display: "flex", flexDirection: "column", fontSize: 150, fontWeight: 700, lineHeight: 0.98, letterSpacing: -7 }}>
+          <div style={{ display: "flex" }}>Des mots.</div>
+          <div style={{ display: "flex", color: "#4f46e5" }}>Des chiffres.</div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -38,8 +34,8 @@ export default function OpengraphImage() {
             </div>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ width: 22, height: 22, borderRadius: 11, background: "#b93d0b" }} />
-            <div style={{ width: 22, height: 22, borderRadius: 11, background: "#1f4fd1" }} />
+            <div style={{ width: 22, height: 22, borderRadius: 11, background: "#2563eb" }} />
+            <div style={{ width: 22, height: 22, borderRadius: 11, background: "#7c3aed" }} />
           </div>
         </div>
       </div>

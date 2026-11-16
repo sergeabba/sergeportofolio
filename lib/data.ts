@@ -10,7 +10,6 @@ export const NAV_LINKS = [
   { id: "expertises", label: "Expertises" },
   { id: "realisations", label: "Réalisations" },
   { id: "parcours", label: "Parcours" },
-  { id: "competences", label: "Compétences" },
   { id: "contact", label: "Contact" },
 ] as const;
 

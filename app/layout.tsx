@@ -1,25 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { FULL_NAME, HEADLINE, SITE_URL, CONTACT_EMAIL } from "@/lib/data";
 
-const fraunces = Fraunces({
+const interTight = Inter_Tight({
   subsets: ["latin"],
-  axes: ["opsz", "SOFT"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-jetbrains",
+  variable: "--font-inter-tight",
   display: "swap",
 });
 
@@ -58,12 +44,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0e1126" },
-    { media: "(prefers-color-scheme: dark)", color: "#090b1a" },
-  ],
-};
+export const viewport: Viewport = { themeColor: "#ffffff" };
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -82,14 +63,14 @@ const jsonLd = {
   sameAs: ["https://linkedin.com/in/sergeabba", "https://github.com/sergeabba"],
 };
 
-// Applique le thème avant le premier rendu pour éviter le flash.
-const themeScript = `(function(){var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('reveal-ready'))d.classList.add('reveal-off')},2500);try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.dataset.theme=t}catch(e){d.dataset.theme='light'}})();`;
+// Active les animations uniquement si JavaScript fonctionne (sinon tout reste visible).
+const themeScript = `(function(){var d=document.documentElement;d.classList.add('js');setTimeout(function(){if(!d.classList.contains('reveal-ready'))d.classList.add('reveal-off')},2500)})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="fr"
-      className={`${fraunces.variable} ${jakarta.variable} ${jetbrains.variable}`}
+      className={interTight.variable}
       suppressHydrationWarning
     >
       <head>
